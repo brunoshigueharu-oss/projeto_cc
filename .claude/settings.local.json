@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rsync -av --exclude node_modules '/Users/brunohigashi/Documents/Claude Code/Projeto Do Claude Code 1/' '/Users/brunohigashi/Documents/Claude Code/Figma/')",
+      "Bash(npm install *)",
+      "WebSearch",
+      "WebFetch(domain:help.figma.com)",
+      "Bash(claude --version)",
+      "Bash(claude plugin *)",
+      "mcp__plugin_figma_figma__whoami",
+      "Bash(claude mcp *)",
+      "Bash(git init *)",
+      "Bash(git branch *)",
+      "Bash(git add *)"
+    ]
+  }
+}
