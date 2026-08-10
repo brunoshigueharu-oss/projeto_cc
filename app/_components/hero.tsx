@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Seal } from "./seal";
+import { Seal } from "@/components/seal";
 
 export function Hero() {
   return (

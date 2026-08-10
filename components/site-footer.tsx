@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { NAV_LINKS } from "./nav-links";
+import { NAV_LINKS } from "@/lib/nav-links";
 import { Seal } from "./seal";
 
 export function SiteFooter() {

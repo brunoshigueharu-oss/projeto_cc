@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Literata, Pirata_One } from "next/font/google";
+
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,7 +27,10 @@ const literata = Literata({
 });
 
 export const metadata: Metadata = {
-  title: "Hocus Pocus",
+  title: {
+    default: "Hocus Pocus",
+    template: "%s · Hocus Pocus",
+  },
   description: "Editora de ficção sombria ilustrada.",
 };
 
@@ -41,7 +47,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Pular para o conteúdo
         </a>
-        {children}
+        <SiteHeader />
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
+        <SiteFooter />
       </body>
     </html>
   );

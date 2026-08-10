@@ -41,6 +41,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Tonalidades dos universos. Tailwind 4 é CSS-first: novos tokens entram
+     aqui, não num tailwind.config.ts (que não existe neste projeto). */
+  --color-universe-garnet: #6e1423;
+  --color-universe-navy: #141b36;
+  --color-universe-brown: #4a2d0a;
+  --color-universe-forest: #101913;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
