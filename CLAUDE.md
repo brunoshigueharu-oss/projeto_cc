@@ -9,6 +9,12 @@
 ## Commands
 - `npm run dev` — servidor local (porta 3000)
 - `npm run build` — build de produção
+- `npm run type-check` — `tsc --noEmit`
+- `npm run lint` — eslint
+
+> Ao criar rotas novas, rode `npm run dev` (ou `build`) UMA vez antes do
+> `type-check`: `PageProps`/`LayoutProps` são tipos gerados em
+> `.next/dev/types/routes.d.ts` a partir das rotas existentes.
 
 ## Architecture
 - App Router: rotas em `app/`, agrupadas por `(grupo)/`
@@ -17,13 +23,23 @@
 - `components/ui/` — primitivos reutilizáveis (shadcn)
 - `components/` — componentes de feature
 - `lib/` — helpers, clients (supabase, stripe), configurações
+- `lib/data/` — dados estáticos do site + schemas Zod, validados no topo do módulo
 - `types/` — tipos globais e schemas Zod compartilhados
+
+> shadcn neste projeto usa o estilo `base-nova` sobre `@base-ui/react` (não
+> Radix). O wrapper `form` clássico não existe nesse estilo — o equivalente é
+> `field` (`Field`/`FieldLabel`/`FieldError`), cujo `FieldError` já aceita o
+> formato de `fieldState.error` do React Hook Form. Ver
+> `app/contato/_components/contact-form.tsx`.
 
 ## Code Style
 - NEVER use `any` explícito — usar `unknown` + type guard
 - Imports: ES modules (import/export), sem require()
 - Tailwind only — sem CSS inline, sem styled-components
-- Novos design tokens vão em `tailwind.config.ts` antes de usar
+- Novos design tokens vão em `app/globals.css`, no bloco `@theme inline`, antes de usar
+  (Tailwind 4 é CSS-first — este projeto não tem `tailwind.config.ts`)
+- Classe Tailwind dinâmica não funciona (`bg-universe-${tone}`): o scanner só
+  enxerga nomes completos. Mapear para classe literal, como em `lib/tone.ts`
 - Nomes de arquivo: kebab-case. Componentes: PascalCase
 
 ## Environment Variables

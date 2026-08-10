@@ -1,32 +1,52 @@
-# Sitemap (ideia geral)
+# Sitemap
 
-Baseado numa checagem rápida do site Wix atual (que ainda está incompleto —
-isto é direção, não conteúdo final). Textos, imagens e dados reais serão
-definidos durante o ciclo de brainstorming de cada seção, não copiados
-daqui.
+Mapa real das rotas implementadas. As perguntas que estavam em aberto na
+versão anterior deste arquivo foram todas respondidas na implementação.
 
-## Seções principais (navegação)
+## Rotas
 
-1. **Home**
-   - Seção "Conheça os nossos universos" — sugere destaque para múltiplas
-     franquias/coleções de livros logo na entrada.
-2. **Catálogo**
-   - Provável listagem de livros organizados por "universo"/franquia.
-3. **Campanhas**
-   - Área para promoções ou iniciativas especiais (lançamentos, eventos).
-4. **Sobre**
-   - Institucional — apresentação da editora.
+| Rota | Renderização | Descrição |
+|---|---|---|
+| `/` | Estática | Hero escura + prateleira dos universos |
+| `/catalogo` | Dinâmica | Grade de universos + grade de livros, com filtro `?universo=` |
+| `/catalogo/[slug]` | SSG (uma por livro) | Página de livro — **template** a ser otimizado |
+| `/campanhas` | Estática | Pré-vendas, assinaturas e eventos |
+| `/sobre` | Estática | Manifesto, princípios editoriais, universos |
+| `/contato` | Estática | Canais diretos + formulário com Server Action |
+| `/perfil` | Estática | Maquete de conta — estante e pedidos fictícios |
 
-## Ainda em aberto (definir durante os ciclos por seção)
+`/catalogo` é a única rota dinâmica: ela lê `searchParams` para o filtro por
+universo. É uma troca consciente — mantém o estado na URL (compartilhável,
+navegável pelo histórico) sem exigir JavaScript de cliente.
 
-- Se existem sub-páginas (ex.: página de detalhe de um livro dentro do
-  Catálogo, página de detalhe de uma campanha).
-- Estrutura exata de dados do Catálogo (campos de cada livro/universo).
-- Se há formulário de contato/newsletter (provavelmente em Sobre ou rodapé).
-- Header/footer globais (não mapeados ainda).
+## Navegação
 
-## Notas
+- **Menu principal** (header e rodapé): Home · Catálogo · Campanhas · Sobre ·
+  Contato.
+- **Perfil** fica fora do menu — é acessado pelo ícone de conta no header, e
+  também aparece no menu mobile como "Minha conta".
+- Não há carrinho. A venda é por link externo, por livro (`buyUrl` no
+  schema), então o ícone de carrinho foi removido do header.
 
-- Este documento é intencionalmente leve — o objetivo é ter uma direção
-  geral para começar o design system e a primeira seção (Home), não um
-  clone exato do Wix.
+## Camada de dados
+
+Sem CMS. Dados estáticos tipados com Zod em `lib/data/`:
+
+- `schemas.ts` — contrato de `universe`, `book` e `campaign`
+- `universes.ts`, `books.ts`, `campaigns.ts` — dados validados no topo do
+  módulo (`.parse()` roda uma vez por processo; no build, para rotas
+  estáticas)
+
+A integridade referencial é verificada no boot: um livro apontando para
+universo inexistente, ou campanha apontando para livro inexistente, derruba
+o build em vez de virar link morto em produção.
+
+Cada rota acessa esses dados pela sua própria camada `_data-access/`, mesmo
+sendo dado estático — é o ponto de troca para CMS ou banco no futuro, sem
+alterar nenhum componente.
+
+## Conteúdo
+
+Os textos e a lista de livros são **placeholder plausível**, não o catálogo
+real da editora. O site Wix de origem está inacabado e foi usado apenas como
+referência de estrutura (ver `00-overview.md`).
