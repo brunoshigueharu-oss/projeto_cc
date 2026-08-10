@@ -22,7 +22,7 @@ export function PageHeader({ eyebrow, title, intro, children }: PageHeaderProps)
     <section className="relative overflow-hidden border-b border-border">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-16 top-1/2 hidden size-80 -translate-y-1/2 text-foreground/[0.04] sm:block"
+        className="pointer-events-none absolute -right-16 top-1/2 hidden size-80 -translate-y-1/2 opacity-[0.04] sm:block"
       >
         <Seal className="size-full" />
       </div>

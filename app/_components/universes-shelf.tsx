@@ -29,9 +29,9 @@ export async function UniversesShelf() {
         </Link>
       </div>
 
-      <ul className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
+      <ul className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
         {universes.map((universe) => (
-          <li key={universe.slug} className="shrink-0 basis-64 snap-start">
+          <li key={universe.slug}>
             <UniverseCard universe={universe} />
           </li>
         ))}

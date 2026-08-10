@@ -93,7 +93,7 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
           <figure className="relative mt-14 max-w-3xl overflow-hidden rounded-xl border border-border bg-muted p-8 sm:p-12">
             <Seal
               aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 size-40 text-foreground/[0.04]"
+              className="pointer-events-none absolute -right-8 -top-8 size-40 opacity-[0.04]"
             />
             <blockquote className="relative font-serif text-xl leading-relaxed text-foreground/85 sm:text-2xl">
               {book.excerpt}

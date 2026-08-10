@@ -7,10 +7,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-display);
-  --font-serif: var(--font-serif);
+  /* Únicas tipografias do projeto: Poppins (--font-poppins, ver
+     app/layout.tsx) para heading/display, Nunito Sans para todo o resto —
+     inclusive os aliases font-mono/font-serif, que continuam existindo como
+     utilitários semânticos no código mas não introduzem uma terceira fonte
+     visual. */
+  --font-sans: var(--font-nunito-sans);
+  --font-mono: var(--font-nunito-sans);
+  --font-display: var(--font-poppins);
+  --font-serif: var(--font-nunito-sans);
   --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -95,36 +100,37 @@
 
 .dark {
   --background: #0b0f0c;
-  --foreground: #f3efe2;
+  --foreground: #ffffff;
   --card: #131a14;
-  --card-foreground: #f3efe2;
+  --card-foreground: #ffffff;
   --popover: #131a14;
-  --popover-foreground: #f3efe2;
-  --primary: #3dffa8;
+  --popover-foreground: #ffffff;
+  /* Amarelo forte da marca (mesmo tom da logo) — troca do verde original. */
+  --primary: #ffc00c;
   --primary-foreground: #0b0f0c;
   --secondary: #1c261e;
-  --secondary-foreground: #f3efe2;
+  --secondary-foreground: #ffffff;
   --muted: #1c261e;
   --muted-foreground: #9aa398;
   --accent: #c9a227;
   --accent-foreground: #0b0f0c;
   --destructive: #d9553d;
-  --border: color-mix(in oklab, #f3efe2 12%, transparent);
-  --input: color-mix(in oklab, #f3efe2 15%, transparent);
-  --ring: #3dffa8;
-  --chart-1: #3dffa8;
+  --border: color-mix(in oklab, #ffffff 12%, transparent);
+  --input: color-mix(in oklab, #ffffff 15%, transparent);
+  --ring: #ffc00c;
+  --chart-1: #ffc00c;
   --chart-2: #c9a227;
   --chart-3: #6e1423;
   --chart-4: #9aa398;
-  --chart-5: #f3efe2;
+  --chart-5: #ffffff;
   --sidebar: #131a14;
-  --sidebar-foreground: #f3efe2;
-  --sidebar-primary: #3dffa8;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffc00c;
   --sidebar-primary-foreground: #0b0f0c;
   --sidebar-accent: #1c261e;
-  --sidebar-accent-foreground: #f3efe2;
-  --sidebar-border: color-mix(in oklab, #f3efe2 12%, transparent);
-  --sidebar-ring: #3dffa8;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: color-mix(in oklab, #ffffff 12%, transparent);
+  --sidebar-ring: #ffc00c;
 }
 
 @layer base {

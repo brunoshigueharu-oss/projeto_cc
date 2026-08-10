@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CircleUserRound } from "lucide-react";
+import { CircleUserRound, ShoppingBag } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
 import { MobileNav } from "./mobile-nav";
@@ -11,7 +11,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <Seal className="size-8 text-primary" />
+          <Seal className="size-8" />
           <span className="font-display text-xl tracking-wide text-foreground">
             Hocus Pocus
           </span>
@@ -32,6 +32,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1">
+          {/* Sem página de carrinho ainda — ícone entra como placeholder visual do novo header. */}
+          <Link
+            href="#"
+            aria-label="Carrinho"
+            className="hidden size-9 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
+          >
+            <ShoppingBag className="size-[18px]" aria-hidden="true" />
+          </Link>
+
           <Link
             href="/perfil"
             aria-label="Minha conta"

@@ -1,16 +1,36 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Seal } from "@/components/seal";
 
+const CAROUSEL_ARROW_CLASSNAME =
+  "absolute top-1/2 z-10 flex size-[72px] -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16";
+
 export function Hero() {
   return (
     <section className="dark relative overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(60%_60%_at_80%_15%,color-mix(in_oklab,var(--primary)_22%,transparent),transparent_70%)]" />
-      <div className="pointer-events-none absolute -left-32 top-1/2 hidden size-[34rem] -translate-y-1/2 text-foreground/[0.035] sm:block">
+      <div className="pointer-events-none absolute -left-32 top-1/2 hidden size-[34rem] -translate-y-1/2 opacity-[0.035] sm:block">
         <Seal className="size-full" />
       </div>
+
+      {/* Controles de carrossel — sem múltiplos slides ainda; entram prontos para quando houver conteúdo a alternar. */}
+      <button
+        type="button"
+        aria-label="Slide anterior"
+        className={cn(CAROUSEL_ARROW_CLASSNAME, "left-10 hidden lg:flex")}
+      >
+        <ChevronLeft className="size-3.5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        aria-label="Próximo slide"
+        className={cn(CAROUSEL_ARROW_CLASSNAME, "right-10 hidden lg:flex")}
+      >
+        <ChevronRight className="size-3.5" aria-hidden="true" />
+      </button>
 
       <div className="relative mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-32">
         <div className="max-w-xl">
@@ -48,7 +68,7 @@ export function Hero() {
         <div className="relative mx-auto aspect-3/4 w-full max-w-xs">
           <div className="absolute inset-0 rounded-2xl border border-border bg-card shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]" />
           <div className="absolute inset-6 rounded-lg border border-border/70" />
-          <div className="absolute right-5 top-5 flex size-14 items-center justify-center rounded-full bg-background text-accent shadow-lg">
+          <div className="absolute right-5 top-5 flex size-14 items-center justify-center rounded-full bg-background shadow-lg">
             <Seal className="size-8" />
           </div>
           <span className="absolute inset-x-6 bottom-8 font-display text-2xl leading-tight text-primary">

@@ -104,7 +104,7 @@ export default async function SobrePage() {
       <section className="relative overflow-hidden border-t border-border">
         <Seal
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 text-foreground/[0.04]"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 opacity-[0.04]"
         />
         <div className="relative mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
           <h2 className="font-display text-3xl text-foreground sm:text-4xl">

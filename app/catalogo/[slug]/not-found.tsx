@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export default function BookNotFound() {
   return (
     <section className="mx-auto flex max-w-2xl flex-col items-center px-4 py-32 text-center sm:px-6">
-      <Seal className="size-16 text-primary" aria-hidden="true" />
+      <Seal className="size-16" aria-hidden="true" />
       <h1 className="mt-8 font-display text-4xl text-foreground">
         Este título não está no catálogo.
       </h1>
