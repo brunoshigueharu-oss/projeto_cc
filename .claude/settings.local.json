@@ -11,7 +11,16 @@
       "Bash(claude mcp *)",
       "Bash(git init *)",
       "Bash(git branch *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git push *)",
+      "Bash(node \".claude/hooks/init.js\")",
+      "Bash(node \".claude/hooks/session-stop.js\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npx skills *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git status *)",
+      "Bash(npm run *)",
+      "mcp__plugin_figma_figma__use_figma"
     ]
   }
 }
