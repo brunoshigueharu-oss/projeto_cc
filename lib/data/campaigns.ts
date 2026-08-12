@@ -5,7 +5,7 @@ const RAW_CAMPAIGNS = [
   {
     slug: "pre-venda-um-bipede",
     title: "Pré-venda: Um Bípede Entre Plantas",
-    kicker: "Necroplanta",
+    kicker: "O Planta",
     description:
       "Quem reservar até o fechamento do lote recebe o marcador serigrafado da estufa e o nome impresso na página de agradecimentos.",
     kind: "pre-venda",

@@ -104,7 +104,7 @@ Bounding boxes extraídas via Pillow (`Image.getbbox()`) dos 4 PNGs originais
 Legendas (texto livre, não derivado de `book.title` — são o texto de
 marketing da arte original, como na referência):
 
-- 4.png → `"O Planta — Um Bípede Entre Plantas"`, sem `bookSlug` (livro atual)
+- 4.png → `"O Planta — Um Bípede Entre Plantas"`, `bookSlug: "um-bipede-entre-plantas"` (livro atual — link para a própria página, mantém hover/zoom igual aos demais)
 - 6.png → `"Necroplanta"`, `bookSlug: "necroplanta"`
 - 5.png → `"Os Contos do Planta — Vol. 1"`, `bookSlug: "os-contos-do-planta-1"`
 - 7.png → `"Os Contos do Planta — Vol. 2"`, `bookSlug: "os-contos-do-planta-2"`

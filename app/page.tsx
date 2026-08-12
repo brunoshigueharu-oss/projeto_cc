@@ -1,5 +1,5 @@
+import { FeaturedBooksShelf } from "./_components/featured-books-shelf";
 import { Hero } from "./_components/hero";
-import { UniversesShelf } from "./_components/universes-shelf";
 import { getHeroBanners } from "./_data-access/get-hero-banners";
 
 export default async function Home() {
@@ -8,7 +8,7 @@ export default async function Home() {
   return (
     <>
       <Hero banners={banners} />
-      <UniversesShelf />
+      <FeaturedBooksShelf />
     </>
   );
 }

@@ -20,7 +20,83 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(git status *)",
       "Bash(npm run *)",
-      "mcp__plugin_figma_figma__use_figma"
+      "mcp__plugin_figma_figma__use_figma",
+      "Bash(git commit *)",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__get_design_context",
+      "Bash(lsof -i :3000 -sTCP:LISTEN)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(ps -p 68173 -o command=)",
+      "mcp__plugin_figma_figma__get_variable_defs",
+      "Skill(update-config)",
+      "Bash(curl *)",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_evaluate",
+      "WebFetch(domain:hocusp1r1studio.wixstudio.com)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "Bash(node trace.js)",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(grep -E \"\\\\.png$|http|compare\")",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill -9)",
+      "Bash(open *)",
+      "Bash(lsof -i :3000 -sTCP:LISTEN -t)",
+      "Bash(pkill -f \"ms-playwright-mcp\")",
+      "Bash(lsof -nP -iTCP:3000 -sTCP:LISTEN)",
+      "Bash(disown)",
+      "Read(//private/tmp/**)",
+      "mcp__playwright__browser_run_code_unsafe",
+      "Bash(git restore *)",
+      "Bash(git reset *)",
+      "Bash(ffprobe *)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/brunohigashi/Documents/Site Ravaglio/Videos/graphicnovelplanta0001-0700.mp4\")",
+      "Bash(mkdir -p \"/Users/brunohigashi/Documents/Claude Code/Figma/public/videos/faixas\")",
+      "Bash(cp \"/Users/brunohigashi/Documents/Site Ravaglio/Videos/graphicnovelplanta0001-0700.mp4\" \"/Users/brunohigashi/Documents/Claude Code/Figma/public/videos/faixas/um-bipede-entre-plantas.mp4\")",
+      "mcp__chrome-devtools__resize_page",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(pkill -f \"next dev\")",
+      "Read(//Users/brunohigashi/Downloads/**)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "v=$(cat | jq -r '.stop_hook_active // \"false\"'); if [ \"$v\" = \"true\" ]; then afplay /System/Library/Sounds/Glass.aiff >/dev/null 2>&1; fi",
+            "async": true
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/ensure-dev-server.sh\"",
+            "statusMessage": "Verificando servidor de dev...",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Ping.aiff >/dev/null 2>&1",
+            "async": true
+          }
+        ]
+      }
     ]
   }
 }

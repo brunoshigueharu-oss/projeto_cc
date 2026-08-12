@@ -18,15 +18,15 @@ type PageHeaderProps = {
 export function PageHeader({ eyebrow, title, intro, children }: PageHeaderProps) {
   return (
     <section className="border-b border-border">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
         <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
           {eyebrow}
         </span>
-        <h1 className="mt-3 max-w-2xl text-balance font-display text-4xl leading-tight text-foreground sm:text-5xl">
+        <h1 className="mt-1 max-w-2xl text-balance font-display text-3xl leading-tight text-foreground">
           {title}
         </h1>
         {intro ? (
-          <p className="mt-4 max-w-xl font-serif text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-1 max-w-xl font-serif text-base leading-snug text-muted-foreground">
             {intro}
           </p>
         ) : null}

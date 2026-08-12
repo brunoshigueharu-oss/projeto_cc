@@ -14,7 +14,7 @@ export function RelatedBooks({ books, universe }: RelatedBooksProps) {
   return (
     <section className="border-t border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
+        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
           {universe.name}
         </span>
         <h2 className="mt-3 font-display text-2xl text-foreground sm:text-3xl">

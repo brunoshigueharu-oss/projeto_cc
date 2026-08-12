@@ -27,7 +27,7 @@ export function BookSpecs({ book }: { book: Book }) {
 
   return (
     <div className="w-full">
-      <h3 className="font-display text-2xl text-foreground">Especificações Técnicas</h3>
+      <h3 className="font-display text-xl text-foreground sm:text-2xl">Especificações Técnicas</h3>
 
       <dl className="mt-6">
         {rows.map((row) => (

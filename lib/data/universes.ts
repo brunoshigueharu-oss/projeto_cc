@@ -4,7 +4,7 @@ const RAW_UNIVERSES = [
   {
     slug: "necroplanta",
     order: 1,
-    name: "Necroplanta",
+    name: "O Planta",
     tagline: "Horror botânico contado em capítulos ilustrados.",
     description:
       "Planta é um vegetal que não queria ser apenas uma planta. Ele queria explorar o mundo, viver aventuras e descobrir o que existia além da cerca que delimitava seu pequeno universo. O protagonista acreditava que o mundo terminava logo ali, até ouvir dos pássaros histórias sobre como tudo era vasto, misterioso e extraordinário. Sem esperança de mudar seu destino, sua vida se transforma ao conhecer Dr. Mantis, um cientista com aparência de louva-a-deus que, ao perceber em Planta uma inteligência e uma vontade incomuns, cria um corpo para que ele pudesse finalmente se expressar e explorar o mundo. E isso é apenas o começo: uma grande saga de fantasia reconhecida pelos principais prêmios do país e elogiada por importantes artistas da indústria dos quadrinhos.",
@@ -18,6 +18,12 @@ const RAW_UNIVERSES = [
     description:
       "Autômatos entalhados por gente que já morreu, ainda cumprindo ordens que ninguém lembra de ter dado.",
     tone: "navy",
+    image: {
+      src: "/images/universo/robo-de-madeira.jpg",
+      alt: "Arte do universo Robô de Madeira: estojo Art Edition com a capa de Atlas Cianus, sobre ilustração de linhas douradas em fundo azul",
+      title: "Robô de Madeira - Art Edition",
+      author: "Gustavo Ravaglio",
+    },
   },
   {
     slug: "caixa-de-reliquias",

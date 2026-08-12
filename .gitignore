@@ -33,3 +33,6 @@ next-env.d.ts
 *-check.png
 *-centered.png
 *-centered-*.png
+
+# hook-managed dev server log
+.claude/dev-server.log

@@ -19,12 +19,24 @@ export type Tone = z.infer<typeof toneSchema>;
 
 export const universeSchema = z.object({
   slug,
-  /** Alimenta o "Nº 01" em font-mono nos cards. */
+  /** Ordena os universos na prateleira da Home e em /sobre. */
   order: z.number().int().positive(),
   name: z.string().min(1),
   tagline: z.string().min(1),
   description: z.string().min(1),
   tone: toneSchema,
+  /** Opcional: arte de fundo do card do universo (Home/Catálogo), sobre o
+   * gradiente de `tone`. Preencher só quando a editora enviar a ilustração.
+   * Quando a arte retrata uma edição específica (ex. Art Edition), `title` e
+   * `author` sobrepõem o nome do universo e a tagline no card. */
+  image: z
+    .object({
+      src: z.string().min(1),
+      alt: z.string().min(1),
+      title: z.string().min(1).optional(),
+      author: z.string().min(1).optional(),
+    })
+    .optional(),
 });
 export type Universe = z.infer<typeof universeSchema>;
 
@@ -48,6 +60,8 @@ export const bookSchema = z.object({
   coverVideoSrc: z.string().optional(),
   /** Reduz o vídeo dentro do quadro (0–1) — capas de caixa/estojo, mais largas que um livro. */
   coverVideoScale: z.number().positive().max(1).optional(),
+  /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
+  videoBannerSrc: z.string().optional(),
   /** Opcional: outras fotos do livro (miolo, verso, detalhes), exibidas como galeria abaixo da capa. */
   gallery: z
     .array(
@@ -56,6 +70,18 @@ export const bookSchema = z.object({
         alt: z.string().min(1),
       }),
     )
+    .optional(),
+  /** Opcional: camadas de imagem da seção de parallax entre o hero e "O Livro",
+   * ordenadas de trás pra frente (fundo → primeiro plano). `shift` é o
+   * deslocamento máximo em px durante o scroll; `0` deixa a camada estática. */
+  parallax: z
+    .array(
+      z.object({
+        src: z.string().min(1),
+        shift: z.number().min(0),
+      }),
+    )
+    .min(1)
     .optional(),
   /** Opcional: ficha técnica completa (ISBN, dimensões etc.) chega depois do cadastro inicial. */
   specs: z
@@ -78,7 +104,12 @@ export const bookSchema = z.object({
   buyUrl: z.url().optional(),
   /** Default "disponivel": status real por título chega junto da ficha técnica. */
   status: z.enum(["disponivel", "pre-venda", "esgotado"]).default("disponivel"),
+  /** Título exibido na prateleira de destaque da Home (ver `featured`). */
   featured: z.boolean().default(false),
+  /** Obrigatório quando `featured`: still da capa usado no card da Home —
+   * arte própria para essa vitrine, distinta do preview em vídeo do
+   * catálogo (`coverVideoSrc`). */
+  featuredCardImage: z.object({ src: z.string().min(1), alt: z.string().min(1) }).optional(),
   /** Opcional: item avulso (ex. exemplar autografado) vendido junto do livro. */
   upsell: z
     .object({
@@ -86,6 +117,48 @@ export const bookSchema = z.object({
       description: z.string().min(1),
       price: z.object({ amount: z.number().int().nonnegative(), currency: z.literal("BRL") }),
       ctaLabel: z.string().min(1).default("Adicionar ao pedido"),
+    })
+    .optional(),
+  /** Opcional: sobrepõe o bloco "Sobre o Universo" com a ilustração real e o
+   * título originais deste título, em vez do bloco genérico derivado de
+   * `universe` (placeholder de cor + selo). Preencher só quando a editora
+   * já enviou a arte. */
+  universeShowcase: z
+    .object({
+      title: z.string().min(1),
+      image: z.object({ src: z.string().min(1), alt: z.string().min(1) }),
+    })
+    .optional(),
+  /** Opcional: composição decorativa "família do universo" — fundo
+   * ilustrado + capas dos livros do mesmo universo posicionadas como numa
+   * arte só, substituindo o grid genérico de `RelatedBooks` nesta página.
+   * Preencher só quando a editora enviar a arte composta (fundo + capas já
+   * recortadas). Toda capa leva `bookSlug` — inclusive a do livro atual, cujo
+   * link aponta para a própria página, mantendo o hover/zoom consistente com
+   * as demais; `position` é em % dentro do palco (razão 1920/1080 da arte
+   * original), extraída da bounding box real de cada capa. */
+  universeFamily: z
+    .object({
+      backgroundSrc: z.string().min(1),
+      covers: z
+        .array(
+          z.object({
+            bookSlug: slug.optional(),
+            caption: z.string().min(1),
+            image: z.object({
+              src: z.string().min(1),
+              alt: z.string().min(1),
+              width: z.number().int().positive(),
+              height: z.number().int().positive(),
+            }),
+            position: z.object({
+              top: z.number().min(0).max(100),
+              left: z.number().min(0).max(100),
+              width: z.number().min(0).max(100),
+            }),
+          }),
+        )
+        .min(1),
     })
     .optional(),
 });

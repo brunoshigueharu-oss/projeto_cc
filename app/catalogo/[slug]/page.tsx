@@ -7,10 +7,13 @@ import {
   getRelatedBooks,
 } from "./_data-access/get-book";
 import { BookHero } from "./_components/book-hero";
+import { ParallaxSection } from "./_components/parallax-section";
 import { AboutBookSection } from "./_components/about-book-section";
 import { UpsellCard } from "./_components/upsell-card";
+import { VideoBannerSection } from "./_components/video-banner-section";
 import { UniverseSection } from "./_components/universe-section";
 import { CollectionsGuideSection } from "./_components/collections-guide-section";
+import { UniverseFamilySection } from "./_components/universe-family-section";
 import { RelatedBooks } from "./_components/related-books";
 
 /**
@@ -26,17 +29,24 @@ import { RelatedBooks } from "./_components/related-books";
  *
  *   _data-access/get-book.ts       busca e integridade dos dados
  *   _components/book-hero          abertura escura: capa, título, sinopse, CTA
+ *   _components/parallax-section   faixa decorativa opcional (book.parallax)
  *   _components/about-book-section "O Livro" + "Sobre o Autor" + ficha técnica
  *   _components/upsell-card        item avulso opcional (book.upsell)
+ *   _components/video-banner       faixa de vídeo opcional (book.videoBannerSrc)
  *   _components/universe-section   destaque escuro do universo do livro
  *   _components/collections-guide  texto institucional estático
- *   _components/related-books      outros títulos do mesmo universo
+ *   _components/universe-family    composição decorativa (fundo + capas) do
+ *                                   universo, quando `book.universeFamily`
+ *                                   existe; senão cai no `related-books`
+ *   _components/related-books      grid genérico de outros títulos do
+ *                                   mesmo universo (fallback)
  *
  * Decisões que valem manter ao evoluir a página:
  *
- * 1. NENHUM componente desta rota é Client Component. Não há estado nem evento
- *    aqui, então tudo renderiza no servidor e o usuário não baixa JavaScript
- *    por causa desta página.
+ * 1. Server Component por padrão. A única exceção é `parallax-section`, que
+ *    precisa calcular o deslocamento no scroll via JS (Safari não suporta
+ *    `animation-timeline: view()`, a alternativa 100% CSS) — todo o resto
+ *    renderiza no servidor sem JavaScript extra pro usuário.
  * 2. `dynamicParams = false` + `generateStaticParams` deixam todas as páginas
  *    pré-renderizadas no build; um slug inexistente cai direto no not-found.tsx
  *    sem executar render.
@@ -85,11 +95,17 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
   return (
     <>
       <BookHero book={book} universe={universe} />
+      <ParallaxSection layers={book.parallax ?? []} />
       <AboutBookSection book={book} />
       <UpsellCard book={book} />
-      <UniverseSection universe={universe} />
+      <VideoBannerSection book={book} />
+      <UniverseSection universe={universe} book={book} />
       <CollectionsGuideSection />
-      <RelatedBooks books={relatedBooks} universe={universe} />
+      {book.universeFamily ? (
+        <UniverseFamilySection book={book} universe={universe} />
+      ) : (
+        <RelatedBooks books={relatedBooks} universe={universe} />
+      )}
     </>
   );
 }

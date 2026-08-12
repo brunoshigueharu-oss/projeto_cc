@@ -20,13 +20,13 @@ export default async function CatalogoPage() {
         title="Hocus Pocus"
         intro="Tiragens curtas, capas desenhadas antes do texto terminar e nenhuma reimpressão automática. O que acaba, acaba."
       >
-        <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground tabular-nums">
+        <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground tabular-nums">
           {totalBooks} títulos · {totalUniverses} universos
         </p>
       </PageHeader>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <ul className="grid grid-cols-2 gap-x-10 gap-y-16 lg:grid-cols-3 lg:gap-x-20 lg:gap-y-20">
+      <section className="mx-auto max-w-6xl px-4 pt-6 pb-16 sm:px-6">
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 md:gap-x-10 md:gap-y-16 lg:gap-x-20 lg:gap-y-20">
           {books.map((book) => (
             <li key={book.slug}>
               <BookCard book={book} />

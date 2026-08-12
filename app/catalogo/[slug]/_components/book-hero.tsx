@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import { BookGallery } from "./book-gallery";
+import { BookSynopsis } from "./book-synopsis";
 
 type BookHeroProps = {
   book: Book;
@@ -31,6 +32,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
             alt={book.coverAlt}
             videoSrc={book.coverVideoSrc}
             videoScale={book.coverVideoScale}
+            showPauseControl
             size="lg"
             className="w-full"
           />
@@ -79,14 +81,10 @@ export function BookHero({ book, universe }: BookHeroProps) {
             Por {book.author.name}
           </p>
 
-          {book.synopsis ? (
-            <p className="mt-4 line-clamp-4 max-w-xl font-serif leading-relaxed text-foreground/70">
-              {book.synopsis}
-            </p>
-          ) : null}
+          {book.synopsis ? <BookSynopsis text={book.synopsis} /> : null}
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
-            <span className="font-mono text-2xl text-foreground tabular-nums">
+            <span className="font-mono text-2xl font-bold text-foreground tabular-nums">
               {formatPrice(book.price.amount)}
             </span>
             <BookStatusBadge status={book.status} />

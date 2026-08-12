@@ -1,3 +1,8 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { Pause, Play } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Seal } from "./seal";
 
@@ -13,6 +18,10 @@ type BookCoverProps = {
    *  enquadramento original é mais largo que o dos livros e por isso lê como
    *  "maior" que os vizinhos quando preenche o quadro inteiro. */
   videoScale?: number;
+  /** Mostra um botão glass de pausar/reproduzir sobre o vídeo. Só faz sentido
+   *  no destaque grande do hero — nas miniaturas do catálogo/relacionados
+   *  fica desligado por padrão. */
+  showPauseControl?: boolean;
 };
 
 /**
@@ -34,8 +43,23 @@ export function BookCover({
   className,
   videoSrc,
   videoScale,
+  showPauseControl,
 }: BookCoverProps) {
   const isLarge = size === "lg";
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const hasPauseControl = Boolean(videoSrc) && showPauseControl;
+
+  function handleToggle() {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
 
   const frameStyle = videoScale ? { transform: `scale(${videoScale})` } : undefined;
 
@@ -54,7 +78,7 @@ export function BookCover({
   const frameInsetPercent = (BLEED_PERCENT / (100 + 2 * BLEED_PERCENT)) * 100;
 
   return (
-    <div className={cn("relative aspect-3/4", className)}>
+    <div className={cn("group/cover relative aspect-3/4", className)}>
       <div
         role="img"
         aria-label={alt}
@@ -74,6 +98,7 @@ export function BookCover({
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-110 group-focus-within:scale-110">
             {videoSrc ? (
               <video
+                ref={videoRef}
                 aria-hidden="true"
                 className="size-full object-cover"
                 src={videoSrc}
@@ -81,6 +106,8 @@ export function BookCover({
                 loop
                 muted
                 playsInline
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
               />
             ) : (
               <>
@@ -115,6 +142,21 @@ export function BookCover({
           </div>
         </div>
       </div>
+
+      {hasPauseControl ? (
+        <button
+          type="button"
+          onClick={handleToggle}
+          aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
+          className="absolute left-1/2 top-1/2 z-10 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
+        >
+          {isPlaying ? (
+            <Pause className="size-3.5 fill-current" />
+          ) : (
+            <Play className="size-3.5 fill-current" />
+          )}
+        </button>
+      ) : null}
     </div>
   );
 }
