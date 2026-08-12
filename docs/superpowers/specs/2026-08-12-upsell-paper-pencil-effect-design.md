@@ -275,3 +275,46 @@ perceber).
 5. **Gate de interatividade inalterado**: `matchMedia` hover/pointer fino
    + reduced-motion continua decidindo se os listeners são registrados —
    mobile/touch/reduced-motion seguem vendo só as folhas paradas.
+
+## Revisão 5 (vídeo do desenho na folha da frente, arte final na de trás)
+
+O usuário enviou dois assets próprios: um vídeo real de uma mão desenhando
+o sketch num papel branco (`IMG_2276.MP4`, 768×1084, ~19,6s) e o PNG da
+arte já finalizada do mesmo desenho, com canal alpha real
+(`IMG_2277.PNG`, 2480×3508, fundo 100% transparente, traços pretos
+semi-transparentes ~alpha 20–40). Pediu pra colocar o vídeo na folha da
+frente "em modo multiply, pra só a parte do desenho aparecer", e o PNG da
+arte na folha de trás.
+
+Assets copiados pra:
+- `public/videos/upsell/paper-sketch.mp4`
+- `public/images/upsell/paper-sketch-art.png`
+
+### Decisões
+
+1. **Folha da frente — vídeo com `mix-blend-mode: multiply`.** O vídeo
+   tem fundo claro (papel real filmado) com o traço do desenho em tom
+   escuro. `multiply` faz o fundo claro "sumir" contra o `paper.png`
+   (branco × branco = branco) e só o traço escuro se sobrepõe, como se
+   tivesse sido desenhado direto na folha — mesma ideia do canvas de
+   rastro removido na Revisão 3, mas agora com um vídeo real em vez de
+   desenho ao vivo por mouse. `<video>` renderizado como irmão do
+   `<Image>` do papel, dentro do mesmo `frontPaperRef` (então herda o
+   tilt); `autoPlay loop muted playsInline`, sem `controls`. Verificado
+   que `mix-blend-mode` funciona corretamente entre os dois porque ambos
+   são filhos diretos do mesmo `frontPaperRef` — o próprio `transform`
+   inline nesse `div` já estabelece um stacking context local que os
+   agrupa, então o blend não "vaza" pra fora da folha nem depende de
+   `isolation: isolate` extra.
+2. **Folha de trás — PNG da arte por cima do `paper.png`, sem blend
+   mode.** Diferente do vídeo, o PNG já tem canal alpha real (confirmado
+   via inspeção de pixel: fundo `(0,0,0,0)`, traços com alpha baixo tipo
+   `(9,9,9,29)`) — composição alpha normal já basta, sem precisar de
+   truque de `multiply`. Renderizado como segundo `<Image fill>` dentro
+   do mesmo `backPaperRef`, então tilta junto com a folha.
+3. **`prefers-reduced-motion: reduce` pausa o vídeo** — novo `useEffect`
+   dedicado que chama `video.pause()` no mount se o media query bater
+   (esse `<video>` roda um loop de ~19,6s independente do tilt, então
+   precisa do próprio gate; o `isInteractive` do tilt não cobre isso).
+4. **Sem mudança na área/tamanho das folhas** (Revisão 4) nem no tilt
+   global — só o conteúdo visual de cada folha muda.

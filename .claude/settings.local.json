@@ -62,7 +62,16 @@
       "mcp__chrome-devtools__navigate_page",
       "mcp__chrome-devtools__list_pages",
       "Bash(pkill -f \"next dev\")",
-      "Read(//Users/brunohigashi/Downloads/**)"
+      "Read(//Users/brunohigashi/Downloads/**)",
+      "Bash(ps *)",
+      "Bash(kill -TERM 59719 77626)",
+      "Bash(awk '$2==1 && /WebKit/')",
+      "Bash(sort -k3 -rn)",
+      "Bash(awk '/WebKit/{sum+=$2} END{print sum/1024\" MB\"}')",
+      "Bash(awk '{printf \"%8.1f MB  pid=%-8s %s\\\\n\", $1/1024, $2, $3}')",
+      "Bash(sysctl hw.memsize)",
+      "Bash(awk '{print $2/1024/1024/1024\" GB\"}')",
+      "Bash(memory_pressure)"
     ]
   },
   "hooks": {

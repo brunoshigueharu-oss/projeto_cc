@@ -17,14 +17,35 @@ const BACK_SHEET_ROTATE_DEG = 9;
  * cursor está bem em cima da caixa das folhas. Ao sair da janela, a
  * rotação de ambas volta a 0.
  *
- * Sem canvas de rastro e sem lápis — ver
+ * Folha da frente: vídeo (`paper-sketch.mp4`, um take real de mão
+ * desenhando em papel branco) sobreposto ao `paper.png` com
+ * `mix-blend-mode: multiply` — o fundo claro do vídeo multiplica pra
+ * "sumir" contra o papel, sobrando só o traço escuro do desenho, como se
+ * tivesse sido desenhado direto na folha.
+ *
+ * Folha de trás: a arte estática (`paper-sketch-art.png`) sobreposta ao
+ * `paper.png`. Sem blend mode — o PNG já tem canal alpha real (traços
+ * escuros semi-transparentes sobre fundo transparente), então a
+ * composição normal já basta.
+ *
+ * Sem canvas de rastro e sem lápis desenhado à mão — ver
  * docs/superpowers/specs/2026-08-12-upsell-paper-pencil-effect-design.md
- * (Revisão 3) para o porquê de terem sido removidos, e Revisão 4 pra essa
- * mudança (tilt na folha de trás + rastreio global).
+ * (Revisão 3) para o porquê de terem sido removidos, Revisão 4 pro tilt
+ * global, e Revisão 5 pro vídeo/arte.
  */
 export function PaperTiltEffect() {
   const frontPaperRef = useRef<HTMLDivElement>(null);
   const backPaperRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      video.pause();
+    }
+  }, []);
 
   useEffect(() => {
     const frontPaper = frontPaperRef.current;
@@ -88,6 +109,13 @@ export function PaperTiltEffect() {
             sizes="260px"
             className="object-contain drop-shadow-md"
           />
+          <Image
+            src="/images/upsell/paper-sketch-art.png"
+            alt=""
+            fill
+            sizes="260px"
+            className="pointer-events-none object-contain"
+          />
         </div>
       </div>
 
@@ -112,6 +140,16 @@ export function PaperTiltEffect() {
             fill
             sizes="260px"
             className="object-contain drop-shadow-xl"
+          />
+          <video
+            ref={videoRef}
+            src="/videos/upsell/paper-sketch.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+            style={{ mixBlendMode: "multiply" }}
           />
         </div>
       </div>
