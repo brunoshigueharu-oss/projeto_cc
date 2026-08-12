@@ -72,7 +72,7 @@ export default async function PerfilPage() {
           {shelf.length} títulos adquiridos.
         </p>
 
-        <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
+        <ul className="mt-10 grid grid-cols-2 gap-x-8 gap-y-14 lg:grid-cols-4 lg:gap-x-10 lg:gap-y-16">
           {shelf.map((book) => (
             <li key={book.slug}>
               <BookCard book={book} />

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { UniverseCard } from "@/components/universe-card";
 import { getUniverses } from "../_data-access/get-universes";
+import { UniversesShelfScroller } from "./universes-shelf-scroller";
 
 export async function UniversesShelf() {
   const universes = await getUniverses();
@@ -29,13 +29,7 @@ export async function UniversesShelf() {
         </Link>
       </div>
 
-      <ul className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
-        {universes.map((universe) => (
-          <li key={universe.slug}>
-            <UniverseCard universe={universe} />
-          </li>
-        ))}
-      </ul>
+      <UniversesShelfScroller universes={universes} />
     </section>
   );
 }

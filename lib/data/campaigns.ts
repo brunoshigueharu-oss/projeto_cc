@@ -3,8 +3,8 @@ import { campaignSchema, type Campaign } from "./schemas";
 
 const RAW_CAMPAIGNS = [
   {
-    slug: "pre-venda-jardineiro",
-    title: "Pré-venda: O Jardineiro Não Dorme",
+    slug: "pre-venda-um-bipede",
+    title: "Pré-venda: Um Bípede Entre Plantas",
     kicker: "Necroplanta",
     description:
       "Quem reservar até o fechamento do lote recebe o marcador serigrafado da estufa e o nome impresso na página de agradecimentos.",
@@ -14,23 +14,23 @@ const RAW_CAMPAIGNS = [
     status: "ativa",
     tone: "garnet",
     ctaLabel: "Reservar exemplar",
-    ctaHref: "/catalogo/o-jardineiro-nao-dorme",
-    relatedBookSlugs: ["o-jardineiro-nao-dorme", "os-contos-do-planta"],
+    ctaHref: "/catalogo/um-bipede-entre-plantas",
+    relatedBookSlugs: ["um-bipede-entre-plantas", "necroplanta"],
   },
   {
-    slug: "assinatura-noturnos",
-    title: "Assinatura Contos Noturnos",
-    kicker: "Quatro volumes por ano",
+    slug: "assinatura-contos-do-planta",
+    title: "Assinatura Os Contos do Planta",
+    kicker: "Dois volumes lançados, mais chegando",
     description:
       "Um volume fino a cada trimestre, sempre inédito, sempre numerado. A assinatura fecha quando a tiragem esgota.",
     kind: "assinatura",
     startsAt: "2026-01-10",
     endsAt: null,
     status: "ativa",
-    tone: "forest",
+    tone: "garnet",
     ctaLabel: "Ver planos",
     ctaHref: "/contato",
-    relatedBookSlugs: ["sete-noites-sem-lua"],
+    relatedBookSlugs: ["os-contos-do-planta-1", "os-contos-do-planta-2"],
   },
   {
     slug: "feira-do-livro-2026",
@@ -45,22 +45,22 @@ const RAW_CAMPAIGNS = [
     tone: "navy",
     ctaLabel: "Receber aviso",
     ctaHref: "/contato",
-    relatedBookSlugs: ["art-edition-robo-de-madeira"],
+    relatedBookSlugs: ["robo-de-madeira-atlas-cianus-art-edition"],
   },
   {
     slug: "lancamento-caixa-de-reliquias",
     title: "Lançamento: Caixa de Relíquias",
     kicker: "Encerrada",
     description:
-      "O primeiro volume do gabinete saiu em agosto de 2025 e a tiragem de lançamento acabou em onze dias.",
+      "O volume do gabinete saiu em agosto de 2025 e a tiragem de lançamento acabou em onze dias.",
     kind: "lancamento",
     startsAt: "2025-08-16",
     endsAt: "2025-08-27",
     status: "encerrada",
     tone: "brown",
     ctaLabel: "Ver o livro",
-    ctaHref: "/catalogo/caixa-de-reliquias-vol-i",
-    relatedBookSlugs: ["caixa-de-reliquias-vol-i", "inventario-incompleto"],
+    ctaHref: "/catalogo/os-contos-do-planta-caixa-de-reliquias",
+    relatedBookSlugs: ["os-contos-do-planta-caixa-de-reliquias"],
   },
 ];
 

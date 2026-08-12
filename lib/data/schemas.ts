@@ -35,30 +35,59 @@ export const bookSchema = z.object({
   universeSlug: slug,
   author: z.object({
     name: z.string().min(1),
-    bio: z.string().min(1),
+    /** Opcional: nem todo autor cadastrado já tem bio recebida da editora. */
+    bio: z.string().min(1).optional(),
   }),
-  synopsis: z.string().min(1),
+  /** Opcional: ficha de catálogo pode chegar antes da sinopse final. */
+  synopsis: z.string().min(1).optional(),
   /** Trecho curto do livro, exibido em destaque na página de detalhe. */
   excerpt: z.string().optional(),
   coverAlt: z.string().min(1),
   coverTone: toneSchema,
-  specs: z.object({
-    pages: z.number().int().positive(),
-    isbn: z.string().regex(/^\d{3}-\d{10}$/, "ISBN-13 no formato 978-XXXXXXXXXX"),
-    format: z.enum(["Capa dura", "Brochura", "Digital"]),
-    dimensions: z.string().min(1),
-    language: z.string().default("Português"),
-    edition: z.string().min(1),
-    publishedAt: z.iso.date(),
-  }),
+  /** Preview em vídeo (mudo, loop) que substitui a capa estática no card. */
+  coverVideoSrc: z.string().optional(),
+  /** Reduz o vídeo dentro do quadro (0–1) — capas de caixa/estojo, mais largas que um livro. */
+  coverVideoScale: z.number().positive().max(1).optional(),
+  /** Opcional: outras fotos do livro (miolo, verso, detalhes), exibidas como galeria abaixo da capa. */
+  gallery: z
+    .array(
+      z.object({
+        src: z.string().min(1),
+        alt: z.string().min(1),
+      }),
+    )
+    .optional(),
+  /** Opcional: ficha técnica completa (ISBN, dimensões etc.) chega depois do cadastro inicial. */
+  specs: z
+    .object({
+      pages: z.number().int().positive(),
+      isbn: z.string().regex(/^\d{3}-\d{10}$/, "ISBN-13 no formato 978-XXXXXXXXXX"),
+      format: z.enum(["Capa dura", "Brochura", "Digital"]),
+      dimensions: z.string().min(1),
+      language: z.string().default("Português"),
+      edition: z.string().min(1),
+      publishedAt: z.iso.date(),
+    })
+    .optional(),
   /** Em centavos, para não carregar float. Formatação só em lib/format.ts. */
   price: z.object({
     amount: z.number().int().nonnegative(),
     currency: z.literal("BRL"),
   }),
-  buyUrl: z.url(),
-  status: z.enum(["disponivel", "pre-venda", "esgotado"]),
+  /** Opcional: link de compra chega junto da ficha técnica. */
+  buyUrl: z.url().optional(),
+  /** Default "disponivel": status real por título chega junto da ficha técnica. */
+  status: z.enum(["disponivel", "pre-venda", "esgotado"]).default("disponivel"),
   featured: z.boolean().default(false),
+  /** Opcional: item avulso (ex. exemplar autografado) vendido junto do livro. */
+  upsell: z
+    .object({
+      title: z.string().min(1),
+      description: z.string().min(1),
+      price: z.object({ amount: z.number().int().nonnegative(), currency: z.literal("BRL") }),
+      ctaLabel: z.string().min(1).default("Adicionar ao pedido"),
+    })
+    .optional(),
 });
 export type Book = z.infer<typeof bookSchema>;
 

@@ -5,6 +5,7 @@ import { NAV_LINKS } from "@/lib/nav-links";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 import { Seal } from "./seal";
+import { Wordmark } from "./wordmark";
 
 export function SiteHeader() {
   return (
@@ -12,9 +13,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Seal className="size-8" />
-          <span className="font-display text-xl tracking-wide text-foreground">
-            Hocus Pocus
-          </span>
+          <Wordmark className="h-6 w-auto text-foreground" />
         </Link>
 
         {/* `md` e não `sm`: com cinco itens a navegação estoura entre 640px e 768px. */}
@@ -36,7 +35,7 @@ export function SiteHeader() {
           <Link
             href="#"
             aria-label="Carrinho"
-            className="hidden size-9 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
+            className="hidden size-9 items-center justify-center rounded-full bg-foreground/5 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
           >
             <ShoppingBag className="size-[18px]" aria-hidden="true" />
           </Link>
@@ -44,7 +43,7 @@ export function SiteHeader() {
           <Link
             href="/perfil"
             aria-label="Minha conta"
-            className="hidden size-9 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
+            className="hidden size-9 items-center justify-center rounded-full bg-foreground/5 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
           >
             <CircleUserRound className="size-[18px]" aria-hidden="true" />
           </Link>

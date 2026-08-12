@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FacebookIcon, InstagramIcon, XIcon } from "@/components/icons/social-icons";
 import { Seal } from "./seal";
+import { Wordmark } from "./wordmark";
 
 const INSTITUTIONAL_LINKS = [
   { label: "Sobre nós", href: "/sobre" },
@@ -32,7 +33,7 @@ export function SiteFooter() {
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Seal className="size-7" />
-            <span className="font-display text-lg text-foreground">Hocus Pocus</span>
+            <Wordmark className="h-5 w-auto text-foreground" />
           </Link>
           <p className="max-w-xs font-serif text-sm text-muted-foreground">
             Ficção sombria ilustrada, em pequenas tiragens de colecionador.
@@ -109,7 +110,7 @@ export function SiteFooter() {
             </h3>
             <div className="flex flex-col gap-3">
               <p className="text-sm text-muted-foreground">
-                Receba novidades e lançamentos em primeira mão.
+                Receba novidades e ofertas exclusivas.
               </p>
               <form className="flex gap-3">
                 <Input
@@ -118,7 +119,10 @@ export function SiteFooter() {
                   aria-label="Seu e-mail"
                   className="h-10"
                 />
-                <Button type="submit" className="h-10 shrink-0">
+                <Button
+                  type="submit"
+                  className="h-10 shrink-0 bg-foreground text-background hover:bg-foreground/85"
+                >
                   Inscrever
                 </Button>
               </form>

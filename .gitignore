@@ -27,3 +27,9 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# dev verification artifacts
+.playwright-mcp/
+*-check.png
+*-centered.png
+*-centered-*.png

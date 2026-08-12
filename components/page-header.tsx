@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import { Seal } from "./seal";
-
 type PageHeaderProps = {
   eyebrow: string;
   title: string;
@@ -14,20 +12,13 @@ type PageHeaderProps = {
  * Faixa de abertura das páginas internas.
  *
  * A hero escura continua exclusiva da Home — é o único momento de imersão do
- * site. As páginas internas abrem na casca clara, com o selo em marca d'água
- * mantendo a assinatura da marca sem competir com o conteúdo.
+ * site. As páginas internas abrem na casca clara, compacta, para não competir
+ * com o conteúdo logo abaixo.
  */
 export function PageHeader({ eyebrow, title, intro, children }: PageHeaderProps) {
   return (
-    <section className="relative overflow-hidden border-b border-border">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-16 top-1/2 hidden size-80 -translate-y-1/2 opacity-[0.04] sm:block"
-      >
-        <Seal className="size-full" />
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+    <section className="border-b border-border">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
         <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
           {eyebrow}
         </span>
@@ -35,7 +26,7 @@ export function PageHeader({ eyebrow, title, intro, children }: PageHeaderProps)
           {title}
         </h1>
         {intro ? (
-          <p className="mt-5 max-w-xl font-serif text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-xl font-serif text-lg leading-relaxed text-muted-foreground">
             {intro}
           </p>
         ) : null}

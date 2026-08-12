@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { Seal } from "@/components/seal";
 import {
   getAllBookSlugs,
   getBookBySlug,
   getRelatedBooks,
 } from "./_data-access/get-book";
 import { BookHero } from "./_components/book-hero";
-import { BookSpecs } from "./_components/book-specs";
+import { AboutBookSection } from "./_components/about-book-section";
+import { UpsellCard } from "./_components/upsell-card";
+import { UniverseSection } from "./_components/universe-section";
+import { CollectionsGuideSection } from "./_components/collections-guide-section";
 import { RelatedBooks } from "./_components/related-books";
 
 /**
@@ -20,13 +22,15 @@ import { RelatedBooks } from "./_components/related-books";
  * então um único arquivo serve o catálogo inteiro. Para publicar um título
  * novo basta acrescentar o registro em `lib/data/books.ts` — nada aqui muda.
  *
- * Como está organizada:
+ * Estrutura, seguindo o "Book Detail" do Figma (node 173:893):
  *
- *   _data-access/get-book.ts   busca e integridade dos dados
- *   _components/book-hero      abertura escura: capa, título, preço, CTA
- *   _components/book-specs     ficha técnica em <dl>
- *   _components/related-books  outros títulos do mesmo universo
- *   (sinopse e trecho ficam inline abaixo — são só tipografia)
+ *   _data-access/get-book.ts       busca e integridade dos dados
+ *   _components/book-hero          abertura escura: capa, título, sinopse, CTA
+ *   _components/about-book-section "O Livro" + "Sobre o Autor" + ficha técnica
+ *   _components/upsell-card        item avulso opcional (book.upsell)
+ *   _components/universe-section   destaque escuro do universo do livro
+ *   _components/collections-guide  texto institucional estático
+ *   _components/related-books      outros títulos do mesmo universo
  *
  * Decisões que valem manter ao evoluir a página:
  *
@@ -40,6 +44,9 @@ import { RelatedBooks } from "./_components/related-books";
  *    em `generateMetadata`.
  * 4. Preço vive em centavos no schema e só vira string em `lib/format.ts`, que
  *    é `server-only` para não arriscar divergência de hidratação.
+ * 5. Cada seção decide sozinha se renderiza (retorna `null` quando o dado
+ *    opcional não existe) — o catálogo real ainda não tem sinopse, trecho,
+ *    ficha técnica nem upsell preenchidos pra nenhum título.
  */
 
 export const dynamicParams = false;
@@ -60,7 +67,7 @@ export async function generateMetadata(
 
   return {
     title: detail.book.title,
-    description: detail.book.synopsis.slice(0, 155),
+    description: detail.book.synopsis?.slice(0, 155),
   };
 }
 
@@ -78,52 +85,10 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
   return (
     <>
       <BookHero book={book} universe={universe} />
-
-      {/* Sinopse — largura de leitura curta e serifada, como o corpo do livro. */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="max-w-prose">
-          <h2 className="font-display text-2xl text-foreground">Sobre o livro</h2>
-          <p className="mt-6 font-serif text-lg leading-relaxed text-foreground/80">
-            {book.synopsis}
-          </p>
-        </div>
-
-        {/* Trecho: opcional no schema, então a seção inteira é condicional. */}
-        {book.excerpt ? (
-          <figure className="relative mt-14 max-w-3xl overflow-hidden rounded-xl border border-border bg-muted p-8 sm:p-12">
-            <Seal
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-8 -top-8 size-40 opacity-[0.04]"
-            />
-            <blockquote className="relative font-serif text-xl leading-relaxed text-foreground/85 sm:text-2xl">
-              {book.excerpt}
-            </blockquote>
-            <figcaption className="relative mt-6 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-              Trecho de {book.title}
-            </figcaption>
-          </figure>
-        ) : null}
-      </section>
-
-      <BookSpecs book={book} />
-
-      {/* Sobre o autor */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <div className="max-w-prose">
-            <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
-              Autoria
-            </span>
-            <h2 className="mt-3 font-display text-2xl text-foreground">
-              {book.author.name}
-            </h2>
-            <p className="mt-4 font-serif leading-relaxed text-muted-foreground">
-              {book.author.bio}
-            </p>
-          </div>
-        </div>
-      </section>
-
+      <AboutBookSection book={book} />
+      <UpsellCard book={book} />
+      <UniverseSection universe={universe} />
+      <CollectionsGuideSection />
       <RelatedBooks books={relatedBooks} universe={universe} />
     </>
   );

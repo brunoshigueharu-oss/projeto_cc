@@ -12,16 +12,16 @@ export function RelatedBooks({ books, universe }: RelatedBooksProps) {
   }
 
   return (
-    <section className="border-t border-border bg-muted/40">
+    <section className="border-t border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <span className="text-[11px] font-medium uppercase tracking-[0.3em] text-primary">
           {universe.name}
         </span>
         <h2 className="mt-3 font-display text-2xl text-foreground sm:text-3xl">
-          Do mesmo universo
+          Outros livros deste universo
         </h2>
 
-        <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
+        <ul className="mt-10 grid grid-cols-2 gap-x-8 gap-y-14 lg:grid-cols-4 lg:gap-x-10 lg:gap-y-16">
           {books.map((book) => (
             <li key={book.slug}>
               <BookCard book={book} />

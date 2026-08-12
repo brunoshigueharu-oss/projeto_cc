@@ -37,29 +37,29 @@ const ORDERS: readonly Order[] = [
     placedAt: "2026-02-09",
     total: 12900,
     status: "em-transito",
-    bookSlugs: ["os-contos-do-planta"],
+    bookSlugs: ["os-contos-do-planta-1"],
   },
   {
     id: "HP-2025-1129",
     placedAt: "2025-11-22",
     total: 20800,
     status: "entregue",
-    bookSlugs: ["caixa-de-reliquias-vol-i", "sete-noites-sem-lua"],
+    bookSlugs: ["os-contos-do-planta-caixa-de-reliquias", "necroplanta"],
   },
   {
     id: "HP-2025-0733",
     placedAt: "2025-08-17",
     total: 8900,
     status: "entregue",
-    bookSlugs: ["herbario-dos-afogados"],
+    bookSlugs: ["yanayag"],
   },
 ];
 
 const SHELF_SLUGS = [
-  "os-contos-do-planta",
-  "caixa-de-reliquias-vol-i",
-  "sete-noites-sem-lua",
-  "herbario-dos-afogados",
+  "os-contos-do-planta-1",
+  "os-contos-do-planta-caixa-de-reliquias",
+  "necroplanta",
+  "yanayag",
 ];
 
 export async function getProfile(): Promise<Profile> {

@@ -1,33 +1,25 @@
 import { BOOKS } from "@/lib/data/books";
-import type { Book, Universe } from "@/lib/data/schemas";
-import { UNIVERSES, UNIVERSES_BY_SLUG } from "@/lib/data/universes";
-
-export type CatalogEntry = {
-  book: Book;
-  universeName: string;
-};
+import type { Book } from "@/lib/data/schemas";
 
 export type Catalog = {
-  universes: readonly Universe[];
-  entries: readonly CatalogEntry[];
+  books: readonly Book[];
   totalBooks: number;
+  /** Só universos com pelo menos um livro publicado — 6 dos 9 cadastrados em
+   *  lib/data/universes.ts ainda não têm título. */
+  totalUniverses: number;
 };
 
 /**
- * `universeSlug` já chega validado da page (slug desconhecido vira `undefined`
- * lá, para que `?universo=lixo` degrade para "todos" em vez de quebrar).
+ * Declarada `async` de propósito, mesmo sem I/O — mesmo padrão de
+ * app/_data-access/get-hero-banners.ts: ponto de troca para CMS/DB futuro sem
+ * alterar o call site.
  */
-export async function getCatalog(universeSlug?: string): Promise<Catalog> {
-  const books = universeSlug
-    ? BOOKS.filter((book) => book.universeSlug === universeSlug)
-    : BOOKS;
+export async function getCatalog(): Promise<Catalog> {
+  const universeSlugsWithBooks = new Set(BOOKS.map((book) => book.universeSlug));
 
   return {
-    universes: UNIVERSES,
+    books: BOOKS,
     totalBooks: BOOKS.length,
-    entries: books.map((book) => ({
-      book,
-      universeName: UNIVERSES_BY_SLUG.get(book.universeSlug)?.name ?? "",
-    })),
+    totalUniverses: universeSlugsWithBooks.size,
   };
 }

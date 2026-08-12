@@ -7,7 +7,6 @@ import { BookStatusBadge } from "./book-status-badge";
 
 type BookCardProps = {
   book: Book;
-  universeName?: string;
 };
 
 /**
@@ -17,27 +16,25 @@ type BookCardProps = {
  * Assim o card todo é clicável, mas existe uma única parada de tabulação, e o
  * leitor de tela anuncia o link pelo título (não pela descrição da capa).
  */
-export function BookCard({ book, universeName }: BookCardProps) {
+export function BookCard({ book }: BookCardProps) {
   return (
     <article className="group relative flex flex-col">
       <BookCover
         title={book.title}
-        tone={book.coverTone}
         alt={book.coverAlt}
-        className="transition-transform group-hover:-translate-y-1 group-focus-within:-translate-y-1"
+        videoSrc={book.coverVideoSrc}
+        videoScale={book.coverVideoScale}
       />
 
-      <div className="mt-4 flex flex-1 flex-col">
-        {universeName ? (
-          <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-primary">
-            {universeName}
-          </span>
-        ) : null}
+      <div className="mt-4 flex flex-1 flex-col items-center text-center">
+        <span className="font-serif text-xs italic uppercase tracking-[0.1em] text-muted-foreground">
+          {book.author.name}
+        </span>
 
         <h3 className="mt-1 font-display text-xl leading-tight text-foreground">
           <Link
             href={`/catalogo/${book.slug}`}
-            className="rounded outline-none after:absolute after:inset-0 after:content-[''] group-hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="rounded underline underline-offset-4 outline-none after:absolute after:inset-0 after:content-[''] group-hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {book.title}
           </Link>
@@ -49,13 +46,13 @@ export function BookCard({ book, universeName }: BookCardProps) {
           </p>
         ) : null}
 
-        <p className="mt-1 text-sm text-muted-foreground">{book.author.name}</p>
-
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3 flex items-center justify-center gap-3">
           <span className="font-mono text-sm text-foreground tabular-nums">
             {formatPrice(book.price.amount)}
           </span>
-          <BookStatusBadge status={book.status} />
+          {book.status !== "disponivel" ? (
+            <BookStatusBadge status={book.status} />
+          ) : null}
         </div>
       </div>
     </article>

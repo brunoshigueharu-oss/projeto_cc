@@ -63,8 +63,9 @@
 
 :root {
   /* Hocus Pocus — casca clara (chrome do site: header, seções, footer).
+     Branco puro (var. `shell/card` do Figma), não o creme antigo.
      O mergulho escuro fica isolado na hero (ver .hero-dark), não no tema global. */
-  --background: #f6f1e6;
+  --background: #ffffff;
   --foreground: #17190f;
   --card: #ffffff;
   --card-foreground: #17190f;
