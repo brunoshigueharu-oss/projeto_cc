@@ -115,7 +115,10 @@
       "Bash(cp __TRACKED_VAR__/3.png public/images/parallax/necroplanta/3-portal.png)",
       "Bash(cp __TRACKED_VAR__/4.png public/images/parallax/necroplanta/4-nucleo.png)",
       "Bash(cp \"/Users/brunohigashi/Documents/Site Ravaglio/Videos/necroplanta0001-0700.mp4\" public/videos/faixas/necroplanta.mp4)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(npm ls *)",
+      "Bash(git ls-remote *)",
+      "Bash(echo \"EXIT:$?\")"
     ]
   },
   "hooks": {
