@@ -23,8 +23,8 @@ export function BookSynopsis({ text }: BookSynopsisProps) {
         ref={paragraphRef}
         className={
           isExpanded
-            ? "font-serif leading-relaxed text-foreground/70"
-            : "line-clamp-4 font-serif leading-relaxed text-foreground/70"
+            ? "whitespace-pre-line font-serif leading-relaxed text-foreground/70"
+            : "line-clamp-4 whitespace-pre-line font-serif leading-relaxed text-foreground/70"
         }
       >
         {text}

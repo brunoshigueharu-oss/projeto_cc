@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { Bell, ExternalLink } from "lucide-react";
 
-import { Seal } from "@/components/seal";
 import { buttonVariants } from "@/components/ui/button";
-import { TONE_BACKGROUND } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 import type { Book, Universe } from "@/lib/data/schemas";
 
@@ -18,17 +16,24 @@ type UniverseSectionProps = {
  * Bloco de destaque do universo, na casca clara, equivalente ao
  * "UniverseSection" do Figma.
  *
- * Quando o livro traz `universeShowcase` (ilustração real + título originais
- * do material da editora), a seção usa esse conteúdo em vez do placeholder
- * genérico — ver `um-bipede-entre-plantas` em `lib/data/books.ts`. Os demais
- * títulos continuam com o painel de cor (`coverTone`) e o selo, já que ainda
- * não existe arte de universo para eles.
+ * Só renderiza quando o livro traz `universeShowcase` (ilustração real +
+ * título originais do material da editora) — ver `um-bipede-entre-plantas` em
+ * `lib/data/books.ts`. Sem essa arte a seção some: o antigo placeholder
+ * genérico ("Sobre o Universo X" com painel de `coverTone` e selo) foi
+ * removido, porque em títulos como Robô de Madeira ele repetia a descrição do
+ * universo sem acrescentar nada visualmente.
  */
 export function UniverseSection({ universe, book }: UniverseSectionProps) {
   const { universeShowcase } = book;
 
   if (universeShowcase) {
     const isSoldOut = book.status === "esgotado";
+    const isPreOrder = book.status === "pre-venda";
+    const ctaLabel = isPreOrder ? "Reservar" : "Comprar";
+    const ctaClassName = cn(
+      buttonVariants({ size: "lg" }),
+      "h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground hover:bg-primary/85",
+    );
 
     return (
       <section className="relative overflow-hidden bg-background text-foreground border-t border-border">
@@ -50,11 +55,16 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
               {universe.description}
             </p>
 
-            {isSoldOut ? (
-              <div className="flex flex-col items-start gap-3">
-                <span className="text-xs font-medium uppercase tracking-[0.15em] text-foreground/40">
-                  Esgotado nesta edição
-                </span>
+            <div className="flex flex-col items-start gap-3">
+              <span className="text-xs font-medium uppercase tracking-[0.15em] text-foreground/40">
+                {isSoldOut
+                  ? "Esgotado nesta edição"
+                  : isPreOrder
+                    ? "Em pré-venda"
+                    : "Disponível nesta edição"}
+              </span>
+
+              {isSoldOut ? (
                 <Link
                   href="/contato"
                   className={cn(
@@ -65,46 +75,40 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                   <Bell className="size-4" aria-hidden="true" />
                   Avise-me quando estiver disponível
                 </Link>
-              </div>
-            ) : null}
+              ) : book.buyUrl ? (
+                <a
+                  href={book.buyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={ctaClassName}
+                >
+                  {ctaLabel}
+                  <ExternalLink className="size-4" aria-hidden="true" />
+                  <span className="sr-only">(abre em nova aba)</span>
+                </a>
+              ) : (
+                // Sem `buyUrl` ainda — mesmo tratamento do CTA do hero: botão
+                // na forma final, desabilitado até a loja existir, mas ainda
+                // focável (ver nota em `book-hero.tsx`).
+                <button
+                  type="button"
+                  aria-disabled="true"
+                  title="Link de compra em breve"
+                  className={cn(
+                    ctaClassName,
+                    "cursor-not-allowed opacity-50 hover:bg-primary",
+                  )}
+                >
+                  {ctaLabel}
+                  <span className="sr-only">— link de compra em breve</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </section>
     );
   }
 
-  return (
-    <section className="relative overflow-hidden bg-background text-foreground border-t border-border">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-12 px-4 py-20 sm:px-6 lg:flex-row lg:py-28">
-        <div
-          aria-hidden="true"
-          className={`relative flex h-64 w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl lg:h-96 lg:w-[420px] ${TONE_BACKGROUND[universe.tone]}`}
-        >
-          <Seal className="size-24 opacity-20" />
-        </div>
-
-        <div className="flex flex-col items-start gap-6 text-left lg:items-end lg:text-right">
-          <div className="flex flex-col gap-3 lg:items-end">
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-              Expansão Narrativa
-            </span>
-            <h2 className="font-display text-2xl leading-tight text-foreground sm:text-3xl">
-              Sobre o Universo {universe.name}
-            </h2>
-          </div>
-
-          <p className="max-w-xl font-serif leading-relaxed text-foreground/70">
-            {universe.description}
-          </p>
-
-          <Link
-            href={`/catalogo?universo=${universe.slug}`}
-            className="text-sm font-bold text-primary underline-offset-4 hover:underline"
-          >
-            Ver todos os livros de {universe.name} →
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+  return null;
 }

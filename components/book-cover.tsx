@@ -14,9 +14,11 @@ type BookCoverProps = {
   className?: string;
   /** Preview em vídeo (mudo, loop, autoplay) — quando presente, substitui o placeholder. */
   videoSrc?: string;
-  /** Reduz o vídeo dentro do quadro (0–1). Usa em capas de caixa/estojo, cujo
-   *  enquadramento original é mais largo que o dos livros e por isso lê como
-   *  "maior" que os vizinhos quando preenche o quadro inteiro. */
+  /** Ajusta o zoom do vídeo dentro do quadro. <1 reduz — usa em capas de
+   *  caixa/estojo, cujo enquadramento original é mais largo que o dos livros
+   *  e por isso lê como "maior" que os vizinhos quando preenche o quadro
+   *  inteiro. >1 amplia — usa quando o enquadramento original deixa o livro
+   *  pequeno no quadro em relação aos vizinhos. */
   videoScale?: number;
   /** Mostra um botão glass de pausar/reproduzir sobre o vídeo. Só faz sentido
    *  no destaque grande do hero — nas miniaturas do catálogo/relacionados

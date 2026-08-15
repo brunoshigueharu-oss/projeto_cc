@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import {
   getAllBookSlugs,
   getBookBySlug,
+  getCombosForBook,
   getRelatedBooks,
 } from "./_data-access/get-book";
 import { BookHero } from "./_components/book-hero";
@@ -15,6 +16,7 @@ import { UniverseSection } from "./_components/universe-section";
 import { CollectionsGuideSection } from "./_components/collections-guide-section";
 import { UniverseFamilySection } from "./_components/universe-family-section";
 import { RelatedBooks } from "./_components/related-books";
+import { CombosSection } from "./_components/combos-section";
 
 /**
  * ============================================================================
@@ -33,13 +35,17 @@ import { RelatedBooks } from "./_components/related-books";
  *   _components/about-book-section "O Livro" + "Sobre o Autor" + ficha técnica
  *   _components/upsell-card        item avulso opcional (book.upsell)
  *   _components/video-banner       faixa de vídeo opcional (book.videoBannerSrc)
- *   _components/universe-section   destaque escuro do universo do livro
- *   _components/collections-guide  texto institucional estático
+ *   _components/universe-section   destaque do universo, só quando o livro
+ *                                   tem `universeShowcase`
+ *   _components/collections-guide  texto institucional das coleções, só no
+ *                                   universo de Planta
  *   _components/universe-family    composição decorativa (fundo + capas) do
  *                                   universo, quando `book.universeFamily`
  *                                   existe; senão cai no `related-books`
  *   _components/related-books      grid genérico de outros títulos do
  *                                   mesmo universo (fallback)
+ *   _components/combos-section     banners rotativos de combos do catálogo
+ *                                   que incluem este livro (getCombosForBook)
  *
  * Decisões que valem manter ao evoluir a página:
  *
@@ -91,6 +97,7 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
 
   const { book, universe } = detail;
   const relatedBooks = await getRelatedBooks(book);
+  const combos = await getCombosForBook(book);
 
   return (
     <>
@@ -100,12 +107,13 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
       <UpsellCard book={book} />
       <VideoBannerSection book={book} />
       <UniverseSection universe={universe} book={book} />
-      <CollectionsGuideSection />
+      <CollectionsGuideSection universe={universe} />
       {book.universeFamily ? (
         <UniverseFamilySection book={book} universe={universe} />
       ) : (
         <RelatedBooks books={relatedBooks} universe={universe} />
       )}
+      <CombosSection combos={combos} />
     </>
   );
 }

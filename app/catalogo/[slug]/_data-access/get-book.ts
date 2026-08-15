@@ -1,5 +1,6 @@
 import { BOOKS, BOOKS_BY_SLUG, BOOKS_BY_UNIVERSE } from "@/lib/data/books";
-import type { Book, Universe } from "@/lib/data/schemas";
+import { COMBOS } from "@/lib/data/combos";
+import type { Book, Combo, Universe } from "@/lib/data/schemas";
 import { UNIVERSES_BY_SLUG } from "@/lib/data/universes";
 
 export type BookDetail = {
@@ -38,4 +39,27 @@ export async function getRelatedBooks(book: Book): Promise<readonly Book[]> {
 /** Alimenta `generateStaticParams` — todas as páginas de livro são estáticas. */
 export function getAllBookSlugs(): readonly string[] {
   return BOOKS.map((book) => book.slug);
+}
+
+export type ResolvedCombo = {
+  combo: Combo;
+  /** Livros do kit, resolvidos e na ordem de `combo.bookSlugs`. */
+  books: readonly Book[];
+  /** Soma do preço de cada livro do kit, em centavos — o preço "de" (riscado). */
+  originalPrice: number;
+};
+
+/** Combos do catálogo cujo kit inclui `book`, com os livros já resolvidos. */
+export async function getCombosForBook(book: Book): Promise<readonly ResolvedCombo[]> {
+  return COMBOS.filter((combo) => combo.bookSlugs.includes(book.slug)).map((combo) => {
+    const books = combo.bookSlugs
+      .map((slug) => BOOKS_BY_SLUG.get(slug))
+      .filter((candidate): candidate is Book => candidate !== undefined);
+
+    return {
+      combo,
+      books,
+      originalPrice: books.reduce((total, candidate) => total + candidate.price.amount, 0),
+    };
+  });
 }

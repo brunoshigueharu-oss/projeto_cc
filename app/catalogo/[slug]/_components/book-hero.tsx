@@ -106,9 +106,25 @@ export function BookHero({ book, universe }: BookHeroProps) {
                 <span className="sr-only">(abre em nova aba)</span>
               </a>
             ) : isAvailable || book.status === "pre-venda" ? (
-              <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
-                Link de compra em breve
-              </span>
+              // Título à venda, mas sem `buyUrl` cadastrado ainda: o CTA já
+              // aparece na forma final, só desabilitado — basta preencher o
+              // link em `lib/data/books.ts` para ele passar a levar à loja.
+              // `aria-disabled` em vez de `disabled`: o botão continua
+              // focável, então quem navega por teclado/leitor de tela ainda
+              // ouve o porquê de ele não levar a lugar nenhum.
+              <button
+                type="button"
+                aria-disabled="true"
+                title="Link de compra em breve"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground",
+                  "cursor-not-allowed opacity-50 hover:bg-primary",
+                )}
+              >
+                {isAvailable ? "Comprar" : "Reservar"}
+                <span className="sr-only">— link de compra em breve</span>
+              </button>
             ) : (
               <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
                 Tiragem esgotada

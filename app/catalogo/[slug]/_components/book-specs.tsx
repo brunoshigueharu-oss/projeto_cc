@@ -19,6 +19,8 @@ export function BookSpecs({ book }: { book: Book }) {
     { label: "ISBN", value: book.specs.isbn },
     { label: "Páginas", value: String(book.specs.pages) },
     { label: "Dimensões", value: book.specs.dimensions },
+    // Peso só chega em parte das fichas — a linha some quando não veio.
+    ...(book.specs.weight ? [{ label: "Peso", value: book.specs.weight }] : []),
     { label: "Idioma", value: book.specs.language },
     { label: "Encadernação", value: book.specs.format },
     { label: "Edição", value: book.specs.edition },
@@ -33,12 +35,17 @@ export function BookSpecs({ book }: { book: Book }) {
         {rows.map((row) => (
           <div
             key={row.label}
-            className="flex items-center justify-between border-b border-border py-4"
+            className="flex items-center justify-between gap-6 border-b border-border py-4"
           >
-            <dt className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+            {/* `shrink-0` + `text-right`: valores longos (a encadernação vem
+                como um parágrafo em algumas fichas) quebram em linha própria à
+                direita em vez de encostar no rótulo. */}
+            <dt className="shrink-0 text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
               {row.label}
             </dt>
-            <dd className="text-sm font-medium text-foreground tabular-nums">{row.value}</dd>
+            <dd className="text-right text-sm font-medium text-foreground tabular-nums">
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>

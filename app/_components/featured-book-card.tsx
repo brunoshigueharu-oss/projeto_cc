@@ -39,9 +39,7 @@ export function FeaturedBookCard({ book, className }: FeaturedBookCardProps) {
       />
 
       <h3 className="relative font-display text-lg leading-tight">{book.title}</h3>
-      {book.subtitle ? (
-        <p className="relative mt-1 font-serif text-xs text-white/75">{book.subtitle}</p>
-      ) : null}
+      <p className="relative mt-1 font-serif text-xs text-white/75">{book.author.name}</p>
     </Link>
   );
 }
