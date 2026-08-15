@@ -12,8 +12,9 @@ import { PaperTiltEffect } from "./paper-tilt-effect";
  *
  * Layout simples: card de texto (borda + fundo branco, igual ao resto do
  * site) ao lado das folhas soltas, sem nenhum painel colorido por trás delas
- * — nada muda no fundo da seção. CTA usa `bg-primary` (mesmo tom da Hero) em
- * vez do dourado de `--accent`, que lia fraco/deslocado sobre o card claro.
+ * — nada muda no fundo da seção. CTA usa `variant="accent"` (dourado): agora
+ * é o único CTA de compra do site que usa cor forte, então precisa ser
+ * consistente com os demais mesmo sobre fundo claro.
  */
 export function UpsellCard({ book }: { book: Book }) {
   if (!book.upsell) {
@@ -45,8 +46,8 @@ export function UpsellCard({ book }: { book: Book }) {
               </span>
               <span
                 className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "h-11 rounded-full bg-primary px-7 text-primary-foreground hover:bg-primary/85",
+                  buttonVariants({ variant: "accent", size: "lg" }),
+                  "h-11 rounded-full px-7",
                 )}
               >
                 {upsell.ctaLabel}

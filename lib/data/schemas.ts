@@ -252,3 +252,12 @@ export const campaignSchema = z.object({
     .optional(),
 });
 export type Campaign = z.infer<typeof campaignSchema>;
+
+/** Banner de vídeo do Hero da Home — mudo/loop/autoplay, sem texto sobreposto. */
+export const homeBannerSchema = z.object({
+  slug,
+  videoSrc: z.string().min(1),
+  /** Página do livro para onde o banner leva ao ser clicado. */
+  href: z.string().min(1),
+});
+export type HomeBanner = z.infer<typeof homeBannerSchema>;

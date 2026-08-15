@@ -176,8 +176,8 @@ function ComboContent({
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            buttonVariants({ size: "lg" }),
-            "mt-2 h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground hover:bg-primary/85",
+            buttonVariants({ variant: "accent", size: "lg" }),
+            "mt-2 h-11 gap-2 rounded-full px-7",
           )}
         >
           {combo.ctaLabel}

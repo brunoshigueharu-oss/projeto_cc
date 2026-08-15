@@ -31,8 +31,8 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
     const isPreOrder = book.status === "pre-venda";
     const ctaLabel = isPreOrder ? "Reservar" : "Comprar";
     const ctaClassName = cn(
-      buttonVariants({ size: "lg" }),
-      "h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground hover:bg-primary/85",
+      buttonVariants({ variant: "accent", size: "lg" }),
+      "h-11 gap-2 rounded-full px-7",
     );
 
     return (
@@ -96,7 +96,7 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                   title="Link de compra em breve"
                   className={cn(
                     ctaClassName,
-                    "cursor-not-allowed opacity-50 hover:bg-primary",
+                    "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
                   )}
                 >
                   {ctaLabel}

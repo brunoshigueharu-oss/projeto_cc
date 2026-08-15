@@ -97,8 +97,8 @@ export function BookHero({ book, universe }: BookHeroProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground hover:bg-primary/85",
+                  buttonVariants({ variant: "accent", size: "lg" }),
+                  "h-11 gap-2 rounded-full px-7",
                 )}
               >
                 {isAvailable ? "Comprar" : "Reservar"}
@@ -117,9 +117,9 @@ export function BookHero({ book, universe }: BookHeroProps) {
                 aria-disabled="true"
                 title="Link de compra em breve"
                 className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "h-11 gap-2 rounded-full bg-primary px-7 text-primary-foreground",
-                  "cursor-not-allowed opacity-50 hover:bg-primary",
+                  buttonVariants({ variant: "accent", size: "lg" }),
+                  "h-11 gap-2 rounded-full px-7",
+                  "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
                 )}
               >
                 {isAvailable ? "Comprar" : "Reservar"}
