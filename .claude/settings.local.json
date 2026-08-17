@@ -118,7 +118,9 @@
       "Bash(git check-ignore *)",
       "Bash(npm ls *)",
       "Bash(git ls-remote *)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(python3 *)",
+      "Bash(gh auth *)"
     ]
   },
   "hooks": {
