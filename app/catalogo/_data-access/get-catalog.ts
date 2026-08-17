@@ -1,4 +1,4 @@
-import { BOOKS } from "@/lib/data/books";
+import { PUBLISHED_BOOKS } from "@/lib/data/books";
 import type { Book } from "@/lib/data/schemas";
 
 export type Catalog = {
@@ -15,11 +15,11 @@ export type Catalog = {
  * alterar o call site.
  */
 export async function getCatalog(): Promise<Catalog> {
-  const universeSlugsWithBooks = new Set(BOOKS.map((book) => book.universeSlug));
+  const universeSlugsWithBooks = new Set(PUBLISHED_BOOKS.map((book) => book.universeSlug));
 
   return {
-    books: BOOKS,
-    totalBooks: BOOKS.length,
+    books: PUBLISHED_BOOKS,
+    totalBooks: PUBLISHED_BOOKS.length,
     totalUniverses: universeSlugsWithBooks.size,
   };
 }

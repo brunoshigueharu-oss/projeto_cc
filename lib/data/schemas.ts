@@ -19,11 +19,16 @@ export type Tone = z.infer<typeof toneSchema>;
 
 export const universeSchema = z.object({
   slug,
-  /** Ordena os universos na prateleira da Home e em /sobre. */
+  /** Ordena os universos na prateleira da Home. */
   order: z.number().int().positive(),
   name: z.string().min(1),
   tagline: z.string().min(1),
   description: z.string().min(1),
+  /** Opcional: versão em inglês de `description`, usada em páginas de livro
+   * com `locale: "en"` (ver `UniverseSection`). Sem ela, a seção cai no texto
+   * em português mesmo numa página em inglês — preencher assim que o
+   * universo tiver algum título impresso em outro idioma. */
+  descriptionEn: z.string().min(1).optional(),
   tone: toneSchema,
   /** Opcional: arte de fundo do card do universo (Home/Catálogo), sobre o
    * gradiente de `tone`. Preencher só quando a editora enviar a ilustração.
@@ -45,6 +50,11 @@ export const bookSchema = z.object({
   title: z.string().min(1),
   subtitle: z.string().optional(),
   universeSlug: slug,
+  /** Idioma da edição impressa: define em que idioma a página do livro
+   * renderiza os rótulos fixos de UI (botões, cabeçalhos de seção etc.).
+   * Default "pt": só edições impressas em outro idioma (ex.
+   * `mr-plant-a-biped-among-plants`) precisam declarar "en". */
+  locale: z.enum(["pt", "en"]).default("pt"),
   author: z.object({
     name: z.string().min(1),
     /** Opcional: nem todo autor cadastrado já tem bio recebida da editora. */
@@ -54,6 +64,10 @@ export const bookSchema = z.object({
   synopsis: z.string().min(1).optional(),
   /** Trecho curto do livro, exibido em destaque na página de detalhe. */
   excerpt: z.string().optional(),
+  /** Opcional: selo de premiação (ex. "Finalista Jabuti"), exibido junto de
+   * "O Livro" na página de detalhe. Preencher só quando o título tiver prêmio
+   * a divulgar. */
+  awardBadge: z.object({ src: z.string().min(1), alt: z.string().min(1) }).optional(),
   coverAlt: z.string().min(1),
   coverTone: toneSchema,
   /** Preview em vídeo (mudo, loop) que substitui a capa estática no card. */
@@ -64,6 +78,43 @@ export const bookSchema = z.object({
   coverVideoScale: z.number().positive().max(2).optional(),
   /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
   videoBannerSrc: z.string().optional(),
+  /** Opcional: variante noturna de `videoBannerSrc` — quando presente, a faixa
+   * ganha um botão sol/lua para alternar entre as duas versões (ex.: uma
+   * floresta que muda de dia para noite). Preencher só quando a editora
+   * enviar as duas versões do mesmo plano. */
+  videoBannerNightSrc: z.string().optional(),
+  /** Opcional: comparação com a edição-base da qual este título deriva (ex.:
+   * Necroplanta é uma variante de "Os Contos do Planta — Vol. 2"). Renderiza
+   * duas folhas de sulfite lado a lado com um "X" entre elas — a mesma arte
+   * de `paper.png` do upsell, sem capa real —, cada uma com o título embaixo,
+   * seguidas de um texto de destaque sobre a tiragem/edição. Preencher só
+   * quando o livro for uma variante/edição especial de outro título já
+   * cadastrado em `books.ts`. */
+  compareEdition: z
+    .object({
+      baseBookSlug: slug,
+      headline: z.string().min(1),
+      description: z.string().min(1),
+    })
+    .optional(),
+  /** Opcional: conteúdo de uma caixa/kit — vídeo da caixa abrindo seguido dos
+   * itens individuais em vídeo, exibido logo abaixo da ficha técnica.
+   * `openingVideoSrc` pode chegar depois dos itens; a seção renderiza só com
+   * os itens até lá. Preencher apenas quando o título for uma caixa/edição
+   * especial com múltiplos itens fotografados em vídeo pela editora. */
+  boxContents: z
+    .object({
+      openingVideoSrc: z.string().optional(),
+      items: z
+        .array(
+          z.object({
+            videoSrc: z.string().min(1),
+            label: z.string().min(1).optional(),
+          }),
+        )
+        .min(1),
+    })
+    .optional(),
   /** Opcional: outras fotos do livro (miolo, verso, detalhes), exibidas como galeria abaixo da capa. */
   gallery: z
     .array(
@@ -121,6 +172,9 @@ export const bookSchema = z.object({
   buyUrl: z.url().optional(),
   /** Default "disponivel": status real por título chega junto da ficha técnica. */
   status: z.enum(["disponivel", "pre-venda", "esgotado"]).default("disponivel"),
+  /** Default `true`. `false` tira a página do ar (404) sem apagar os dados —
+   * usado para títulos que ainda não devem ir ao público. */
+  published: z.boolean().default(true),
   /** Título exibido na prateleira de destaque da Home (ver `featured`). */
   featured: z.boolean().default(false),
   /** Obrigatório quando `featured`: still da capa usado no card da Home —
@@ -180,6 +234,7 @@ export const bookSchema = z.object({
     .optional(),
 });
 export type Book = z.infer<typeof bookSchema>;
+export type Locale = Book["locale"];
 
 export const comboSchema = z.object({
   slug,
@@ -257,6 +312,10 @@ export type Campaign = z.infer<typeof campaignSchema>;
 export const homeBannerSchema = z.object({
   slug,
   videoSrc: z.string().min(1),
+  /** Opcional: recorte quadrado (700x700) do mesmo plano, usado no lugar de
+   * `videoSrc` em telas mobile (abaixo do breakpoint `sm`). Sem ele, o hero
+   * cai no vídeo widescreen também no mobile. */
+  videoSrcMobile: z.string().min(1).optional(),
   /** Página do livro para onde o banner leva ao ser clicado. */
   href: z.string().min(1),
 });

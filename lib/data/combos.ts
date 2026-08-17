@@ -14,8 +14,10 @@ const RAW_COMBOS = [
     slug: "planta-dupla-aventura",
     title: "Dupla Aventura do Planta",
     description:
-      "A edição canônica de Um Bípede Entre Plantas ao lado do primeiro volume de Os Contos do Planta — o início da saga em dose dupla.",
-    bookSlugs: ["um-bipede-entre-plantas", "os-contos-do-planta-1"],
+      "A edição de Mr. Plant — A Biped Among Plants ao lado do primeiro volume de Os Contos do Planta — o início da saga em dose dupla.",
+    // Edição em português (um-bipede-entre-plantas) está esgotada — o combo
+    // usa a edição em inglês, hoje disponível.
+    bookSlugs: ["mr-plant-a-biped-among-plants", "os-contos-do-planta-1"],
     price: { amount: 24999, currency: "BRL" },
   },
 ] as const satisfies readonly unknown[];

@@ -2,11 +2,20 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
+import type { Locale } from "@/lib/data/schemas";
+
 type BookSynopsisProps = {
   text: string;
+  locale?: Locale;
 };
 
-export function BookSynopsis({ text }: BookSynopsisProps) {
+const LABELS: Record<Locale, { readMore: string; readLess: string }> = {
+  pt: { readMore: "Leia mais", readLess: "Leia menos" },
+  en: { readMore: "Read more", readLess: "Read less" },
+};
+
+export function BookSynopsis({ text, locale = "pt" }: BookSynopsisProps) {
+  const labels = LABELS[locale];
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
@@ -37,7 +46,7 @@ export function BookSynopsis({ text }: BookSynopsisProps) {
           className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
           aria-expanded={isExpanded}
         >
-          {isExpanded ? "Leia menos" : "Leia mais"}
+          {isExpanded ? labels.readLess : labels.readMore}
         </button>
       ) : null}
     </div>

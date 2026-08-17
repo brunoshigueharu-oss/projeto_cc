@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { HomeBanner } from "@/lib/data/schemas";
 
 const CAROUSEL_ARROW_CLASSNAME =
-  "absolute top-1/2 z-10 flex size-[72px] -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16";
+  "absolute top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16";
 
 type HeroProps = {
   banners: readonly HomeBanner[];
@@ -33,17 +33,21 @@ export function Hero({ banners }: HeroProps) {
 
   return (
     <section className="relative overflow-hidden bg-background">
-      <Link href={banner.href} className="block aspect-[1785/650] w-full">
+      <Link href={banner.href} className="block aspect-square w-full sm:aspect-[1785/650]">
         <video
           key={banner.slug}
           aria-hidden="true"
           className="size-full object-cover"
-          src={banner.videoSrc}
           autoPlay
           loop
           muted
           playsInline
-        />
+        >
+          {banner.videoSrcMobile && (
+            <source src={banner.videoSrcMobile} media="(max-width: 639px)" />
+          )}
+          <source src={banner.videoSrc} />
+        </video>
       </Link>
 
       {hasMultipleBanners && (
@@ -54,7 +58,7 @@ export function Hero({ banners }: HeroProps) {
             onClick={() => goTo(activeIndex - 1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "left-10 hidden lg:flex")}
           >
-            <ChevronLeft className="size-3.5" aria-hidden="true" />
+            <ChevronLeft className="size-4" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -62,7 +66,7 @@ export function Hero({ banners }: HeroProps) {
             onClick={() => goTo(activeIndex + 1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "right-10 hidden lg:flex")}
           >
-            <ChevronRight className="size-3.5" aria-hidden="true" />
+            <ChevronRight className="size-4" aria-hidden="true" />
           </button>
 
           <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-2">

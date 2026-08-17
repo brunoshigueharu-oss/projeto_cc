@@ -18,7 +18,7 @@ export async function FeaturedBooksShelf() {
             Conheça os nossos livros
           </h2>
           <p className="mt-3 font-serif text-muted-foreground">
-            Cada edição é tratada como objeto — comece por qualquer uma delas.
+            Não existe ordem certa para começar. Escolha uma e deixe-se levar.
           </p>
         </div>
 

@@ -73,6 +73,7 @@ export async function getOrders(): Promise<readonly Order[]> {
 export async function getShelf(): Promise<readonly Book[]> {
   return SHELF_SLUGS.flatMap((slug) => {
     const book = BOOKS_BY_SLUG.get(slug);
-    return book ? [book] : [];
+    // Livro despublicado não deve virar link morto na estante da demo.
+    return book?.published ? [book] : [];
   });
 }

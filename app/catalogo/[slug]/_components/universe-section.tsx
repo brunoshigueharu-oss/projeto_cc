@@ -3,13 +3,51 @@ import { Bell, ExternalLink } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Book, Universe } from "@/lib/data/schemas";
+import type { Book, Locale, Universe } from "@/lib/data/schemas";
 
 import { UniverseShowcaseImage } from "./universe-showcase-image";
 
 type UniverseSectionProps = {
   universe: Universe;
   book: Book;
+};
+
+const LABELS: Record<
+  Locale,
+  {
+    reserve: string;
+    buy: string;
+    soldOutEdition: string;
+    preOrderEdition: string;
+    availableEdition: string;
+    notifyMe: string;
+    opensInNewTab: string;
+    buyLinkSoonTitle: string;
+    buyLinkSoonSr: string;
+  }
+> = {
+  pt: {
+    reserve: "Reservar",
+    buy: "Comprar",
+    soldOutEdition: "Esgotado nesta edição",
+    preOrderEdition: "Em pré-venda",
+    availableEdition: "Disponível nesta edição",
+    notifyMe: "Avise-me quando estiver disponível",
+    opensInNewTab: "(abre em nova aba)",
+    buyLinkSoonTitle: "Link de compra em breve",
+    buyLinkSoonSr: "— link de compra em breve",
+  },
+  en: {
+    reserve: "Reserve",
+    buy: "Buy",
+    soldOutEdition: "Sold out in this edition",
+    preOrderEdition: "Pre-order",
+    availableEdition: "Available in this edition",
+    notifyMe: "Notify me when available",
+    opensInNewTab: "(opens in a new tab)",
+    buyLinkSoonTitle: "Purchase link coming soon",
+    buyLinkSoonSr: "— purchase link coming soon",
+  },
 };
 
 /**
@@ -27,9 +65,12 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
   const { universeShowcase } = book;
 
   if (universeShowcase) {
+    const labels = LABELS[book.locale];
+    const description =
+      book.locale === "en" ? (universe.descriptionEn ?? universe.description) : universe.description;
     const isSoldOut = book.status === "esgotado";
     const isPreOrder = book.status === "pre-venda";
-    const ctaLabel = isPreOrder ? "Reservar" : "Comprar";
+    const ctaLabel = isPreOrder ? labels.reserve : labels.buy;
     const ctaClassName = cn(
       buttonVariants({ variant: "accent", size: "lg" }),
       "h-11 gap-2 rounded-full px-7",
@@ -52,16 +93,16 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
             </div>
 
             <p className="max-w-xl whitespace-pre-line font-serif leading-relaxed text-foreground/70">
-              {universe.description}
+              {description}
             </p>
 
             <div className="flex flex-col items-start gap-3">
               <span className="text-xs font-medium uppercase tracking-[0.15em] text-foreground/40">
                 {isSoldOut
-                  ? "Esgotado nesta edição"
+                  ? labels.soldOutEdition
                   : isPreOrder
-                    ? "Em pré-venda"
-                    : "Disponível nesta edição"}
+                    ? labels.preOrderEdition
+                    : labels.availableEdition}
               </span>
 
               {isSoldOut ? (
@@ -73,7 +114,7 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                   )}
                 >
                   <Bell className="size-4" aria-hidden="true" />
-                  Avise-me quando estiver disponível
+                  {labels.notifyMe}
                 </Link>
               ) : book.buyUrl ? (
                 <a
@@ -84,7 +125,7 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                 >
                   {ctaLabel}
                   <ExternalLink className="size-4" aria-hidden="true" />
-                  <span className="sr-only">(abre em nova aba)</span>
+                  <span className="sr-only">{labels.opensInNewTab}</span>
                 </a>
               ) : (
                 // Sem `buyUrl` ainda — mesmo tratamento do CTA do hero: botão
@@ -93,14 +134,14 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                 <button
                   type="button"
                   aria-disabled="true"
-                  title="Link de compra em breve"
+                  title={labels.buyLinkSoonTitle}
                   className={cn(
                     ctaClassName,
                     "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
                   )}
                 >
                   {ctaLabel}
-                  <span className="sr-only">— link de compra em breve</span>
+                  <span className="sr-only">{labels.buyLinkSoonSr}</span>
                 </button>
               )}
             </div>

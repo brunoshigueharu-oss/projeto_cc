@@ -87,10 +87,11 @@ const PLANTA_UNIVERSE_FAMILY = {
  * campos opcionais em ./schemas.ts. Completar assim que a editora enviar.
  *
  * PLACEHOLDER: em todo título além de `um-bipede-entre-plantas`,
- * `os-contos-do-planta-1`, `os-contos-do-planta-2`,
- * `robo-de-madeira-atlas-cianus`, `robo-de-madeira-atlas-cianus-art-edition`,
+ * `mr-plant-a-biped-among-plants`, `os-contos-do-planta-1`,
+ * `os-contos-do-planta-2`, `robo-de-madeira-atlas-cianus`,
+ * `robo-de-madeira-atlas-cianus-art-edition`,
  * `os-contos-do-planta-caixa-de-reliquias` e `necroplanta`
- * (esses sete já com a ficha real da editora), os
+ * (esses oito já com a ficha real da editora), os
  * campos `synopsis`, `excerpt`, `specs` e `upsell` abaixo são texto de
  * preenchimento (ISBN incluso) só para exercitar o template da página de
  * livro com todas as seções visíveis — substituir pelo conteúdo real assim
@@ -100,25 +101,33 @@ const PLANTA_UNIVERSE_FAMILY = {
  */
 const RAW_BOOKS = [
   {
-    slug: "um-bipede-entre-plantas",
-    title: "Um Bípede Entre Plantas",
+    // Edição em inglês de `um-bipede-entre-plantas` (ficha em
+    // "Graphic Novel - Plant_EN version.DOCX"): mesma sinopse e mesma arte de
+    // universo/parallax da edição canônica em português — só ficha técnica e
+    // vídeo de capa mudam, refletindo a impressão em inglês. O texto da
+    // página em si continua em português, como no resto do site — só o
+    // idioma real do livro impresso (título, `specs.language` etc.) reflete
+    // a edição em inglês. À venda, por isso ocupa o lugar de destaque no
+    // catálogo que era da edição em português (agora esgotada — ver bloco no
+    // fim do array).
+    slug: "mr-plant-a-biped-among-plants",
+    title: "Mr. Plant — A Biped Among Plants",
     subtitle: "Graphic Novel — Vol. 1",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     synopsis:
       "Nesta edição canônica, acompanhamos Planta desde seu nascimento até o início de sua maior aventura. Durante um experimento, Planta acaba sendo lançado para fora de sua própria realidade e cai em uma espécie de \"fresta\" entre mundos, um \"não lugar\" formado por corredores infinitesimais que conectam diferentes dimensões. É nesse labirinto impossível que vive o solitário Arruard, uma raposa violinista que carrega consigo uma misteriosa caixa de chaves mágicas, cada uma capaz de abrir passagem para diferentes dimensões. Uma ameaça silenciosa, muito maior e mais antiga do que eles poderiam imaginar, começa a cercá-los enquanto Planta e Arruard atravessam dimensões desconhecidas em uma longa jornada de volta para casa, enfrentando mundos cada vez mais estranhos, perigosos e imprevisíveis.",
     excerpt:
-      "Aqui, o leitor encontra a edição canônica do personagem Planta, dando início à coleção Graphic Novel, responsável por desenvolver a grande saga principal deste universo. Este é o primeiro volume de uma série mais ampla.\n\nLivro finalista em duas categorias do Prêmio Jabuti, a mais importante premiação literária do Brasil.\n\nNesta edição, a capa foi produzida com papel italiano e ornamentada com ilustrações metálicas em cobre, aplicadas em hot stamp e estendidas também para a contra capa, criando um acabamento marcado por detalhes, brilho e textura.\n\nO livro também conta com acabamentos especiais além da capa, incluindo aplicações de tinta dourada nas páginas internas e trechos impressos em papel vegetal, ampliando as possibilidades visuais e materiais da leitura.",
-    coverAlt: "Capa do livro Um Bípede Entre Plantas, de Gustavo Ravaglio",
+      "Aqui, o leitor encontra a edição canônica do personagem Planta, dando início à coleção Graphic Novel, responsável por desenvolver a grande saga principal deste universo. Este é o primeiro volume de uma série mais ampla.\n\nNesta edição, a capa foi produzida com papel italiano e ornamentada com ilustrações metálicas em cobre, aplicadas em hot stamp e estendidas também para a contra capa, criando um acabamento marcado por detalhes, brilho e textura.\n\nEsta edição foi publicada em Nova York e é inteiramente em inglês. A tradução é assinada por Adriano Scandolara, profissional que já trabalhou com grandes editoras do mercado. O texto foi supervisionado diretamente pelo autor para preservar o tom, o ritmo e a personalidade da escrita original. Os quadrinhos também oferecem uma das formas mais envolventes e naturais de praticar e manter contato com outro idioma.\n\nO livro também conta com acabamentos especiais além da capa, incluindo aplicações de tinta dourada nas páginas internas e trechos impressos em papel vegetal, ampliando as possibilidades visuais e materiais da leitura.",
+    coverAlt:
+      "Capa do livro Mr. Plant — A Biped Among Plants, edição em inglês, de Gustavo Ravaglio",
     coverTone: "garnet",
-    coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
+    coverVideoSrc: "/videos/livros/mr-plant-a-biped-among-plants.mp4",
+    // Sem faixa própria enviada para a edição em inglês — reaproveita a faixa
+    // já existente da edição em português (cena genérica, sem texto).
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
-    // Câmera atravessando a mata: rolando a página, as copas sobem pelo topo
-    // e os arbustos descem pela base — a vegetação se abre em torno do
-    // leitor, cada camada mais à frente com deslocamento e zoom maiores.
-    // Os sinais não são livres: cada recorte só pode sair pela borda em que
-    // está ancorado (copa negativa, arbusto positivo). Na direção contrária
-    // ele se descola da borda e aparece o corte reto da arte.
+    // Mesma arte de parallax da edição em português — ver nota de gramática de
+    // shift/origin no bloco `um-bipede-entre-plantas`, no fim deste array.
     parallax: [
       {
         src: "/images/parallax/um-bipede-entre-plantas/1-fundo.png",
@@ -156,23 +165,39 @@ const RAW_BOOKS = [
     ],
     specs: {
       pages: 178,
-      isbn: "978-8591748433",
+      isbn: "978-8591748440",
       format: "Capa dura",
       dimensions: "28,7 cm • 20,4 cm • 1,9 cm",
-      language: "Português (Brasil)",
+      weight: "980 g",
+      language: "Inglês",
       edition: "1a. edição",
-      publishedAt: "2017-11-01",
+      publishedAt: "2019-11-01",
     },
     price: { amount: 16999, currency: "BRL" },
-    status: "esgotado",
+    status: "disponivel",
     upsell: {
-      title: "Exemplar de O Planta autografado pelo autor e sketch personalizado!",
+      title: "Mr. Plant — A Biped Among Plants + Assinatura + Sketch",
       description:
-        "Você pode receber seu exemplar de O Planta – Um bípede entre plantas autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+        "Você pode receber seu exemplar de Mr. Plant — A Biped Among Plants autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
     },
     universeShowcase: PLANTA_UNIVERSE_SHOWCASE,
-    universeFamily: PLANTA_UNIVERSE_FAMILY,
+    // Reaproveita a composição do universo, mas substitui a capa que
+    // corresponderia a esta própria página: a versão compartilhada aponta
+    // para `um-bipede-entre-plantas` (esgotada) — aqui ela precisa apontar
+    // para si mesma (self-link, ver nota em `universeFamily` em schemas.ts).
+    universeFamily: {
+      ...PLANTA_UNIVERSE_FAMILY,
+      covers: PLANTA_UNIVERSE_FAMILY.covers.map((cover) =>
+        cover.bookSlug === "um-bipede-entre-plantas"
+          ? {
+              ...cover,
+              bookSlug: "mr-plant-a-biped-among-plants",
+              caption: "Mr. Plant — A Biped Among Plants",
+            }
+          : cover,
+      ),
+    },
   },
   {
     slug: "os-contos-do-planta-1",
@@ -486,8 +511,7 @@ const RAW_BOOKS = [
   },
   {
     slug: "os-contos-do-planta-caixa-de-reliquias",
-    title: "Os Contos do Planta",
-    subtitle: "Caixa de Relíquias",
+    title: "Os Contos do Planta – Caixa de Relíquias",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     // A caixa acompanha Contos do Planta 2, então a história é a mesma do
@@ -571,6 +595,31 @@ const RAW_BOOKS = [
       edition: "1a. edição",
       publishedAt: "2023-08-01",
     },
+    boxContents: {
+      items: [
+        {
+          videoSrc:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-1.mp4",
+          label: "Contos do Planta 2",
+        },
+        {
+          videoSrc:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-2.mp4",
+          label: "Jornal",
+        },
+        {
+          videoSrc:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-3.mp4",
+          label: "Tabuleiro",
+        },
+        {
+          videoSrc:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-4.mp4",
+          label: "Cards e Postais",
+        },
+      ],
+      // openingVideoSrc: adicionar quando o vídeo da caixa abrindo for enviado
+    },
     price: { amount: 35999, currency: "BRL" },
     status: "disponivel",
     featured: true,
@@ -647,6 +696,12 @@ const RAW_BOOKS = [
     // cadastrado até a confirmação.
     price: { amount: 16999, currency: "BRL" },
     status: "disponivel",
+    compareEdition: {
+      baseBookSlug: "os-contos-do-planta-2",
+      headline: "Tiragem Única e Limitada.",
+      description:
+        "Todos os exemplares são numerados. Ao adquirir esta obra, você leva para sua coleção uma edição, que não será republicada.",
+    },
     upsell: {
       title: "Necroplanta + Assinatura + Sketch",
       description:
@@ -659,6 +714,9 @@ const RAW_BOOKS = [
   {
     slug: "yanayag",
     title: "Yanayag",
+    // Página pronta, mas ainda não deve ir ao público — aguardando aviso
+    // para religar (ver `published` em schemas.ts).
+    published: false,
     universeSlug: "yanayag",
     author: MAZZITIELLI_E_ALCATENA,
     synopsis:
@@ -669,6 +727,42 @@ const RAW_BOOKS = [
     coverTone: "forest",
     coverVideoSrc: "/videos/livros/yanayag.mp4",
     coverVideoScale: 1.2,
+    videoBannerSrc: "/videos/faixas/yanayag.mp4",
+    videoBannerNightSrc: "/videos/faixas/yanayag-noite.mp4",
+    // Astrolábio suspenso sobre a névoa: a lua ao fundo quase não se move, o
+    // arco de raízes no meio cresce a partir do centro (esconde o corte reto
+    // dos dois lados), o medalhão central paira livre, e o anel externo
+    // (lateral + topo) é a camada mais à frente — o de topo sai por cima,
+    // ancorado onde é cortado.
+    parallax: [
+      {
+        src: "/images/parallax/yanayag/1-fundo.png",
+        shift: 10,
+        zoom: 0.05,
+      },
+      {
+        src: "/images/parallax/yanayag/2-raizes.png",
+        shift: 14,
+        zoom: 0.08,
+      },
+      {
+        src: "/images/parallax/yanayag/3-astrolabio.png",
+        shift: -20,
+        zoom: 0.14,
+      },
+      {
+        src: "/images/parallax/yanayag/4-anel-lateral.png",
+        shift: 8,
+        shiftX: 10,
+        zoom: 0.18,
+      },
+      {
+        src: "/images/parallax/yanayag/5-anel-topo.png",
+        shift: -32,
+        zoom: 0.24,
+        origin: "top",
+      },
+    ],
     specs: {
       pages: 132,
       isbn: "978-0000000007",
@@ -679,12 +773,88 @@ const RAW_BOOKS = [
       publishedAt: "2023-04-01",
     },
     price: { amount: 11999, currency: "BRL" },
-    upsell: {
-      title: "Exemplar de Yanayag autografado pelos autores",
-      description:
-        "Você pode receber seu exemplar de Yanayag autografado por Mazzitielli e Alcatena, direto da floresta que dá nome ao livro.",
-      price: { amount: 3499, currency: "BRL" },
+  },
+  {
+    // Edição canônica em português — esgotada. A edição em inglês
+    // (`mr-plant-a-biped-among-plants`, à venda) ocupa agora o lugar de
+    // destaque no catálogo que era desta; ver nota no início do array.
+    slug: "um-bipede-entre-plantas",
+    title: "Um Bípede Entre Plantas",
+    subtitle: "Graphic Novel — Vol. 1",
+    universeSlug: "necroplanta",
+    author: GUSTAVO,
+    synopsis:
+      "Nesta edição canônica, acompanhamos Planta desde seu nascimento até o início de sua maior aventura. Durante um experimento, Planta acaba sendo lançado para fora de sua própria realidade e cai em uma espécie de \"fresta\" entre mundos, um \"não lugar\" formado por corredores infinitesimais que conectam diferentes dimensões. É nesse labirinto impossível que vive o solitário Arruard, uma raposa violinista que carrega consigo uma misteriosa caixa de chaves mágicas, cada uma capaz de abrir passagem para diferentes dimensões. Uma ameaça silenciosa, muito maior e mais antiga do que eles poderiam imaginar, começa a cercá-los enquanto Planta e Arruard atravessam dimensões desconhecidas em uma longa jornada de volta para casa, enfrentando mundos cada vez mais estranhos, perigosos e imprevisíveis.",
+    excerpt:
+      "Aqui, o leitor encontra a edição canônica do personagem Planta, dando início à coleção Graphic Novel, responsável por desenvolver a grande saga principal deste universo. Este é o primeiro volume de uma série mais ampla.\n\nLivro finalista em duas categorias do Prêmio Jabuti, a mais importante premiação literária do Brasil.\n\nNesta edição, a capa foi produzida com papel italiano e ornamentada com ilustrações metálicas em cobre, aplicadas em hot stamp e estendidas também para a contra capa, criando um acabamento marcado por detalhes, brilho e textura.\n\nO livro também conta com acabamentos especiais além da capa, incluindo aplicações de tinta dourada nas páginas internas e trechos impressos em papel vegetal, ampliando as possibilidades visuais e materiais da leitura.",
+    awardBadge: {
+      src: "/images/livros/um-bipede-entre-plantas/selo-jabuti.png",
+      alt: "Selo de Livro Finalista do Prêmio Jabuti",
     },
+    coverAlt: "Capa do livro Um Bípede Entre Plantas, de Gustavo Ravaglio",
+    coverTone: "garnet",
+    coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
+    videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
+    // Câmera atravessando a mata: rolando a página, as copas sobem pelo topo
+    // e os arbustos descem pela base — a vegetação se abre em torno do
+    // leitor, cada camada mais à frente com deslocamento e zoom maiores.
+    // Os sinais não são livres: cada recorte só pode sair pela borda em que
+    // está ancorado (copa negativa, arbusto positivo). Na direção contrária
+    // ele se descola da borda e aparece o corte reto da arte.
+    parallax: [
+      {
+        src: "/images/parallax/um-bipede-entre-plantas/1-fundo.png",
+        shift: 16,
+        zoom: 0.1,
+      },
+      {
+        src: "/images/parallax/um-bipede-entre-plantas/2-arbusto-fundo.png",
+        shift: 28,
+        shiftX: -8,
+        zoom: 0.06,
+        origin: "bottom",
+      },
+      {
+        src: "/images/parallax/um-bipede-entre-plantas/3-arbusto-frente.png",
+        shift: 62,
+        shiftX: 10,
+        zoom: 0.14,
+        origin: "bottom",
+      },
+      {
+        src: "/images/parallax/um-bipede-entre-plantas/4-copa-fundo.png",
+        shift: -40,
+        shiftX: 8,
+        zoom: 0.08,
+        origin: "top",
+      },
+      {
+        src: "/images/parallax/um-bipede-entre-plantas/5-copa-frente.png",
+        shift: -78,
+        shiftX: -10,
+        zoom: 0.2,
+        origin: "top",
+      },
+    ],
+    specs: {
+      pages: 178,
+      isbn: "978-8591748433",
+      format: "Capa dura",
+      dimensions: "28,7 cm • 20,4 cm • 1,9 cm",
+      language: "Português (Brasil)",
+      edition: "1a. edição",
+      publishedAt: "2017-11-01",
+    },
+    price: { amount: 16999, currency: "BRL" },
+    status: "esgotado",
+    upsell: {
+      title: "Exemplar de O Planta autografado pelo autor e sketch personalizado!",
+      description:
+        "Você pode receber seu exemplar de O Planta – Um bípede entre plantas autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+      price: { amount: 4999, currency: "BRL" },
+    },
+    universeShowcase: PLANTA_UNIVERSE_SHOWCASE,
+    universeFamily: PLANTA_UNIVERSE_FAMILY,
   },
 ];
 
@@ -701,7 +871,26 @@ export const BOOKS: readonly Book[] = bookSchema
   .refine((books) => books.every((book) => !book.featured || book.featuredCardImage), {
     message: "Livro featured precisa de featuredCardImage (ver Home)",
   })
+  // Um compareEdition.baseBookSlug inexistente não quebra nada sozinho — só faz
+  // CompareEditionSection sumir em silêncio (ver getCompareEditionBaseBook) —
+  // melhor quebrar o build.
+  .refine(
+    (books) => {
+      const slugs = new Set(books.map((book) => book.slug));
+      return books.every(
+        (book) => !book.compareEdition || slugs.has(book.compareEdition.baseBookSlug),
+      );
+    },
+    { message: "compareEdition.baseBookSlug aponta para um livro que não existe" },
+  )
+  // Slug duplicado sobrescreveria silenciosamente uma entrada em BOOKS_BY_SLUG.
+  .refine((books) => new Set(books.map((book) => book.slug)).size === books.length, {
+    message: "Slug de livro duplicado em books.ts",
+  })
   .parse(RAW_BOOKS);
+
+/** `BOOKS` filtrado para `published !== false` — o que a vitrine pública usa. */
+export const PUBLISHED_BOOKS: readonly Book[] = BOOKS.filter((book) => book.published);
 
 export const BOOKS_BY_SLUG: ReadonlyMap<string, Book> = new Map(
   BOOKS.map((book) => [book.slug, book]),

@@ -1,9 +1,14 @@
 import { buttonVariants } from "@/components/ui/button";
-import type { Book } from "@/lib/data/schemas";
+import type { Book, Locale } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import { PaperTiltEffect } from "./paper-tilt-effect";
+
+const LABELS: Record<Locale, { exclusive: string }> = {
+  pt: { exclusive: "Exclusivo Hocus Pocus" },
+  en: { exclusive: "Hocus Pocus Exclusive" },
+};
 
 /**
  * Card de item avulso (ex. exemplar autografado), equivalente ao
@@ -29,7 +34,7 @@ export function UpsellCard({ book }: { book: Book }) {
         <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
           <div className="flex flex-col items-start gap-5 rounded-[28px] border border-border bg-card p-6 shadow-sm sm:p-10 lg:max-w-md lg:shrink-0">
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-              Exclusivo Hocus Pocus
+              {LABELS[book.locale].exclusive}
             </span>
 
             <h2 className="font-display text-2xl text-foreground sm:text-3xl">

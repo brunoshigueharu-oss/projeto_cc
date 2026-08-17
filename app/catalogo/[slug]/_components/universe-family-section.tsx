@@ -1,11 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import type { Book, Universe } from "@/lib/data/schemas";
+import type { Book, Locale, Universe } from "@/lib/data/schemas";
 
 type UniverseFamilySectionProps = {
   book: Book;
   universe: Universe;
+};
+
+const universeHeading: Record<Locale, (name: string) => string> = {
+  pt: (name) => `Universo ${name}`,
+  en: (name) => `${name} Universe`,
 };
 
 /**
@@ -40,7 +45,7 @@ export function UniverseFamilySection({ book, universe }: UniverseFamilySectionP
 
           <div className="absolute flex flex-col gap-2" style={{ top: "38%", left: "5%", width: "20%" }}>
             <h2 className="font-display text-[5.6cqw] leading-tight text-foreground sm:text-[3.4cqw]">
-              Universo {universe.name}
+              {universeHeading[book.locale](universe.name)}
             </h2>
             <p className="font-serif text-[2.8cqw] italic text-foreground/60 sm:text-[1.6cqw]">
               {book.author.name}

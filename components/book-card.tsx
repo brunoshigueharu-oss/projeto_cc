@@ -51,7 +51,7 @@ export function BookCard({ book }: BookCardProps) {
             {formatPrice(book.price.amount)}
           </span>
           {book.status !== "disponivel" ? (
-            <BookStatusBadge status={book.status} />
+            <BookStatusBadge status={book.status} locale={book.locale} />
           ) : null}
         </div>
       </div>

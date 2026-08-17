@@ -7,8 +7,6 @@ import { Seal } from "./seal";
 import { Wordmark } from "./wordmark";
 
 const INSTITUTIONAL_LINKS = [
-  { label: "Sobre nós", href: "/sobre" },
-  { label: "Nossa história", href: "/sobre" },
   { label: "Sustentabilidade", href: "#" },
   { label: "Trabalhe conosco", href: "#" },
 ] as const;

@@ -1,10 +1,41 @@
-import type { Universe } from "@/lib/data/schemas";
+import type { Locale, Universe } from "@/lib/data/schemas";
 
 /** Universo cujas coleções este texto explica (Graphic Novel / Contos). */
 const PLANTA_UNIVERSE_SLUG = "necroplanta";
 
 type CollectionsGuideSectionProps = {
   universe: Universe;
+  locale: Locale;
+};
+
+const LABELS: Record<
+  Locale,
+  { heading: string; paragraphs: string[]; whereToStart: string; whereToStartBody: string }
+> = {
+  pt: {
+    heading: "Entenda as Coleções do Planta",
+    paragraphs: [
+      "O universo de Planta é dividido em duas coleções principais: Graphic Novel e Contos do Planta.",
+      "As duas linhas são complementares e expandem o universo da obra em diferentes direções, proporcionando experiências de leitura distintas. Embora compartilhem parte dos personagens principais, cada coleção apresenta seus próprios personagens, histórias e acontecimentos dentro do universo de Planta.",
+      "Os Contos do Planta apresentam histórias mais curtas e fechadas em cada edição. Apesar de existir um arco maior conectando os volumes, esta coleção possui uma estrutura mais episódica, explorando personagens, situações e mistérios do universo de forma dinâmica e acessível.",
+      "Já a coleção Graphic Novel acompanha o grande arco canônico do universo de Planta. As edições possuem histórias mais longas e complexas, permitindo que os acontecimentos se desenvolvam de forma mais ampla ao longo da narrativa.",
+    ],
+    whereToStart: "Por onde começar?",
+    whereToStartBody:
+      "Pela coleção que mais despertar o seu interesse. Ambas foram pensadas para orientar o leitor dentro do contexto dos personagens, permitindo diferentes portas de entrada para o universo.",
+  },
+  en: {
+    heading: "Understanding the Plant Collections",
+    paragraphs: [
+      "The Plant universe is divided into two main collections: Graphic Novel and Tales of Plant.",
+      "Both lines complement each other and expand the work's universe in different directions, offering distinct reading experiences. While they share some of the main characters, each collection features its own characters, stories, and events within the Plant universe.",
+      "Tales of Plant presents shorter, self-contained stories in each edition. Even though a larger arc connects the volumes, this collection has a more episodic structure, exploring the universe's characters, situations, and mysteries in a dynamic and accessible way.",
+      "The Graphic Novel collection, on the other hand, follows the great canonical arc of the Plant universe. These editions feature longer, more complex stories, allowing events to unfold more broadly throughout the narrative.",
+    ],
+    whereToStart: "Where should I start?",
+    whereToStartBody:
+      "Start with whichever collection interests you most. Both were designed to guide readers through the characters' context, offering different entry points into the universe.",
+  },
 };
 
 /**
@@ -17,51 +48,35 @@ type CollectionsGuideSectionProps = {
  */
 export function CollectionsGuideSection({
   universe,
+  locale,
 }: CollectionsGuideSectionProps) {
   if (universe.slug !== PLANTA_UNIVERSE_SLUG) {
     return null;
   }
+
+  const labels = LABELS[locale];
 
   return (
     <section className="border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-16 px-4 py-20 sm:px-6 lg:flex-row">
         <div className="flex flex-1 flex-col gap-6">
           <h2 className="font-display text-2xl text-foreground sm:text-3xl">
-            Entenda as Coleções do Planta
+            {labels.heading}
           </h2>
-          <p className="max-w-lg font-serif leading-relaxed text-muted-foreground">
-            O universo de Planta é dividido em duas coleções principais:
-            Graphic Novel e Contos do Planta.
-          </p>
-          <p className="max-w-lg font-serif leading-relaxed text-muted-foreground">
-            As duas linhas são complementares e expandem o universo da obra
-            em diferentes direções, proporcionando experiências de leitura
-            distintas. Embora compartilhem parte dos personagens principais,
-            cada coleção apresenta seus próprios personagens, histórias e
-            acontecimentos dentro do universo de Planta.
-          </p>
-          <p className="max-w-lg font-serif leading-relaxed text-muted-foreground">
-            Os Contos do Planta apresentam histórias mais curtas e fechadas
-            em cada edição. Apesar de existir um arco maior conectando os
-            volumes, esta coleção possui uma estrutura mais episódica,
-            explorando personagens, situações e mistérios do universo de
-            forma dinâmica e acessível.
-          </p>
-          <p className="max-w-lg font-serif leading-relaxed text-muted-foreground">
-            Já a coleção Graphic Novel acompanha o grande arco canônico do
-            universo de Planta. As edições possuem histórias mais longas e
-            complexas, permitindo que os acontecimentos se desenvolvam de
-            forma mais ampla ao longo da narrativa.
-          </p>
+          {labels.paragraphs.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="max-w-lg font-serif leading-relaxed text-muted-foreground"
+            >
+              {paragraph}
+            </p>
+          ))}
           <div className="flex flex-col gap-2">
             <p className="max-w-lg font-serif font-semibold leading-relaxed text-foreground">
-              Por onde começar?
+              {labels.whereToStart}
             </p>
             <p className="max-w-lg font-serif leading-relaxed text-muted-foreground">
-              Pela coleção que mais despertar o seu interesse. Ambas foram
-              pensadas para orientar o leitor dentro do contexto dos
-              personagens, permitindo diferentes portas de entrada para o
-              universo.
+              {labels.whereToStartBody}
             </p>
           </div>
         </div>

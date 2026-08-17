@@ -18,7 +18,7 @@ export default async function CatalogoPage() {
       <PageHeader
         eyebrow="Catálogo"
         title="Hocus Pocus"
-        intro="Tiragens curtas, capas desenhadas antes do texto terminar e nenhuma reimpressão automática. O que acaba, acaba."
+        intro="Venha conhecer nossos universos ilustrados — a história em quadrinhos nunca esteve tão viva."
       >
         <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground tabular-nums">
           {totalBooks} títulos · {totalUniverses} universos

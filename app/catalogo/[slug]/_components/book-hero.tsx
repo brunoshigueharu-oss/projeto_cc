@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
 import { buttonVariants } from "@/components/ui/button";
-import type { Book, Universe } from "@/lib/data/schemas";
+import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -16,12 +16,54 @@ type BookHeroProps = {
   universe: Universe;
 };
 
+const LABELS: Record<
+  Locale,
+  {
+    breadcrumbNav: string;
+    catalog: string;
+    byAuthor: (name: string) => string;
+    buy: string;
+    reserve: string;
+    opensInNewTab: string;
+    buyLinkSoonTitle: string;
+    buyLinkSoonSr: string;
+    soldOut: string;
+    seeUniverse: (name: string) => string;
+  }
+> = {
+  pt: {
+    breadcrumbNav: "Trilha de navegação",
+    catalog: "Catálogo",
+    byAuthor: (name) => `Por ${name}`,
+    buy: "Comprar",
+    reserve: "Reservar",
+    opensInNewTab: "(abre em nova aba)",
+    buyLinkSoonTitle: "Link de compra em breve",
+    buyLinkSoonSr: "— link de compra em breve",
+    soldOut: "Tiragem esgotada",
+    seeUniverse: (name) => `Ver o universo ${name}`,
+  },
+  en: {
+    breadcrumbNav: "Breadcrumb",
+    catalog: "Catalog",
+    byAuthor: (name) => `By ${name}`,
+    buy: "Buy",
+    reserve: "Reserve",
+    opensInNewTab: "(opens in a new tab)",
+    buyLinkSoonTitle: "Purchase link coming soon",
+    buyLinkSoonSr: "— purchase link coming soon",
+    soldOut: "Sold out",
+    seeUniverse: (name) => `See the ${name} universe`,
+  },
+};
+
 /**
  * Abertura da página de livro, na casca clara (fundo branco).
  */
 export function BookHero({ book, universe }: BookHeroProps) {
   const isAvailable = book.status === "disponivel";
   const isPurchasable = (isAvailable || book.status === "pre-venda") && Boolean(book.buyUrl);
+  const labels = LABELS[book.locale];
 
   return (
     <section className="relative overflow-hidden bg-background text-foreground">
@@ -43,7 +85,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
         </div>
 
         <div>
-          <nav aria-label="Trilha de navegação">
+          <nav aria-label={labels.breadcrumbNav}>
             <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-foreground/50">
               <li>
                 <Link href="/" className="hover:text-foreground">
@@ -53,7 +95,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
               <li aria-hidden="true">/</li>
               <li>
                 <Link href="/catalogo" className="hover:text-foreground">
-                  Catálogo
+                  {labels.catalog}
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
@@ -78,16 +120,16 @@ export function BookHero({ book, universe }: BookHeroProps) {
           ) : null}
 
           <p className="mt-1 font-serif text-base italic text-primary">
-            Por {book.author.name}
+            {labels.byAuthor(book.author.name)}
           </p>
 
-          {book.synopsis ? <BookSynopsis text={book.synopsis} /> : null}
+          {book.synopsis ? <BookSynopsis text={book.synopsis} locale={book.locale} /> : null}
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <span className="font-mono text-2xl font-bold text-foreground tabular-nums">
               {formatPrice(book.price.amount)}
             </span>
-            <BookStatusBadge status={book.status} />
+            <BookStatusBadge status={book.status} locale={book.locale} />
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-5">
@@ -101,9 +143,9 @@ export function BookHero({ book, universe }: BookHeroProps) {
                   "h-11 gap-2 rounded-full px-7",
                 )}
               >
-                {isAvailable ? "Comprar" : "Reservar"}
+                {isAvailable ? labels.buy : labels.reserve}
                 <ExternalLink className="size-4" aria-hidden="true" />
-                <span className="sr-only">(abre em nova aba)</span>
+                <span className="sr-only">{labels.opensInNewTab}</span>
               </a>
             ) : isAvailable || book.status === "pre-venda" ? (
               // Título à venda, mas sem `buyUrl` cadastrado ainda: o CTA já
@@ -115,19 +157,19 @@ export function BookHero({ book, universe }: BookHeroProps) {
               <button
                 type="button"
                 aria-disabled="true"
-                title="Link de compra em breve"
+                title={labels.buyLinkSoonTitle}
                 className={cn(
                   buttonVariants({ variant: "accent", size: "lg" }),
                   "h-11 gap-2 rounded-full px-7",
                   "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
                 )}
               >
-                {isAvailable ? "Comprar" : "Reservar"}
-                <span className="sr-only">— link de compra em breve</span>
+                {isAvailable ? labels.buy : labels.reserve}
+                <span className="sr-only">{labels.buyLinkSoonSr}</span>
               </button>
             ) : (
               <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
-                Tiragem esgotada
+                {labels.soldOut}
               </span>
             )}
 
@@ -135,7 +177,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
               href={`/catalogo?universo=${universe.slug}`}
               className="text-sm font-medium text-foreground/70 underline-offset-4 hover:text-foreground hover:underline"
             >
-              Ver o universo {universe.name}
+              {labels.seeUniverse(universe.name)}
             </Link>
           </div>
         </div>

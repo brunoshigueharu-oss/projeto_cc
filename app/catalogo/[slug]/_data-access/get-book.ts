@@ -1,4 +1,4 @@
-import { BOOKS, BOOKS_BY_SLUG, BOOKS_BY_UNIVERSE } from "@/lib/data/books";
+import { BOOKS_BY_SLUG, BOOKS_BY_UNIVERSE, PUBLISHED_BOOKS } from "@/lib/data/books";
 import { COMBOS } from "@/lib/data/combos";
 import type { Book, Combo, Universe } from "@/lib/data/schemas";
 import { UNIVERSES_BY_SLUG } from "@/lib/data/universes";
@@ -16,7 +16,7 @@ export type BookDetail = {
  */
 export async function getBookBySlug(slug: string): Promise<BookDetail | undefined> {
   const book = BOOKS_BY_SLUG.get(slug);
-  if (!book) {
+  if (!book || !book.published) {
     return undefined;
   }
 
@@ -33,12 +33,21 @@ export async function getBookBySlug(slug: string): Promise<BookDetail | undefine
 /** Outros livros do mesmo universo, excluindo o atual. */
 export async function getRelatedBooks(book: Book): Promise<readonly Book[]> {
   const sameUniverse = BOOKS_BY_UNIVERSE.get(book.universeSlug) ?? [];
-  return sameUniverse.filter((candidate) => candidate.slug !== book.slug);
+  return sameUniverse.filter((candidate) => candidate.slug !== book.slug && candidate.published);
+}
+
+/** Livro-base de `book.compareEdition`, resolvido para exibir o título na legenda. */
+export async function getCompareEditionBaseBook(book: Book): Promise<Book | undefined> {
+  if (!book.compareEdition) {
+    return undefined;
+  }
+
+  return BOOKS_BY_SLUG.get(book.compareEdition.baseBookSlug);
 }
 
 /** Alimenta `generateStaticParams` — todas as páginas de livro são estáticas. */
 export function getAllBookSlugs(): readonly string[] {
-  return BOOKS.map((book) => book.slug);
+  return PUBLISHED_BOOKS.map((book) => book.slug);
 }
 
 export type ResolvedCombo = {

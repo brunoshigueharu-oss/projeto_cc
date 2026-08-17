@@ -8,6 +8,10 @@ const RAW_UNIVERSES = [
     tagline: "Horror botânico contado em capítulos ilustrados.",
     description:
       "Planta é um vegetal que não queria ser apenas uma planta. Ele queria explorar o mundo, viver aventuras e descobrir o que existia além da cerca que delimitava seu pequeno universo. O protagonista acreditava que o mundo terminava logo ali, até ouvir dos pássaros histórias sobre como tudo era vasto, misterioso e extraordinário. Sem esperança de mudar seu destino, sua vida se transforma ao conhecer Dr. Mantis, um cientista com aparência de louva-a-deus que, ao perceber em Planta uma inteligência e uma vontade incomuns, cria um corpo para que ele pudesse finalmente se expressar e explorar o mundo. E isso é apenas o começo: uma grande saga de fantasia reconhecida pelos principais prêmios do país e elogiada por importantes artistas da indústria dos quadrinhos.",
+    // Único universo com título impresso em inglês até aqui
+    // (mr-plant-a-biped-among-plants) — ver nota em `descriptionEn` no schema.
+    descriptionEn:
+      "Plant is a vegetable who didn't want to be just a plant. He wanted to explore the world, live adventures, and discover what existed beyond the fence that bound his small universe. The protagonist believed the world ended right there, until he heard stories from the birds about how vast, mysterious, and extraordinary everything truly was. With no hope of changing his fate, his life is transformed when he meets Dr. Mantis, a scientist with the appearance of a praying mantis who, sensing in Plant an uncommon intelligence and will, builds him a body so he could finally express himself and explore the world. And this is only the beginning: a grand fantasy saga recognized by the country's leading awards and praised by major names in the comics industry.",
     tone: "garnet",
   },
   {

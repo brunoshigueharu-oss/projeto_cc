@@ -1,5 +1,43 @@
-import type { Book } from "@/lib/data/schemas";
+import type { Book, Locale } from "@/lib/data/schemas";
 import { formatDate } from "@/lib/format";
+
+const LABELS: Record<
+  Locale,
+  {
+    heading: string;
+    isbn: string;
+    pages: string;
+    dimensions: string;
+    weight: string;
+    language: string;
+    format: string;
+    edition: string;
+    publishedAt: string;
+  }
+> = {
+  pt: {
+    heading: "Especificações Técnicas",
+    isbn: "ISBN",
+    pages: "Páginas",
+    dimensions: "Dimensões",
+    weight: "Peso",
+    language: "Idioma",
+    format: "Encadernação",
+    edition: "Edição",
+    publishedAt: "Lançamento",
+  },
+  en: {
+    heading: "Technical Specifications",
+    isbn: "ISBN",
+    pages: "Pages",
+    dimensions: "Dimensions",
+    weight: "Weight",
+    language: "Language",
+    format: "Binding",
+    edition: "Edition",
+    publishedAt: "Published",
+  },
+};
 
 /**
  * Ficha técnica, para uso dentro de `AboutBookSection`.
@@ -15,21 +53,23 @@ export function BookSpecs({ book }: { book: Book }) {
     return null;
   }
 
+  const labels = LABELS[book.locale];
+
   const rows: Array<{ label: string; value: string }> = [
-    { label: "ISBN", value: book.specs.isbn },
-    { label: "Páginas", value: String(book.specs.pages) },
-    { label: "Dimensões", value: book.specs.dimensions },
+    { label: labels.isbn, value: book.specs.isbn },
+    { label: labels.pages, value: String(book.specs.pages) },
+    { label: labels.dimensions, value: book.specs.dimensions },
     // Peso só chega em parte das fichas — a linha some quando não veio.
-    ...(book.specs.weight ? [{ label: "Peso", value: book.specs.weight }] : []),
-    { label: "Idioma", value: book.specs.language },
-    { label: "Encadernação", value: book.specs.format },
-    { label: "Edição", value: book.specs.edition },
-    { label: "Lançamento", value: formatDate(book.specs.publishedAt) },
+    ...(book.specs.weight ? [{ label: labels.weight, value: book.specs.weight }] : []),
+    { label: labels.language, value: book.specs.language },
+    { label: labels.format, value: book.specs.format },
+    { label: labels.edition, value: book.specs.edition },
+    { label: labels.publishedAt, value: formatDate(book.specs.publishedAt, book.locale) },
   ];
 
   return (
     <div className="w-full">
-      <h3 className="font-display text-xl text-foreground sm:text-2xl">Especificações Técnicas</h3>
+      <h3 className="font-display text-xl text-foreground sm:text-2xl">{labels.heading}</h3>
 
       <dl className="mt-6">
         {rows.map((row) => (

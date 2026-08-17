@@ -14,11 +14,10 @@ const priceFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
-  day: "2-digit",
-  month: "long",
-  year: "numeric",
-});
+const dateFormatters = {
+  pt: new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }),
+  en: new Intl.DateTimeFormat("en-US", { day: "2-digit", month: "long", year: "numeric" }),
+};
 
 const shortDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   day: "2-digit",
@@ -32,8 +31,8 @@ export function formatPrice(amountInCents: number): string {
 }
 
 /** Recebe data ISO ("2025-10-14"). O `T00:00` evita deslocamento de fuso. */
-export function formatDate(isoDate: string): string {
-  return dateFormatter.format(new Date(`${isoDate}T00:00:00`));
+export function formatDate(isoDate: string, locale: "pt" | "en" = "pt"): string {
+  return dateFormatters[locale].format(new Date(`${isoDate}T00:00:00`));
 }
 
 export function formatDateRange(startsAt: string, endsAt: string | null): string {

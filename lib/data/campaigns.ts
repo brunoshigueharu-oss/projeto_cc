@@ -25,8 +25,10 @@ const RAW_CAMPAIGN = {
   status: "ativa",
   tone: "garnet",
   ctaLabel: "Reservar exemplar",
-  ctaHref: "/catalogo/um-bipede-entre-plantas",
-  relatedBookSlugs: ["um-bipede-entre-plantas", "necroplanta"],
+  // Edição em português está esgotada — a campanha aponta para a edição em
+  // inglês, que ocupa o lugar de destaque no catálogo (ver nota em books.ts).
+  ctaHref: "/catalogo/mr-plant-a-biped-among-plants",
+  relatedBookSlugs: ["mr-plant-a-biped-among-plants", "necroplanta"],
   funding: {
     goal: { amount: 3_500_000, currency: "BRL" },
     raised: { amount: 1_245_000, currency: "BRL" },

@@ -5,11 +5,15 @@ import {
   getAllBookSlugs,
   getBookBySlug,
   getCombosForBook,
+  getCompareEditionBaseBook,
   getRelatedBooks,
 } from "./_data-access/get-book";
 import { BookHero } from "./_components/book-hero";
+import { SetHtmlLang } from "./_components/set-html-lang";
 import { ParallaxSection } from "./_components/parallax-section";
 import { AboutBookSection } from "./_components/about-book-section";
+import { BoxContentsSection } from "./_components/box-contents-section";
+import { CompareEditionSection } from "./_components/compare-edition-section";
 import { UpsellCard } from "./_components/upsell-card";
 import { VideoBannerSection } from "./_components/video-banner-section";
 import { UniverseSection } from "./_components/universe-section";
@@ -33,6 +37,11 @@ import { CombosSection } from "./_components/combos-section";
  *   _components/book-hero          abertura escura: capa, título, sinopse, CTA
  *   _components/parallax-section   faixa decorativa opcional (book.parallax)
  *   _components/about-book-section "O Livro" + "Sobre o Autor" + ficha técnica
+ *   _components/box-contents       "o que vem na caixa": vídeo da caixa
+ *                                   abrindo + itens em vídeo, só quando
+ *                                   book.boxContents existe
+ *   _components/compare-edition    "capa base" × "esta edição" com um X entre
+ *                                   elas, só quando book.compareEdition existe
  *   _components/upsell-card        item avulso opcional (book.upsell)
  *   _components/video-banner       faixa de vídeo opcional (book.videoBannerSrc)
  *   _components/universe-section   destaque do universo, só quando o livro
@@ -98,21 +107,27 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
   const { book, universe } = detail;
   const relatedBooks = await getRelatedBooks(book);
   const combos = await getCombosForBook(book);
+  const compareEditionBaseBook = await getCompareEditionBaseBook(book);
 
   return (
     <>
+      <SetHtmlLang locale={book.locale} />
       <BookHero book={book} universe={universe} />
       <ParallaxSection layers={book.parallax ?? []} />
       <AboutBookSection book={book} />
+      <BoxContentsSection book={book} />
+      <CompareEditionSection book={book} baseBook={compareEditionBaseBook} />
       <UpsellCard book={book} />
       <VideoBannerSection book={book} />
       <UniverseSection universe={universe} book={book} />
-      <CollectionsGuideSection universe={universe} />
+      <CollectionsGuideSection universe={universe} locale={book.locale} />
       {book.universeFamily ? (
         <UniverseFamilySection book={book} universe={universe} />
-      ) : (
+      ) : book.universeSlug !== "robo-de-madeira" ? (
+        // robo-de-madeira só tem as duas edições entre si — "outros livros
+        // deste universo" ficaria mostrando a outra edição do mesmo título.
         <RelatedBooks books={relatedBooks} universe={universe} />
-      )}
+      ) : null}
       <CombosSection combos={combos} />
     </>
   );

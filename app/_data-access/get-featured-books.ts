@@ -1,4 +1,4 @@
-import { BOOKS } from "@/lib/data/books";
+import { PUBLISHED_BOOKS } from "@/lib/data/books";
 import type { Book } from "@/lib/data/schemas";
 
 /**
@@ -6,5 +6,5 @@ import type { Book } from "@/lib/data/schemas";
  * CMS ou banco no futuro, sem precisar alterar nenhum call site.
  */
 export async function getFeaturedBooks(): Promise<readonly Book[]> {
-  return BOOKS.filter((book) => book.featured);
+  return PUBLISHED_BOOKS.filter((book) => book.featured);
 }
