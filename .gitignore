@@ -37,3 +37,6 @@ next-env.d.ts
 # hook-managed dev server log
 .claude/dev-server.log
 .env*
+
+# material bruto da editora (imagens, videos, textos)
+/Hocus Pocus Arquivos/
