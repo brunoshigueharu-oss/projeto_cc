@@ -13,13 +13,20 @@ export type Catalog = {
  * Declarada `async` de propósito, mesmo sem I/O — mesmo padrão de
  * app/_data-access/get-hero-banners.ts: ponto de troca para CMS/DB futuro sem
  * alterar o call site.
+ *
+ * `universeSlug` filtra o catálogo para um único universo (ver
+ * `/catalogo?universo=<slug>` em `book-hero.tsx`) — omitido ou sem
+ * correspondência, devolve o catálogo completo.
  */
-export async function getCatalog(): Promise<Catalog> {
-  const universeSlugsWithBooks = new Set(PUBLISHED_BOOKS.map((book) => book.universeSlug));
+export async function getCatalog(universeSlug?: string): Promise<Catalog> {
+  const books = universeSlug
+    ? PUBLISHED_BOOKS.filter((book) => book.universeSlug === universeSlug)
+    : PUBLISHED_BOOKS;
+  const universeSlugsWithBooks = new Set(books.map((book) => book.universeSlug));
 
   return {
-    books: PUBLISHED_BOOKS,
-    totalBooks: PUBLISHED_BOOKS.length,
+    books,
+    totalBooks: books.length,
     totalUniverses: universeSlugsWithBooks.size,
   };
 }
