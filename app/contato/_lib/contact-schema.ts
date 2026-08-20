@@ -25,8 +25,15 @@ export const contactSchema = z.object({
     .trim()
     .min(20, "Conte um pouco mais — pelo menos 20 caracteres.")
     .max(2000, "Máximo de 2000 caracteres."),
-  /** Honeypot: bots preenchem, humanos não veem. Vazio é o esperado. */
-  website: z.string().max(0).optional(),
+  /**
+   * Honeypot: bots preenchem, humanos não veem. Vazio é o esperado.
+   *
+   * Sem limite de tamanho aqui de propósito: se o schema rejeitasse um valor
+   * não-vazio, `safeParse` falharia com um erro de validação citando o nome
+   * do campo — denunciando o honeypot e pulando a resposta de "sucesso
+   * falso" que a Server Action (`send-message.ts`) já implementa.
+   */
+  website: z.string().optional(),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
