@@ -114,6 +114,7 @@ const RAW_BOOKS = [
     title: "Mr. Plant — A Biped Among Plants",
     subtitle: "Graphic Novel — Vol. 1",
     universeSlug: "necroplanta",
+    locale: "en",
     author: GUSTAVO,
     synopsis:
       "Nesta edição canônica, acompanhamos Planta desde seu nascimento até o início de sua maior aventura. Durante um experimento, Planta acaba sendo lançado para fora de sua própria realidade e cai em uma espécie de \"fresta\" entre mundos, um \"não lugar\" formado por corredores infinitesimais que conectam diferentes dimensões. É nesse labirinto impossível que vive o solitário Arruard, uma raposa violinista que carrega consigo uma misteriosa caixa de chaves mágicas, cada uma capaz de abrir passagem para diferentes dimensões. Uma ameaça silenciosa, muito maior e mais antiga do que eles poderiam imaginar, começa a cercá-los enquanto Planta e Arruard atravessam dimensões desconhecidas em uma longa jornada de volta para casa, enfrentando mundos cada vez mais estranhos, perigosos e imprevisíveis.",
