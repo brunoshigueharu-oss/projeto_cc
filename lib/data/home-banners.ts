@@ -70,12 +70,13 @@ const RAW_HOME_BANNERS = [
 ] as const;
 
 export const HOME_BANNERS: readonly HomeBanner[] = RAW_HOME_BANNERS.flatMap((raw) => {
-  const banner = homeBannerSchema.parse(raw);
-  const bookSlug = "bookSlug" in raw ? raw.bookSlug : banner.slug;
+  const bookSlug = "bookSlug" in raw ? raw.bookSlug : raw.slug;
   const book = BOOKS_BY_SLUG.get(bookSlug);
   if (!book) {
     throw new Error(`Banner da Home aponta para um livro que não existe em books.ts: ${bookSlug}`);
   }
+
+  const banner = homeBannerSchema.parse({ ...raw, bookTitle: book.title });
   // Livro despublicado: some do carrossel sem precisar remover o banner daqui.
   return book.published ? [banner] : [];
 });

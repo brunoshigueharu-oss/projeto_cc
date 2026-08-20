@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { HomeBanner } from "@/lib/data/schemas";
@@ -21,6 +21,8 @@ type HeroProps = {
  */
 export function Hero({ banners }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   if (banners.length === 0) return null;
 
@@ -29,19 +31,43 @@ export function Hero({ banners }: HeroProps) {
 
   function goTo(index: number) {
     setActiveIndex((index + banners.length) % banners.length);
+    // Cada troca de banner monta um <video> novo (key={banner.slug}), que já
+    // volta a tocar sozinho (autoplay) — o estado do botão acompanha.
+    setIsPlaying(true);
+  }
+
+  function handleTogglePlayback() {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
   }
 
   return (
     <section className="relative overflow-hidden bg-background">
-      <Link href={banner.href} className="block aspect-square w-full sm:aspect-[1785/650]">
+      {/* O botão de pausa fica fora do <Link> de propósito: não pode ficar
+          aninhado num <a> (HTML inválido, e o clique nele disparia a
+          navegação) — por isso é irmão, posicionado por cima. */}
+      <Link
+        href={banner.href}
+        aria-label={`Ver ${banner.bookTitle}`}
+        className="block aspect-square w-full sm:aspect-[1785/650]"
+      >
         <video
           key={banner.slug}
+          ref={videoRef}
           aria-hidden="true"
           className="size-full object-cover"
           autoPlay
           loop
           muted
           playsInline
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
         >
           {banner.videoSrcMobile && (
             <source src={banner.videoSrcMobile} media="(max-width: 639px)" />
@@ -49,6 +75,22 @@ export function Hero({ banners }: HeroProps) {
           <source src={banner.videoSrc} />
         </video>
       </Link>
+
+      <button
+        type="button"
+        onClick={handleTogglePlayback}
+        aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
+        className={cn(
+          CAROUSEL_ARROW_CLASSNAME,
+          "left-4 top-auto bottom-6 translate-y-0 sm:bottom-8",
+        )}
+      >
+        {isPlaying ? (
+          <Pause className="size-4 fill-current" />
+        ) : (
+          <Play className="size-4 fill-current" />
+        )}
+      </button>
 
       {hasMultipleBanners && (
         <>

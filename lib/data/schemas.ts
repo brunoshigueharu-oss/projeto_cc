@@ -318,5 +318,7 @@ export const homeBannerSchema = z.object({
   videoSrcMobile: z.string().min(1).optional(),
   /** Página do livro para onde o banner leva ao ser clicado. */
   href: z.string().min(1),
+  /** Título do livro do banner — vira o rótulo acessível do link no hero. */
+  bookTitle: z.string().min(1),
 });
 export type HomeBanner = z.infer<typeof homeBannerSchema>;
