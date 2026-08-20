@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+build
+.git
+.env
+.env*.local
+*.md
+.playwright-mcp
+.claude/dev-server.log
+Hocus Pocus Arquivos
