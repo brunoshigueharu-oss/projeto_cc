@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 
 import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
-import { buttonVariants } from "@/components/ui/button";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
+import { AddToCartButton } from "./add-to-cart-button";
 import { BookGallery } from "./book-gallery";
 import { BookSynopsis } from "./book-synopsis";
 
@@ -24,9 +22,7 @@ const LABELS: Record<
     byAuthor: (name: string) => string;
     buy: string;
     reserve: string;
-    opensInNewTab: string;
-    buyLinkSoonTitle: string;
-    buyLinkSoonSr: string;
+    added: string;
     soldOut: string;
     seeUniverse: (name: string) => string;
   }
@@ -37,9 +33,7 @@ const LABELS: Record<
     byAuthor: (name) => `Por ${name}`,
     buy: "Comprar",
     reserve: "Reservar",
-    opensInNewTab: "(abre em nova aba)",
-    buyLinkSoonTitle: "Link de compra em breve",
-    buyLinkSoonSr: "— link de compra em breve",
+    added: "Adicionado!",
     soldOut: "Tiragem esgotada",
     seeUniverse: (name) => `Ver o universo ${name}`,
   },
@@ -49,9 +43,7 @@ const LABELS: Record<
     byAuthor: (name) => `By ${name}`,
     buy: "Buy",
     reserve: "Reserve",
-    opensInNewTab: "(opens in a new tab)",
-    buyLinkSoonTitle: "Purchase link coming soon",
-    buyLinkSoonSr: "— purchase link coming soon",
+    added: "Added!",
     soldOut: "Sold out",
     seeUniverse: (name) => `See the ${name} universe`,
   },
@@ -62,7 +54,7 @@ const LABELS: Record<
  */
 export function BookHero({ book, universe }: BookHeroProps) {
   const isAvailable = book.status === "disponivel";
-  const isPurchasable = (isAvailable || book.status === "pre-venda") && Boolean(book.buyUrl);
+  const isPurchasable = isAvailable || book.status === "pre-venda";
   const labels = LABELS[book.locale];
 
   return (
@@ -134,39 +126,12 @@ export function BookHero({ book, universe }: BookHeroProps) {
 
           <div className="mt-6 flex flex-wrap items-center gap-5">
             {isPurchasable ? (
-              <a
-                href={book.buyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ variant: "accent", size: "lg" }),
-                  "h-11 gap-2 rounded-full px-7",
-                )}
-              >
-                {isAvailable ? labels.buy : labels.reserve}
-                <ExternalLink className="size-4" aria-hidden="true" />
-                <span className="sr-only">{labels.opensInNewTab}</span>
-              </a>
-            ) : isAvailable || book.status === "pre-venda" ? (
-              // Título à venda, mas sem `buyUrl` cadastrado ainda: o CTA já
-              // aparece na forma final, só desabilitado — basta preencher o
-              // link em `lib/data/books.ts` para ele passar a levar à loja.
-              // `aria-disabled` em vez de `disabled`: o botão continua
-              // focável, então quem navega por teclado/leitor de tela ainda
-              // ouve o porquê de ele não levar a lugar nenhum.
-              <button
-                type="button"
-                aria-disabled="true"
-                title={labels.buyLinkSoonTitle}
-                className={cn(
-                  buttonVariants({ variant: "accent", size: "lg" }),
-                  "h-11 gap-2 rounded-full px-7",
-                  "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
-                )}
-              >
-                {isAvailable ? labels.buy : labels.reserve}
-                <span className="sr-only">{labels.buyLinkSoonSr}</span>
-              </button>
+              <AddToCartButton
+                type="book"
+                slug={book.slug}
+                label={isAvailable ? labels.buy : labels.reserve}
+                addedLabel={labels.added}
+              />
             ) : (
               <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
                 {labels.soldOut}

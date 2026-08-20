@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito_Sans, Poppins } from "next/font/google";
 
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { CartProvider } from "@/lib/cart/cart-context";
 import "./globals.css";
 
 // Únicas tipografias do projeto: Poppins (heading) e Nunito Sans (texto).
@@ -38,11 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Pular para o conteúdo
         </a>
-        <SiteHeader />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

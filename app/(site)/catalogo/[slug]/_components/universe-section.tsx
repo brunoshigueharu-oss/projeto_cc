@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Bell, ExternalLink } from "lucide-react";
+import { Bell } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 
+import { AddToCartButton } from "./add-to-cart-button";
 import { UniverseShowcaseImage } from "./universe-showcase-image";
 
 type UniverseSectionProps = {
@@ -17,36 +18,30 @@ const LABELS: Record<
   {
     reserve: string;
     buy: string;
+    added: string;
     soldOutEdition: string;
     preOrderEdition: string;
     availableEdition: string;
     notifyMe: string;
-    opensInNewTab: string;
-    buyLinkSoonTitle: string;
-    buyLinkSoonSr: string;
   }
 > = {
   pt: {
     reserve: "Reservar",
     buy: "Comprar",
+    added: "Adicionado!",
     soldOutEdition: "Esgotado nesta edição",
     preOrderEdition: "Em pré-venda",
     availableEdition: "Disponível nesta edição",
     notifyMe: "Avise-me quando estiver disponível",
-    opensInNewTab: "(abre em nova aba)",
-    buyLinkSoonTitle: "Link de compra em breve",
-    buyLinkSoonSr: "— link de compra em breve",
   },
   en: {
     reserve: "Reserve",
     buy: "Buy",
+    added: "Added!",
     soldOutEdition: "Sold out in this edition",
     preOrderEdition: "Pre-order",
     availableEdition: "Available in this edition",
     notifyMe: "Notify me when available",
-    opensInNewTab: "(opens in a new tab)",
-    buyLinkSoonTitle: "Purchase link coming soon",
-    buyLinkSoonSr: "— purchase link coming soon",
   },
 };
 
@@ -71,10 +66,6 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
     const isSoldOut = book.status === "esgotado";
     const isPreOrder = book.status === "pre-venda";
     const ctaLabel = isPreOrder ? labels.reserve : labels.buy;
-    const ctaClassName = cn(
-      buttonVariants({ variant: "accent", size: "lg" }),
-      "h-11 gap-2 rounded-full px-7",
-    );
 
     return (
       <section className="relative overflow-hidden bg-background text-foreground border-t border-border">
@@ -116,33 +107,13 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
                   <Bell className="size-4" aria-hidden="true" />
                   {labels.notifyMe}
                 </Link>
-              ) : book.buyUrl ? (
-                <a
-                  href={book.buyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={ctaClassName}
-                >
-                  {ctaLabel}
-                  <ExternalLink className="size-4" aria-hidden="true" />
-                  <span className="sr-only">{labels.opensInNewTab}</span>
-                </a>
               ) : (
-                // Sem `buyUrl` ainda — mesmo tratamento do CTA do hero: botão
-                // na forma final, desabilitado até a loja existir, mas ainda
-                // focável (ver nota em `book-hero.tsx`).
-                <button
-                  type="button"
-                  aria-disabled="true"
-                  title={labels.buyLinkSoonTitle}
-                  className={cn(
-                    ctaClassName,
-                    "cursor-not-allowed opacity-50 hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)]",
-                  )}
-                >
-                  {ctaLabel}
-                  <span className="sr-only">{labels.buyLinkSoonSr}</span>
-                </button>
+                <AddToCartButton
+                  type="book"
+                  slug={book.slug}
+                  label={ctaLabel}
+                  addedLabel={labels.added}
+                />
               )}
             </div>
           </div>

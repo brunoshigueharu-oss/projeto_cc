@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
+import { signOut } from "@/lib/supabase/actions/sign-out";
 import { NavLink } from "./nav-link";
 
 const PANEL_LINK_CLASS =
@@ -16,7 +17,7 @@ const PANEL_LINK_CLASS =
  * aberto por cima da página nova depois de uma navegação client-side. Aqui o
  * estado é fechado no clique do link, então a navegação sempre limpa o menu.
  */
-export function MobileNav() {
+export function MobileNav({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClose() {
@@ -58,13 +59,28 @@ export function MobileNav() {
             </NavLink>
           ))}
           <NavLink
-            href="/perfil"
+            href="/carrinho"
+            onClick={handleClose}
+            className={PANEL_LINK_CLASS}
+            activeClassName="bg-muted text-primary"
+          >
+            Carrinho
+          </NavLink>
+          <NavLink
+            href={isAuthenticated ? "/perfil" : "/login"}
             onClick={handleClose}
             className={PANEL_LINK_CLASS}
             activeClassName="bg-muted text-primary"
           >
             Minha conta
           </NavLink>
+          {isAuthenticated ? (
+            <form action={signOut}>
+              <button type="submit" className={`w-full text-left ${PANEL_LINK_CLASS}`}>
+                Sair
+              </button>
+            </form>
+          ) : null}
         </nav>
       ) : null}
     </div>

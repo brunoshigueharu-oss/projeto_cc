@@ -3,10 +3,8 @@
 import { useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
 
 import { BookCover } from "@/components/book-cover";
-import { buttonVariants } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -17,6 +15,8 @@ import {
 import type { Book, Combo } from "@/lib/data/schemas";
 import { TONE_BACKGROUND } from "@/lib/tone";
 import { cn } from "@/lib/utils";
+
+import { AddToCartButton } from "./add-to-cart-button";
 
 /**
  * Preço já formatado por `combos-section.tsx` (Server Component): `formatPrice`
@@ -170,25 +170,13 @@ function ComboContent({
         ) : null}
       </div>
 
-      {combo.buyUrl ? (
-        <a
-          href={combo.buyUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            buttonVariants({ variant: "accent", size: "lg" }),
-            "mt-2 h-11 gap-2 rounded-full px-7",
-          )}
-        >
-          {combo.ctaLabel}
-          <ExternalLink className="size-4" aria-hidden="true" />
-          <span className="sr-only">(abre em nova aba)</span>
-        </a>
-      ) : (
-        <span className="mt-2 rounded-full border border-white/40 px-7 py-3 text-sm font-medium text-white/70">
-          Link de compra em breve
-        </span>
-      )}
+      <AddToCartButton
+        type="combo"
+        slug={combo.slug}
+        label={combo.ctaLabel}
+        addedLabel="Adicionado!"
+        className="mt-2"
+      />
     </div>
   );
 }

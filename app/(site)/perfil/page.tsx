@@ -12,18 +12,14 @@ export const metadata: Metadata = {
   description: "Sua estante, seus pedidos e seus dados na Hocus Pocus.",
 };
 
-/**
- * MAQUETE DE INTERFACE.
- *
- * Não há autenticação: a página renderiza dados fictícios de
- * `_data-access/get-profile.ts` para validar o layout antes de investir em
- * backend. Ao plugar login real, nada aqui muda além da origem dos dados.
- */
-
-const ORDER_STATUS: Record<Order["status"], { label: string; variant: "secondary" | "default" | "outline" }> = {
+const ORDER_STATUS: Record<
+  Order["status"],
+  { label: string; variant: "secondary" | "default" | "outline" }
+> = {
   entregue: { label: "Entregue", variant: "outline" },
   "em-transito": { label: "Em trânsito", variant: "default" },
   processando: { label: "Processando", variant: "secondary" },
+  cancelado: { label: "Cancelado", variant: "secondary" },
 };
 
 export default async function PerfilPage() {
@@ -55,13 +51,8 @@ export default async function PerfilPage() {
               Leitora desde {formatDate(profile.memberSince)}
             </p>
           </div>
-          <Badge>{profile.plan}</Badge>
+          {profile.plan ? <Badge>{profile.plan}</Badge> : null}
         </div>
-
-        <p className="mt-8 max-w-lg rounded-lg border border-border bg-muted px-4 py-3 font-serif text-sm text-muted-foreground">
-          Área de demonstração — os dados exibidos são fictícios e não há login
-          ativo.
-        </p>
       </PageHeader>
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
@@ -99,9 +90,9 @@ export default async function PerfilPage() {
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {formatDate(order.placedAt)} ·{" "}
-                    {order.bookSlugs.length === 1
+                    {order.items.length === 1
                       ? "1 item"
-                      : `${order.bookSlugs.length} itens`}
+                      : `${order.items.length} itens`}
                   </p>
                 </div>
 

@@ -55,6 +55,8 @@
 
 ## Common Gotchas
 - `revalidatePath()` e `revalidateTag()` só funcionam em Server Actions/Route Handlers
-- Middleware em `middleware.ts` na raiz — não dentro de `app/`
+- Proxy (antigo "middleware") em `proxy.ts` na raiz — não dentro de `app/`.
+  Next.js 16 renomeou a convenção: arquivo `proxy.ts`, função exportada
+  `proxy` (não `middleware`)
 - Supabase client no server: usar `createServerClient` (cookies). No client: `createBrowserClient`
 - Imagens externas precisam de domínio autorizado em `next.config.ts` (remotePatterns)
