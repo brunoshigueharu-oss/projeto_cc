@@ -34,3 +34,24 @@ export async function requireSession() {
 export async function getOptionalSession() {
   return getSession();
 }
+
+/** Para Server Components/data-access do admin — exige sessão E role
+ * 'admin'. Segunda camada de defesa: o `proxy.ts` já bloqueia `/admin/*`
+ * antes de renderizar, e a RLS barra mesmo que as duas primeiras falhem. */
+export async function requireAdminSession() {
+  const { supabase, user } = await requireSession();
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (error) throw error;
+
+  if (profile.role !== "admin") {
+    redirect("/");
+  }
+
+  return { supabase, user };
+}
