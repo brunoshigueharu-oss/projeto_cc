@@ -53,3 +53,38 @@ export async function createOrder(
   if (error) throw error;
   return data;
 }
+
+export type OrderWithProfile = Tables<"orders"> & {
+  profiles: Pick<Tables<"profiles">, "name" | "email"> | null;
+};
+
+export async function getAllOrders(
+  supabase: SupabaseClient<Database>,
+): Promise<OrderWithProfile[]> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, profiles(name, email)")
+    .order("placed_at", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export type OrderWithItemsAndAddress = OrderWithItems & {
+  profiles: Pick<Tables<"profiles">, "name" | "email"> | null;
+  addresses: Tables<"addresses"> | null;
+};
+
+export async function getOrderByNumber(
+  supabase: SupabaseClient<Database>,
+  orderNumber: string,
+): Promise<OrderWithItemsAndAddress | null> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, order_items(*), profiles(name, email), addresses(*)")
+    .eq("order_number", orderNumber)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
