@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import type { Database } from "./database.types";
 
-const PROTECTED_PATHS = ["/perfil", "/carrinho", "/checkout"];
+const PROTECTED_PATHS = ["/perfil", "/carrinho", "/checkout", "/admin"];
 
 export async function updateSession(request: NextRequest) {
   const response = NextResponse.next({ request });
@@ -39,6 +39,24 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/login";
     url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
+  }
+
+  // Checagem extra só pra `/admin/*` — role não está no JWT, então isso
+  // exige uma query; as demais rotas protegidas não pagam esse custo.
+  const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+
+  if (data?.claims && isAdminPath) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.claims.sub)
+      .single();
+
+    if (profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;
