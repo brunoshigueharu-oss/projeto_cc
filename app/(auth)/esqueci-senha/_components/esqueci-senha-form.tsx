@@ -6,35 +6,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
-import { login } from "../_actions/login";
-import { loginSchema, type LoginInput } from "../_lib/login-schema";
+import { esqueciSenha } from "../_actions/esqueci-senha";
+import { esqueciSenhaSchema, type EsqueciSenhaInput } from "../_lib/esqueci-senha-schema";
 
-export function LoginForm({ redirectTo }: { redirectTo?: string }) {
+export function EsqueciSenhaForm() {
   const [result, setResult] = useState<FormResult | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+  } = useForm<EsqueciSenhaInput>({
+    resolver: zodResolver(esqueciSenhaSchema),
+    defaultValues: { email: "" },
   });
 
-  async function onSubmit(values: LoginInput) {
-    const response = await login(values, redirectTo);
-    // Em caso de sucesso a action já faz redirect() e não retorna aqui.
-    if (!response.success) {
-      setResult({ ok: false, message: response.message ?? "Não foi possível entrar." });
-    }
+  async function onSubmit(values: EsqueciSenhaInput) {
+    const response = await esqueciSenha(values);
+    setResult({ ok: response.success, message: response.message ?? "" });
+  }
+
+  if (result?.ok) {
+    return (
+      <p
+        role="status"
+        aria-live="polite"
+        className="rounded-lg border border-border bg-muted px-4 py-3 font-serif text-sm text-foreground"
+      >
+        {result.message}
+      </p>
+    );
   }
 
   return (
@@ -54,26 +58,6 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
           <FieldError errors={[errors.email]} />
         </Field>
 
-        <Field>
-          <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="password">Senha</FieldLabel>
-            <Link
-              href="/esqueci-senha"
-              className="text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground"
-            >
-              Esqueci minha senha
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            aria-invalid={errors.password ? true : undefined}
-            {...register("password")}
-          />
-          <FieldError errors={[errors.password]} />
-        </Field>
-
         <div className="flex flex-wrap items-center gap-4">
           <Button
             type="submit"
@@ -81,19 +65,19 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
             disabled={isSubmitting}
             className="h-11 rounded-full px-7"
           >
-            {isSubmitting ? "Entrando…" : "Entrar"}
+            {isSubmitting ? "Enviando…" : "Enviar link"}
           </Button>
 
           <FormStatus result={result} />
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Ainda não tem conta?{" "}
+          Lembrou a senha?{" "}
           <Link
-            href="/cadastro"
+            href="/login"
             className="font-medium text-foreground underline underline-offset-4"
           >
-            Cadastre-se
+            Entrar
           </Link>
         </p>
       </FieldGroup>
