@@ -30,9 +30,15 @@ export async function login(
   const { error } = await supabase.auth.signInWithPassword(validation.data);
 
   if (error) {
+    // Supabase distingue "senha errada" de "e-mail ainda não confirmado" —
+    // antes essa mensagem era genérica pra qualquer erro e confundia quem
+    // tinha acabado de se cadastrar e ainda não clicou no link do e-mail.
     return {
       success: false,
-      message: "E-mail ou senha incorretos.",
+      message:
+        error.code === "email_not_confirmed"
+          ? "Confirme seu e-mail antes de entrar — enviamos um link de confirmação no cadastro."
+          : "E-mail ou senha incorretos.",
     };
   }
 
