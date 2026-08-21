@@ -46,11 +46,15 @@ export async function updateSession(request: NextRequest) {
   const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
 
   if (data?.claims && isAdminPath) {
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", data.claims.sub)
       .single();
+
+    if (error) {
+      console.error("[proxy] admin role check failed:", error);
+    }
 
     if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
