@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FormStatus, type FormResult } from "@/components/form-status";
 import { sendMessage } from "../_actions/send-message";
 import {
   CONTACT_SUBJECTS,
@@ -33,9 +34,7 @@ const SELECT_CLASS =
  * `fieldState.error` do RHF — daí a composição abaixo.
  */
 export function ContactForm() {
-  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(
-    null,
-  );
+  const [result, setResult] = useState<FormResult | null>(null);
 
   const {
     register,
@@ -133,19 +132,7 @@ export function ContactForm() {
             {isSubmitting ? "Enviando…" : "Enviar mensagem"}
           </Button>
 
-          {result ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className={
-                result.ok
-                  ? "text-sm text-foreground"
-                  : "text-sm text-destructive"
-              }
-            >
-              {result.message}
-            </p>
-          ) : null}
+          <FormStatus result={result} />
         </div>
       </FieldGroup>
     </form>

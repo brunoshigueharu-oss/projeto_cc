@@ -3,6 +3,7 @@ import { Bell } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { isPreOrder as isBookPreOrder, isSoldOut as isBookSoldOut } from "@/lib/data/book-availability";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 
 import { AddToCartButton } from "./add-to-cart-button";
@@ -63,8 +64,8 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
     const labels = LABELS[book.locale];
     const description =
       book.locale === "en" ? (universe.descriptionEn ?? universe.description) : universe.description;
-    const isSoldOut = book.status === "esgotado";
-    const isPreOrder = book.status === "pre-venda";
+    const isSoldOut = isBookSoldOut(book.status);
+    const isPreOrder = isBookPreOrder(book.status);
     const ctaLabel = isPreOrder ? labels.reserve : labels.buy;
 
     return (

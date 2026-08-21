@@ -4,7 +4,7 @@ import { BookCard } from "@/components/book-card";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatPrice } from "@/lib/format";
-import { getOrders, getProfile, getShelf } from "./_data-access/get-profile";
+import { getPerfilData } from "./_data-access/get-profile";
 import type { Order } from "./_data-access/get-profile";
 
 export const metadata: Metadata = {
@@ -23,11 +23,7 @@ const ORDER_STATUS: Record<
 };
 
 export default async function PerfilPage() {
-  const [profile, orders, shelf] = await Promise.all([
-    getProfile(),
-    getOrders(),
-    getShelf(),
-  ]);
+  const { profile, orders, shelf } = await getPerfilData();
 
   const initials = profile.name
     .split(" ")

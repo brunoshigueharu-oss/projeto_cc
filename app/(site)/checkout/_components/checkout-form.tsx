@@ -15,18 +15,15 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormStatus, type FormResult } from "@/components/form-status";
 import { useCart } from "@/lib/cart/cart-context";
 import { formatPriceClient } from "@/lib/cart/format-price";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createOrder } from "../_actions/create-order";
 import { UF_LIST, newAddressSchema, type NewAddressInput } from "../_lib/checkout-schema";
+
+const SELECT_CLASS =
+  "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
 type CheckoutFormProps = {
   savedAddresses: readonly Tables<"addresses">[];
@@ -41,7 +38,7 @@ export function CheckoutForm({ savedAddresses }: CheckoutFormProps) {
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new">(
     defaultAddress?.id ?? "new",
   );
-  const [result, setResult] = useState<{ message: string } | null>(null);
+  const [result, setResult] = useState<FormResult | null>(null);
 
   const {
     register,
@@ -81,7 +78,7 @@ export function CheckoutForm({ savedAddresses }: CheckoutFormProps) {
     });
 
     if (!response.success) {
-      setResult({ message: response.message ?? "Não foi possível concluir o pedido." });
+      setResult({ ok: false, message: response.message ?? "Não foi possível concluir o pedido." });
       return;
     }
 
@@ -182,24 +179,22 @@ export function CheckoutForm({ savedAddresses }: CheckoutFormProps) {
               </Field>
               <Field>
                 <FieldLabel htmlFor="state">UF</FieldLabel>
-                <Select
-                  onValueChange={(value) =>
-                    setValue("state", value as NewAddressInput["state"], {
-                      shouldValidate: true,
-                    })
-                  }
+                <select
+                  id="state"
+                  className={SELECT_CLASS}
+                  defaultValue=""
+                  aria-invalid={errors.state ? true : undefined}
+                  {...register("state")}
                 >
-                  <SelectTrigger id="state" aria-invalid={errors.state ? true : undefined}>
-                    <SelectValue placeholder="UF" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {UF_LIST.map((uf) => (
-                      <SelectItem key={uf} value={uf}>
-                        {uf}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>
+                    UF
+                  </option>
+                  {UF_LIST.map((uf) => (
+                    <option key={uf} value={uf}>
+                      {uf}
+                    </option>
+                  ))}
+                </select>
                 <FieldError errors={[errors.state]} />
               </Field>
             </Field>
@@ -242,11 +237,7 @@ export function CheckoutForm({ savedAddresses }: CheckoutFormProps) {
           {isSubmitting ? "Finalizando…" : "Confirmar pedido"}
         </Button>
 
-        {result ? (
-          <p role="status" aria-live="polite" className="text-sm text-destructive">
-            {result.message}
-          </p>
-        ) : null}
+        <FormStatus result={result} />
       </FieldGroup>
     </form>
   );

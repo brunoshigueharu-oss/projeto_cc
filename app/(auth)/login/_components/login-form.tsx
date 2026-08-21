@@ -13,11 +13,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { FormStatus, type FormResult } from "@/components/form-status";
 import { login } from "../_actions/login";
 import { loginSchema, type LoginInput } from "../_lib/login-schema";
 
 export function LoginForm({ redirectTo }: { redirectTo?: string }) {
-  const [result, setResult] = useState<{ message: string } | null>(null);
+  const [result, setResult] = useState<FormResult | null>(null);
 
   const {
     register,
@@ -32,7 +33,7 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
     const response = await login(values, redirectTo);
     // Em caso de sucesso a action já faz redirect() e não retorna aqui.
     if (!response.success) {
-      setResult({ message: response.message ?? "Não foi possível entrar." });
+      setResult({ ok: false, message: response.message ?? "Não foi possível entrar." });
     }
   }
 
@@ -75,11 +76,7 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
             {isSubmitting ? "Entrando…" : "Entrar"}
           </Button>
 
-          {result ? (
-            <p role="status" aria-live="polite" className="text-sm text-destructive">
-              {result.message}
-            </p>
-          ) : null}
+          <FormStatus result={result} />
         </div>
 
         <p className="text-sm text-muted-foreground">

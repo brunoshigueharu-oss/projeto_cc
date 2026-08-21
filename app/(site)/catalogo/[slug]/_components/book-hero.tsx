@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
+import { isInStock, isPurchasable as isBookPurchasable } from "@/lib/data/book-availability";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 
@@ -53,8 +54,8 @@ const LABELS: Record<
  * Abertura da página de livro, na casca clara (fundo branco).
  */
 export function BookHero({ book, universe }: BookHeroProps) {
-  const isAvailable = book.status === "disponivel";
-  const isPurchasable = isAvailable || book.status === "pre-venda";
+  const isAvailable = isInStock(book.status);
+  const isPurchasable = isBookPurchasable(book.status);
   const labels = LABELS[book.locale];
 
   return (

@@ -1,5 +1,6 @@
 "use server";
 
+import { isSoldOut } from "@/lib/data/book-availability";
 import { BOOKS_BY_SLUG } from "@/lib/data/books";
 import { COMBOS } from "@/lib/data/combos";
 import { createAddress } from "@/lib/supabase/queries/addresses";
@@ -7,7 +8,7 @@ import {
   createOrder as createOrderMutation,
   type CreateOrderItemInput,
 } from "@/lib/supabase/queries/orders";
-import { createClient } from "@/lib/supabase/server";
+import { getOptionalSession } from "@/lib/supabase/session";
 import {
   createOrderSchema,
   type CreateOrderInput,
@@ -29,7 +30,7 @@ function revalidateCartItems(items: CreateOrderInput["items"]): RevalidationResu
   for (const item of items) {
     if (item.item_type === "book") {
       const book = item.book_slug ? BOOKS_BY_SLUG.get(item.book_slug) : undefined;
-      if (!book || book.status === "esgotado") {
+      if (!book || isSoldOut(book.status)) {
         return {
           ok: false,
           message: `"${item.title_snapshot}" não está mais disponível.`,
@@ -77,10 +78,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, message: "Confira os dados do pedido." };
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user } = await getOptionalSession();
 
   if (!user) {
     return { success: false, message: "Sua sessão expirou. Entre novamente." };

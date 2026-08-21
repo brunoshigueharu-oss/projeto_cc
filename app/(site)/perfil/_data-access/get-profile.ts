@@ -3,7 +3,7 @@ import "server-only";
 import { BOOKS_BY_SLUG } from "@/lib/data/books";
 import type { Book } from "@/lib/data/schemas";
 import { getOrdersForUser } from "@/lib/supabase/queries/orders";
-import { requireSession } from "@/lib/supabase/require-session";
+import { requireSession } from "@/lib/supabase/session";
 
 export type Profile = {
   name: string;
@@ -27,31 +27,36 @@ export type Order = {
   items: readonly OrderItem[];
 };
 
-export async function getProfile(): Promise<Profile> {
+export type PerfilData = {
+  profile: Profile;
+  orders: readonly Order[];
+  shelf: readonly Book[];
+};
+
+/**
+ * Uma sessão, uma query de pedidos — `orders`/`shelf` derivam do mesmo
+ * resultado de `getOrdersForUser`, em vez de repetir a query (a estante é só
+ * os livros de pedidos entregues).
+ */
+export async function getPerfilData(): Promise<PerfilData> {
   const { supabase, user } = await requireSession();
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("name, email, plan, created_at")
-    .eq("id", user.id)
-    .single();
+  const [profileRow, rawOrders] = await Promise.all([
+    supabase.from("profiles").select("name, email, plan, created_at").eq("id", user.id).single(),
+    getOrdersForUser(supabase),
+  ]);
 
-  if (error) throw error;
+  if (profileRow.error) throw profileRow.error;
 
-  return {
-    name: data.name,
-    email: data.email,
+  const profile: Profile = {
+    name: profileRow.data.name,
+    email: profileRow.data.email,
     // `formatDate` espera "YYYY-MM-DD" — `created_at` é timestamptz completo.
-    memberSince: data.created_at.slice(0, 10),
-    plan: data.plan,
+    memberSince: profileRow.data.created_at.slice(0, 10),
+    plan: profileRow.data.plan,
   };
-}
 
-export async function getOrders(): Promise<readonly Order[]> {
-  const { supabase } = await requireSession();
-  const orders = await getOrdersForUser(supabase);
-
-  return orders.map((order) => ({
+  const orders: Order[] = rawOrders.map((order) => ({
     id: order.order_number,
     // `formatDate` espera "YYYY-MM-DD" — `placed_at` é timestamptz completo.
     placedAt: order.placed_at.slice(0, 10),
@@ -64,23 +69,20 @@ export async function getOrders(): Promise<readonly Order[]> {
       quantity: item.quantity,
     })),
   }));
-}
-
-export async function getShelf(): Promise<readonly Book[]> {
-  const { supabase } = await requireSession();
-  const orders = await getOrdersForUser(supabase);
 
   const deliveredBookSlugs = new Set(
-    orders
+    rawOrders
       .filter((order) => order.status === "entregue")
       .flatMap((order) => order.order_items)
       .map((item) => item.book_slug)
       .filter((slug): slug is string => Boolean(slug)),
   );
 
-  return Array.from(deliveredBookSlugs).flatMap((slug) => {
+  const shelf = Array.from(deliveredBookSlugs).flatMap((slug) => {
     const book = BOOKS_BY_SLUG.get(slug);
     // Livro despublicado não deve virar link morto na estante.
     return book?.published ? [book] : [];
   });
+
+  return { profile, orders, shelf };
 }

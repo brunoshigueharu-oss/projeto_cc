@@ -14,13 +14,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { FormStatus, type FormResult } from "@/components/form-status";
 import { cadastro } from "../_actions/cadastro";
 import { cadastroSchema, type CadastroInput } from "../_lib/cadastro-schema";
 
 export function CadastroForm() {
-  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(
-    null,
-  );
+  const [result, setResult] = useState<FormResult | null>(null);
 
   const {
     register,
@@ -103,11 +102,7 @@ export function CadastroForm() {
             {isSubmitting ? "Criando conta…" : "Criar conta"}
           </Button>
 
-          {result && !result.ok ? (
-            <p role="status" aria-live="polite" className="text-sm text-destructive">
-              {result.message}
-            </p>
-          ) : null}
+          <FormStatus result={result} />
         </div>
 
         <p className="text-sm text-muted-foreground">

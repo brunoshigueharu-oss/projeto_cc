@@ -1,15 +1,8 @@
-const priceFormatter = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+import { formatPrice } from "@/lib/format-price";
 
 /**
- * Versão client-safe de `lib/format.ts#formatPrice` — aquele módulo é
- * `server-only` de propósito (evita erro de hidratação em conteúdo
- * renderizado no servidor). O carrinho/checkout são client-only
- * (localStorage), sem SSR do conteúdo dinâmico para divergir, mas ainda
- * assim não podem importar um módulo `server-only`.
+ * Alias client-safe de `formatPrice` — `lib/format.ts` é `server-only` de
+ * propósito (ver comentário lá), e o carrinho/checkout são client-only
+ * (localStorage), então não podem importar aquele módulo.
  */
-export function formatPriceClient(amountInCents: number): string {
-  return priceFormatter.format(amountInCents / 100);
-}
+export const formatPriceClient = formatPrice;

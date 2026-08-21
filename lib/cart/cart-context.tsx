@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 
+import { isPurchasable } from "@/lib/data/book-availability";
 import { BOOKS_BY_SLUG } from "@/lib/data/books";
 import { COMBOS } from "@/lib/data/combos";
 
@@ -153,7 +154,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               ...line,
               title: book.title,
               unitPriceCents: book.price.amount,
-              available: book.status !== "esgotado",
+              available: isPurchasable(book.status),
             },
           ];
         }

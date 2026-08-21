@@ -3,7 +3,7 @@ import { CircleUserRound, LogOut } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
 import { signOut } from "@/lib/supabase/actions/sign-out";
-import { createClient } from "@/lib/supabase/server";
+import { getOptionalSession } from "@/lib/supabase/session";
 import { CartLink } from "./cart-link";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
@@ -23,10 +23,7 @@ function getInitials(displayName: string) {
 }
 
 export async function SiteHeader() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user } = await getOptionalSession();
 
   const displayName =
     (user?.user_metadata?.name as string | undefined)?.trim() || user?.email || "";
