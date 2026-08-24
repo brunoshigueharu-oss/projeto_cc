@@ -31,7 +31,7 @@ export function MemberProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- refresh's setState calls happen after an await, not synchronously; false positive for this fetch-on-mount pattern.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- refresh() sets state synchronously on mount (setLoading/setLoggedIn); accepted as one-time cost for initial auth check, not a hot path.
     refresh();
   }, [refresh]);
 
