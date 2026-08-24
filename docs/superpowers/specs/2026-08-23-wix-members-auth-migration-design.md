@@ -164,7 +164,15 @@ Server Components por padrão, `'use client'` só onde precisa):
 - Credenciais inválidas → mensagem genérica (como hoje: "E-mail ou senha
   incorretos"), sem revelar se o e-mail existe.
 - `REQUIRE_EMAIL_VERIFICATION` no cadastro → tela de código, com opção de
-  reenviar.
+  reenviar. **Pendência conhecida (revisão final da Fase 1, 2026-08-24):** a
+  opção de reenviar não foi implementada — a Task 11 do plano nunca a
+  descreveu em nenhum passo, e a implementação bate com o brief da task
+  linha a linha (não é um desvio do implementador, é uma lacuna do próprio
+  plano). Quem perde/não recebe o código hoje fica sem saída fácil: precisa
+  recomeçar o cadastro com o mesmo e-mail, o que colide com
+  `emailAlreadyExists`. Decisão do usuário: adiar pra uma fase futura em vez
+  de bloquear o merge desta — consistente com `/perfil`, `/checkout` e o
+  admin também ficarem como "em manutenção" nesta fase.
 - `REQUIRE_OWNER_APPROVAL` (caso a Wix exija aprovação manual do dono do
   site) → estado "cadastro pendente", sem tratar como erro.
 - Token expirado/refresh falhando → limpar sessão local, tratar como
