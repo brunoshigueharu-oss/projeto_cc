@@ -54,16 +54,28 @@ mais simples, mas exige redeploy pra adicionar um admin; a coleção no Wix
 Data mantém a promessa de "gerenciável pelo painel" que motivou a migração
 inteira.
 
-### 2. Sessão: client-side pras rotas comuns, servidor pro `/admin`
+### 2. Sessão: client-side em toda parte — inclusive `/admin`
 
-- `/perfil`, `/carrinho`, `/checkout`: gate client-side — um componente lê
-  `useMember()` (do provider do cliente Wix) e redireciona pra `/login` se
-  não houver sessão. Aceita-se o trade-off frente ao `proxy.ts` atual: sem
+**Correção pós-implementação (Task 20):** esta seção originalmente previa
+manter `/admin` com "checagem no servidor, mesma garantia de hoje". Isso se
+provou impossível sem cookie de sessão legível pelo servidor — o token do
+Wix Member vive só em `localStorage`, então não há nada que um Server
+Component possa ler antes de renderizar. O que foi de fato implementado:
+
+- `/perfil`, `/carrinho`, `/checkout`, `/admin`: gate client-side — um
+  componente lê `useMember()` (do provider do cliente Wix) e redireciona pra
+  `/login` (ou pra `/`, no caso do admin não autorizado) se não houver
+  sessão válida. Aceita-se o trade-off frente ao `proxy.ts` removido: sem
   bloqueio no servidor antes de renderizar, só depois de montar no client.
   É o padrão que o próprio cliente Wix já entrega pronto.
-- `/admin`: mantém checagem no servidor (mesma garantia de hoje), mas a
-  fonte da verdade passa a ser a coleção do Wix Data (decisão 1) em vez de
-  `profiles.role`.
+- `/admin` especificamente: a fonte da verdade da autorização (coleção
+  `Admins` do Wix Data, decisão 1) só é consultada num Route Handler
+  server-only (`/api/admin/check`), com a Admin API Key nunca saindo do
+  servidor — mas a decisão de renderizar ou não o conteúdo do lado do
+  client continua sendo client-side, com a mesma limitação estrutural das
+  outras rotas. A garantia real contra vazamento de dado sensível nessa
+  fase vem de as páginas do admin não fazerem nenhum data-fetching real (ver
+  Task 22 do plano) — não de um gate server-side, que não existe.
 
 ### 3. Cadastro: verificação por código de 6 dígitos (não link)
 
