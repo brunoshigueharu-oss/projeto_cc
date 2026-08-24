@@ -1731,7 +1731,7 @@ export function SiteHeader() {
               >
                 {getInitials(displayName || "Conta")}
               </Link>
-              <SignOutButton className={ICON_LINK_CLASS}>
+              <SignOutButton aria-label="Sair" className={ICON_LINK_CLASS}>
                 <LogOut className="size-[18px]" aria-hidden="true" />
               </SignOutButton>
             </>
