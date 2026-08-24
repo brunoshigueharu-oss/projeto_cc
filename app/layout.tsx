@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Nunito_Sans, Poppins } from "next/font/google";
 
 import { CartProvider } from "@/lib/cart/cart-context";
+import { MemberProvider } from "@/lib/wix/member-context";
 import "./globals.css";
 
-// Únicas tipografias do projeto: Poppins (heading) e Nunito Sans (texto).
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -37,7 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Pular para o conteúdo
         </a>
-        <CartProvider>{children}</CartProvider>
+        <MemberProvider>
+          <CartProvider>{children}</CartProvider>
+        </MemberProvider>
       </body>
     </html>
   );

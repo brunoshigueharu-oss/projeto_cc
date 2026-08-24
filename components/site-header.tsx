@@ -1,9 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { CircleUserRound, LogOut } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
-import { signOut } from "@/lib/supabase/actions/sign-out";
-import { getOptionalSession } from "@/lib/supabase/session";
+import { useMember } from "@/lib/wix/member-context";
+import { SignOutButton } from "./sign-out-button";
 import { CartLink } from "./cart-link";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
@@ -22,11 +24,11 @@ function getInitials(displayName: string) {
     .toUpperCase();
 }
 
-export async function SiteHeader() {
-  const { user } = await getOptionalSession();
+export function SiteHeader() {
+  const { loggedIn, member, loading } = useMember();
 
   const displayName =
-    (user?.user_metadata?.name as string | undefined)?.trim() || user?.email || "";
+    member?.profile?.nickname || member?.loginEmail || "";
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -53,20 +55,18 @@ export async function SiteHeader() {
         <div className="flex items-center gap-1">
           <CartLink className={ICON_LINK_CLASS} />
 
-          {user ? (
+          {!loading && loggedIn ? (
             <>
               <Link
                 href="/perfil"
                 aria-label="Minha conta"
                 className={`${ICON_LINK_CLASS} text-xs font-medium`}
               >
-                {getInitials(displayName)}
+                {getInitials(displayName || "Conta")}
               </Link>
-              <form action={signOut}>
-                <button type="submit" aria-label="Sair" className={ICON_LINK_CLASS}>
-                  <LogOut className="size-[18px]" aria-hidden="true" />
-                </button>
-              </form>
+              <SignOutButton className={ICON_LINK_CLASS} aria-label="Sair">
+                <LogOut className="size-[18px]" aria-hidden="true" />
+              </SignOutButton>
             </>
           ) : (
             <Link href="/login" aria-label="Entrar" className={ICON_LINK_CLASS}>
@@ -74,7 +74,7 @@ export async function SiteHeader() {
             </Link>
           )}
 
-          <MobileNav isAuthenticated={Boolean(user)} />
+          <MobileNav isAuthenticated={!loading && loggedIn} />
         </div>
       </div>
     </header>

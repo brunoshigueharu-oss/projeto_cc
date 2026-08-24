@@ -1,6 +1,8 @@
+// app/(auth)/login/_components/login-form.tsx
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -14,11 +16,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
-import { login } from "../_actions/login";
+import { useMember } from "@/lib/wix/member-context";
+import { login, MemberAuthError } from "@/lib/wix/members-auth";
 import { loginSchema, type LoginInput } from "../_lib/login-schema";
 
 export function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const [result, setResult] = useState<FormResult | null>(null);
+  const router = useRouter();
+  const { refresh } = useMember();
 
   const {
     register,
@@ -30,10 +35,25 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
   });
 
   async function onSubmit(values: LoginInput) {
-    const response = await login(values, redirectTo);
-    // Em caso de sucesso a action já faz redirect() e não retorna aqui.
-    if (!response.success) {
-      setResult({ ok: false, message: response.message ?? "Não foi possível entrar." });
+    setResult(null);
+    try {
+      const res = await login(values.email, values.password);
+      if (res.state === "SUCCESS") {
+        await refresh();
+        const safeRedirect = redirectTo && /^\/(?!\/|\\)/.test(redirectTo) ? redirectTo : "/perfil";
+        router.push(safeRedirect);
+        return;
+      }
+      // REQUIRE_EMAIL_VERIFICATION / REQUIRE_OWNER_APPROVAL no login (raro):
+      // não construímos uma segunda tela aqui, orienta pro fluxo de recuperação.
+      setResult({ ok: false, message: "Confirme seu cadastro antes de entrar. Verifique seu e-mail." });
+    } catch (e) {
+      if (e instanceof MemberAuthError && e.code === "invalidCredentials") {
+        setResult({ ok: false, message: "E-mail ou senha incorretos." });
+      } else {
+        console.error(e);
+        setResult({ ok: false, message: "Não foi possível entrar. Tente novamente." });
+      }
     }
   }
 

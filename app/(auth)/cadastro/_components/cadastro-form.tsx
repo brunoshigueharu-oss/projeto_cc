@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -8,23 +9,30 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
-import { cadastro } from "../_actions/cadastro";
+import { useMember } from "@/lib/wix/member-context";
+import { register as wixRegister, verifyEmail, MemberAuthError } from "@/lib/wix/members-auth";
 import { cadastroSchema, type CadastroInput } from "../_lib/cadastro-schema";
+
+type Phase = "form" | "verify" | "pending";
 
 export function CadastroForm() {
   const [result, setResult] = useState<FormResult | null>(null);
+  const [phase, setPhase] = useState<Phase>("form");
+  const [stateToken, setStateToken] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const router = useRouter();
+  const { refresh } = useMember();
 
   const {
-    register,
+    register: registerField,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<CadastroInput>({
     resolver: zodResolver(cadastroSchema),
@@ -32,22 +40,87 @@ export function CadastroForm() {
   });
 
   async function onSubmit(values: CadastroInput) {
-    const response = await cadastro(values);
-    setResult({ ok: response.success, message: response.message ?? "" });
-    if (response.success) {
-      reset();
+    setResult(null);
+    try {
+      const res = await wixRegister(values.email, values.password, { nickname: values.name });
+      if (res.state === "SUCCESS") {
+        await refresh();
+        router.push("/perfil");
+        return;
+      }
+      if (res.state === "REQUIRE_EMAIL_VERIFICATION") {
+        setStateToken(res.stateToken ?? null);
+        setPhase("verify");
+        return;
+      }
+      if (res.state === "REQUIRE_OWNER_APPROVAL") {
+        setPhase("pending");
+        return;
+      }
+    } catch (e) {
+      if (e instanceof MemberAuthError && e.code === "emailAlreadyExists") {
+        setResult({ ok: false, message: "Este e-mail já tem cadastro. Tente entrar." });
+      } else {
+        setResult({ ok: false, message: "Não foi possível criar sua conta. Tente novamente." });
+      }
     }
   }
 
-  if (result?.ok) {
+  async function onSubmitCode(e: React.FormEvent) {
+    e.preventDefault();
+    if (!stateToken) return;
+    setVerifying(true);
+    setResult(null);
+    try {
+      const res = await verifyEmail(code, stateToken);
+      if (res.state === "SUCCESS") {
+        await refresh();
+        router.push("/perfil");
+        return;
+      }
+      setResult({ ok: false, message: "Código inválido. Confira e tente novamente." });
+    } catch {
+      setResult({ ok: false, message: "Código inválido. Confira e tente novamente." });
+    } finally {
+      setVerifying(false);
+    }
+  }
+
+  if (phase === "pending") {
     return (
-      <p
-        role="status"
-        aria-live="polite"
-        className="rounded-lg border border-border bg-muted px-4 py-3 font-serif text-sm text-foreground"
-      >
-        {result.message}
+      <p className="text-sm text-muted-foreground">
+        Seu cadastro está pendente de aprovação. Você poderá entrar assim que
+        for aprovado.
       </p>
+    );
+  }
+
+  if (phase === "verify") {
+    return (
+      <form onSubmit={onSubmitCode}>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="code">Código de verificação</FieldLabel>
+            <p className="text-sm text-muted-foreground">
+              Enviamos um código de 6 dígitos para o seu e-mail.
+            </p>
+            <Input
+              id="code"
+              inputMode="numeric"
+              maxLength={6}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              autoComplete="one-time-code"
+            />
+          </Field>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button type="submit" size="lg" disabled={verifying} className="h-11 rounded-full px-7">
+              {verifying ? "Confirmando…" : "Confirmar"}
+            </Button>
+            <FormStatus result={result} />
+          </div>
+        </FieldGroup>
+      </form>
     );
   }
 
@@ -56,12 +129,7 @@ export function CadastroForm() {
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="name">Nome</FieldLabel>
-          <Input
-            id="name"
-            autoComplete="name"
-            aria-invalid={errors.name ? true : undefined}
-            {...register("name")}
-          />
+          <Input id="name" autoComplete="name" aria-invalid={errors.name ? true : undefined} {...registerField("name")} />
           <FieldError errors={[errors.name]} />
         </Field>
 
@@ -74,7 +142,7 @@ export function CadastroForm() {
             autoComplete="email"
             spellCheck={false}
             aria-invalid={errors.email ? true : undefined}
-            {...register("email")}
+            {...registerField("email")}
           />
           <FieldError errors={[errors.email]} />
         </Field>
@@ -86,31 +154,21 @@ export function CadastroForm() {
             type="password"
             autoComplete="new-password"
             aria-invalid={errors.password ? true : undefined}
-            {...register("password")}
+            {...registerField("password")}
           />
-          <FieldDescription>Pelo menos 8 caracteres.</FieldDescription>
           <FieldError errors={[errors.password]} />
         </Field>
 
         <div className="flex flex-wrap items-center gap-4">
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isSubmitting}
-            className="h-11 rounded-full px-7"
-          >
+          <Button type="submit" size="lg" disabled={isSubmitting} className="h-11 rounded-full px-7">
             {isSubmitting ? "Criando conta…" : "Criar conta"}
           </Button>
-
           <FormStatus result={result} />
         </div>
 
         <p className="text-sm text-muted-foreground">
           Já tem conta?{" "}
-          <Link
-            href="/login"
-            className="font-medium text-foreground underline underline-offset-4"
-          >
+          <Link href="/login" className="font-medium text-foreground underline underline-offset-4">
             Entrar
           </Link>
         </p>

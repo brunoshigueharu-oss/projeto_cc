@@ -3,13 +3,17 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
-import { esqueciSenha } from "../_actions/esqueci-senha";
+import { sendPasswordResetEmail } from "@/lib/wix/members-auth";
 import { esqueciSenhaSchema, type EsqueciSenhaInput } from "../_lib/esqueci-senha-schema";
 
 export function EsqueciSenhaForm() {
@@ -25,20 +29,15 @@ export function EsqueciSenhaForm() {
   });
 
   async function onSubmit(values: EsqueciSenhaInput) {
-    const response = await esqueciSenha(values);
-    setResult({ ok: response.success, message: response.message ?? "" });
-  }
-
-  if (result?.ok) {
-    return (
-      <p
-        role="status"
-        aria-live="polite"
-        className="rounded-lg border border-border bg-muted px-4 py-3 font-serif text-sm text-foreground"
-      >
-        {result.message}
-      </p>
-    );
+    const redirectUri = `${window.location.origin}/atualizar-senha`;
+    try {
+      await sendPasswordResetEmail(values.email, redirectUri);
+    } catch (e) {
+      // Mensagem sempre igual, mesmo em erro — não revela se o e-mail existe.
+      // Logado pra debug (allow-list de redirect, chave errada, etc.) sem vazar nada ao usuário.
+      console.error(e);
+    }
+    setResult({ ok: true, message: "Se esse e-mail tiver cadastro, enviamos um link para redefinir a senha." });
   }
 
   return (
@@ -59,27 +58,11 @@ export function EsqueciSenhaForm() {
         </Field>
 
         <div className="flex flex-wrap items-center gap-4">
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isSubmitting}
-            className="h-11 rounded-full px-7"
-          >
+          <Button type="submit" size="lg" disabled={isSubmitting} className="h-11 rounded-full px-7">
             {isSubmitting ? "Enviando…" : "Enviar link"}
           </Button>
-
           <FormStatus result={result} />
         </div>
-
-        <p className="text-sm text-muted-foreground">
-          Lembrou a senha?{" "}
-          <Link
-            href="/login"
-            className="font-medium text-foreground underline underline-offset-4"
-          >
-            Entrar
-          </Link>
-        </p>
       </FieldGroup>
     </form>
   );
