@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useMember } from "@/lib/wix/member-context";
 
 export function SignOutButton({
@@ -12,16 +14,16 @@ export function SignOutButton({
   "aria-label"?: string;
 }) {
   const { logout } = useMember();
+  const router = useRouter();
 
   async function handleSignOut() {
     try {
       await logout();
     } catch {
-      // Hard navigation deliberada: fallback só usado quando a chamada de
-      // logout falhou, então preferimos garantir a saída da página em vez de
-      // depender do client router (que pode estar num estado inconsistente).
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.href = "/";
+      // logout() já zera member/loggedIn e limpa a sessão local (finally)
+      // antes de chamar a API do Wix — não sobra estado inconsistente pro
+      // router herdar, então uma navegação client-side normal já basta.
+      router.push("/");
     }
   }
 
