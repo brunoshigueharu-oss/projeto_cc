@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
-import { NavLink } from "./nav-link";
 import { SignOutButton } from "./sign-out-button";
+import { NavLink } from "./nav-link";
 
 const PANEL_LINK_CLASS =
   "rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted hover:text-foreground";
