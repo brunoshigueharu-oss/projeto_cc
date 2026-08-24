@@ -2138,13 +2138,20 @@ WIX_ADMIN_API_KEY=<a chave gerada>
 
 ### Task 19: `lib/wix/admin.ts` + Route Handler `/api/admin/check`
 
-**Antes de escrever este código, confirme o formato exato da consulta Wix
-Data v2** com a doc oficial (`SearchWixRESTDocumentation`/`wix-docs` por
-`items/query`, ou `dev.wix.com/docs/api-reference/wix-data/items/query`) —
-o corpo abaixo é minha melhor estimativa com base no padrão de outras APIs
-Wix (`Authorization` cru + header `wix-site-id`), mas não foi confirmado
-contra a doc dessa API específica nesta sessão de planejamento. Ajuste se a
-doc mostrar um shape diferente.
+**Formato da consulta confirmado contra a doc oficial** (Query Data Items —
+`dev.wix.com/docs/api-reference/business-solutions/cms/data-items/query-data-items`,
+lida durante a execução do plano, não mais uma estimativa): URL e
+`dataCollectionId` batiam com o que já estava aqui, mas o `filter` estava
+errado — a doc mostra e confirma como "working combination" o **valor direto**
+(`"state": "California"`), não um operador `$eq` aninhado. O código abaixo já
+reflete a correção: `filter: { email }` no lugar de
+`filter: { email: { $eq: email } }`. Também trocado `cursorPaging` por
+`paging` — a doc é explícita: `paging` (offset) é o certo quando cada
+requisição carrega seu próprio `filter` novo (nosso caso: um e-mail
+diferente a cada chamada), `cursorPaging` é só pra continuar um resultado já
+paginado. `Authorization` cru (sem `Bearer`) e o header `wix-site-id`
+continuam corretos, confirmados separadamente contra a doc da skill
+`wix-vibe-headless` lida antes neste plano.
 
 **Files:**
 - Create: `lib/wix/admin.ts`
@@ -2183,8 +2190,8 @@ export async function isAdminEmail(email: string): Promise<boolean> {
     body: JSON.stringify({
       dataCollectionId: ADMINS_COLLECTION_ID,
       query: {
-        filter: { email: { $eq: email } },
-        cursorPaging: { limit: 1 },
+        filter: { email },
+        paging: { limit: 1 },
       },
     }),
   });
