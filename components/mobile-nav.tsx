@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
-import { signOut } from "@/lib/supabase/actions/sign-out";
 import { NavLink } from "./nav-link";
+import { SignOutButton } from "./sign-out-button";
 
 const PANEL_LINK_CLASS =
   "rounded-md px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted hover:text-foreground";
@@ -75,11 +75,9 @@ export function MobileNav({ isAuthenticated }: { isAuthenticated: boolean }) {
             Minha conta
           </NavLink>
           {isAuthenticated ? (
-            <form action={signOut}>
-              <button type="submit" className={`w-full text-left ${PANEL_LINK_CLASS}`}>
-                Sair
-              </button>
-            </form>
+            <SignOutButton className={`w-full text-left ${PANEL_LINK_CLASS}`}>
+              Sair
+            </SignOutButton>
           ) : null}
         </nav>
       ) : null}

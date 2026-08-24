@@ -2,12 +2,12 @@ import Link from "next/link";
 import { CircleUserRound, LogOut } from "lucide-react";
 
 import { NAV_LINKS } from "@/lib/nav-links";
-import { signOut } from "@/lib/supabase/actions/sign-out";
 import { getOptionalSession } from "@/lib/supabase/session";
 import { CartLink } from "./cart-link";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 import { Seal } from "./seal";
+import { SignOutButton } from "./sign-out-button";
 import { Wordmark } from "./wordmark";
 
 const ICON_LINK_CLASS =
@@ -62,11 +62,9 @@ export async function SiteHeader() {
               >
                 {getInitials(displayName)}
               </Link>
-              <form action={signOut}>
-                <button type="submit" aria-label="Sair" className={ICON_LINK_CLASS}>
-                  <LogOut className="size-[18px]" aria-hidden="true" />
-                </button>
-              </form>
+              <SignOutButton aria-label="Sair" className={ICON_LINK_CLASS}>
+                <LogOut className="size-[18px]" aria-hidden="true" />
+              </SignOutButton>
             </>
           ) : (
             <Link href="/login" aria-label="Entrar" className={ICON_LINK_CLASS}>
