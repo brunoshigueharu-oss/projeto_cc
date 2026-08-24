@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { BookCard } from "@/components/book-card";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
+import { RequireAuth } from "@/components/require-auth";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getPerfilData } from "./_data-access/get-profile";
 import type { Order } from "./_data-access/get-profile";
@@ -32,7 +33,7 @@ export default async function PerfilPage() {
     .join("");
 
   return (
-    <>
+    <RequireAuth>
       <PageHeader eyebrow="Minha conta" title={profile.name}>
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <span
@@ -105,6 +106,6 @@ export default async function PerfilPage() {
           </ul>
         </div>
       </section>
-    </>
+    </RequireAuth>
   );
 }

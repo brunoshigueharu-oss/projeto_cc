@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
+import { RequireAuth } from "@/components/require-auth";
 import { formatPriceClient } from "@/lib/cart/format-price";
 import { useCart } from "@/lib/cart/cart-context";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,8 @@ export default function CarrinhoPage() {
 
   if (resolvedLines.length === 0) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+      <RequireAuth>
+        <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
         <h1 className="font-display text-2xl text-foreground">
           Seu carrinho está vazio
         </h1>
@@ -31,12 +33,14 @@ export default function CarrinhoPage() {
         >
           Ver catálogo
         </Link>
-      </div>
+        </div>
+      </RequireAuth>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <RequireAuth>
+      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <h1 className="font-display text-2xl text-foreground sm:text-3xl">
         Carrinho
       </h1>
@@ -119,6 +123,7 @@ export default function CarrinhoPage() {
           Finalizar pedido
         </Link>
       )}
-    </div>
+      </div>
+    </RequireAuth>
   );
 }

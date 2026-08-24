@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { RequireAuth } from "@/components/require-auth";
 import { CheckoutForm } from "./_components/checkout-form";
 import { getSavedAddresses } from "./_data-access/get-addresses";
 
@@ -12,13 +13,15 @@ export default async function CheckoutPage() {
   const savedAddresses = await getSavedAddresses();
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <RequireAuth>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
       <h1 className="font-display text-2xl text-foreground sm:text-3xl">
         Finalizar pedido
       </h1>
       <div className="mt-8">
         <CheckoutForm savedAddresses={savedAddresses} />
       </div>
-    </div>
+      </div>
+    </RequireAuth>
   );
 }
