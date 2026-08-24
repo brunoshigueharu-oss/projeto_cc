@@ -40,16 +40,18 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
       const res = await login(values.email, values.password);
       if (res.state === "SUCCESS") {
         await refresh();
-        router.push(redirectTo?.startsWith("/") ? redirectTo : "/perfil");
+        const safeRedirect = redirectTo && /^\/(?!\/|\\)/.test(redirectTo) ? redirectTo : "/perfil";
+        router.push(safeRedirect);
         return;
       }
       // REQUIRE_EMAIL_VERIFICATION / REQUIRE_OWNER_APPROVAL no login (raro):
       // não construímos uma segunda tela aqui, orienta pro fluxo de recuperação.
       setResult({ ok: false, message: "Confirme seu cadastro antes de entrar. Verifique seu e-mail." });
     } catch (e) {
-      if (e instanceof MemberAuthError) {
+      if (e instanceof MemberAuthError && e.code === "invalidCredentials") {
         setResult({ ok: false, message: "E-mail ou senha incorretos." });
       } else {
+        console.error(e);
         setResult({ ok: false, message: "Não foi possível entrar. Tente novamente." });
       }
     }

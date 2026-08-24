@@ -32,8 +32,10 @@ export function EsqueciSenhaForm() {
     const redirectUri = `${window.location.origin}/atualizar-senha`;
     try {
       await sendPasswordResetEmail(values.email, redirectUri);
-    } catch {
+    } catch (e) {
       // Mensagem sempre igual, mesmo em erro — não revela se o e-mail existe.
+      // Logado pra debug (allow-list de redirect, chave errada, etc.) sem vazar nada ao usuário.
+      console.error(e);
     }
     setResult({ ok: true, message: "Se esse e-mail tiver cadastro, enviamos um link para redefinir a senha." });
   }

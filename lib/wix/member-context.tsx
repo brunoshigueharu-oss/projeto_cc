@@ -22,9 +22,10 @@ export function MemberProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const active = isLoggedIn();
-      setLoggedIn(active);
-      setMember(active ? await getCurrentMember() : null);
+      const wasActive = isLoggedIn();
+      const currentMember = wasActive ? await getCurrentMember() : null;
+      setMember(currentMember);
+      setLoggedIn(wasActive && currentMember !== null);
     } finally {
       setLoading(false);
     }
