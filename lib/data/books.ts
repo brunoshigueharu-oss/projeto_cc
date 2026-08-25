@@ -175,6 +175,7 @@ const RAW_BOOKS = [
       publishedAt: "2019-11-01",
     },
     price: { amount: 16999, currency: "BRL" },
+    wixProductId: "d8562fa9-53ef-44ac-97ec-6babc709fc4d",
     status: "disponivel",
     upsell: {
       title: "Mr. Plant — A Biped Among Plants + Assinatura + Sketch",
@@ -257,6 +258,7 @@ const RAW_BOOKS = [
       publishedAt: "2023-11-01",
     },
     price: { amount: 11999, currency: "BRL" },
+    wixProductId: "e80b58a4-d293-4446-9f8b-e87dc200c04e",
     status: "disponivel",
     featured: true,
     featuredCardImage: {
@@ -337,6 +339,7 @@ const RAW_BOOKS = [
       publishedAt: "2023-08-01",
     },
     price: { amount: 14999, currency: "BRL" },
+    wixProductId: "8c934c49-de32-404a-abb2-63b2a3085b0e",
     status: "disponivel",
     featured: true,
     featuredCardImage: {
@@ -417,6 +420,7 @@ const RAW_BOOKS = [
       publishedAt: "2022-06-01",
     },
     price: { amount: 18999, currency: "BRL" },
+    wixProductId: "0d1a13af-c4c7-4865-ad37-65ad9e0b995f",
     status: "disponivel",
     featured: true,
     featuredCardImage: {
@@ -503,6 +507,7 @@ const RAW_BOOKS = [
       publishedAt: "2022-06-01",
     },
     price: { amount: 43999, currency: "BRL" },
+    wixProductId: "9d1a6081-7973-46f1-9539-33bf432686c6",
     status: "disponivel",
     featured: true,
     featuredCardImage: {
@@ -622,6 +627,7 @@ const RAW_BOOKS = [
       // openingVideoSrc: adicionar quando o vídeo da caixa abrindo for enviado
     },
     price: { amount: 35999, currency: "BRL" },
+    wixProductId: "31186e71-4a54-4e84-b244-0b66f0f51975",
     status: "disponivel",
     featured: true,
     featuredCardImage: {
@@ -696,6 +702,7 @@ const RAW_BOOKS = [
     // PLACEHOLDER: preço não veio na ficha da editora — mantido o valor já
     // cadastrado até a confirmação.
     price: { amount: 16999, currency: "BRL" },
+    wixProductId: "4ffede71-97be-4b6f-b434-57acb965c09e",
     status: "disponivel",
     compareEdition: {
       baseBookSlug: "os-contos-do-planta-2",
