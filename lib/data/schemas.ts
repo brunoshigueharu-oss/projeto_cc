@@ -170,6 +170,11 @@ export const bookSchema = z.object({
   }),
   /** Opcional: link de compra chega junto da ficha técnica. */
   buyUrl: z.url().optional(),
+  /** Opcional: ID do produto correspondente no Wix Stores (Catalog V3).
+   * Sem ele, o item fica bloqueado no checkout — ver `available` em
+   * `lib/cart/cart-context.tsx`. Cadastro do produto acontece no painel Wix,
+   * fora deste repo; aqui só guardamos o ID pra apontar pra ele. */
+  wixProductId: z.string().min(1).optional(),
   /** Default "disponivel": status real por título chega junto da ficha técnica. */
   status: z.enum(["disponivel", "pre-venda", "esgotado"]).default("disponivel"),
   /** Default `true`. `false` tira a página do ar (404) sem apagar os dados —
@@ -251,6 +256,11 @@ export const comboSchema = z.object({
   price: z.object({ amount: z.number().int().nonnegative(), currency: z.literal("BRL") }),
   ctaLabel: z.string().min(1).default("Comprar combo"),
   buyUrl: z.url().optional(),
+  /** Opcional: ID do produto correspondente no Wix Stores (Catalog V3) — o
+   * kit precisa de um produto próprio criado no painel, a Wix não compõe
+   * produtos a partir de outros produtos automaticamente. Sem ele, o combo
+   * fica bloqueado no checkout — ver `available` em `lib/cart/cart-context.tsx`. */
+  wixProductId: z.string().min(1).optional(),
 });
 export type Combo = z.infer<typeof comboSchema>;
 

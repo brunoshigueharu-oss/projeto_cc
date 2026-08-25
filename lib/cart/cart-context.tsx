@@ -17,7 +17,15 @@ export type CartLine = {
 export type ResolvedCartLine = CartLine & {
   title: string;
   unitPriceCents: number;
+  /** `true` só quando o item pode seguir pro checkout: status local permite
+   * compra E existe produto Wix mapeado. */
   available: boolean;
+  /** Motivo de `available: false`, pra UI escolher a mensagem certa (`null`
+   * quando `available` é `true`). */
+  unavailableReason: "esgotado" | "sem-produto-wix" | null;
+  /** ID do produto Wix Stores correspondente — usado só no checkout pra
+   * montar o carrinho real via `addLineItemsToCart`. */
+  wixProductId: string | undefined;
 };
 
 type CartContextValue = {
@@ -149,23 +157,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (line.type === "book") {
           const book = BOOKS_BY_SLUG.get(line.slug);
           if (!book) return [];
+          const purchasableByStatus = isPurchasable(book.status);
+          const hasWixProduct = Boolean(book.wixProductId);
           return [
             {
               ...line,
               title: book.title,
               unitPriceCents: book.price.amount,
-              available: isPurchasable(book.status),
+              available: purchasableByStatus && hasWixProduct,
+              unavailableReason: !purchasableByStatus
+                ? "esgotado"
+                : !hasWixProduct
+                  ? "sem-produto-wix"
+                  : null,
+              wixProductId: book.wixProductId,
             },
           ];
         }
         const combo = COMBOS.find((candidate) => candidate.slug === line.slug);
         if (!combo) return [];
+        const hasWixProduct = Boolean(combo.wixProductId);
         return [
           {
             ...line,
             title: combo.title,
             unitPriceCents: combo.price.amount,
-            available: true,
+            available: hasWixProduct,
+            unavailableReason: hasWixProduct ? null : "sem-produto-wix",
+            wixProductId: combo.wixProductId,
           },
         ];
       }),

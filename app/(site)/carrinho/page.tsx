@@ -51,7 +51,9 @@ export default function CarrinhoPage() {
               <p className="font-medium text-foreground">{line.title}</p>
               {!line.available ? (
                 <p className="mt-1 text-xs text-destructive">
-                  Esgotado — remova para continuar.
+                  {line.unavailableReason === "esgotado"
+                    ? "Esgotado — remova para continuar."
+                    : "Ainda não disponível para compra online — remova para continuar."}
                 </p>
               ) : null}
               <p className="mt-1 font-mono text-sm text-muted-foreground tabular-nums">
@@ -94,7 +96,7 @@ export default function CarrinhoPage() {
 
       {hasUnavailableItem ? (
         <p className="mt-4 text-sm text-destructive">
-          Remova os itens esgotados do carrinho para continuar.
+          Remova os itens indisponíveis do carrinho para continuar.
         </p>
       ) : null}
 
