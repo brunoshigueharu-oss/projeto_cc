@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 
-import { MaintenanceNotice } from "@/components/maintenance-notice";
+import { WixDashboardLinks } from "./_components/wix-dashboard-links";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 export default function AdminDashboardPage() {
-  return (
-    <MaintenanceNotice
-      title="Dashboard em manutenção"
-      description="As métricas de pedidos voltam aqui quando o painel for reconstruído sobre o Wix, na fase 3 da migração."
-    />
-  );
+  return <WixDashboardLinks />;
 }
