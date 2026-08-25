@@ -91,17 +91,17 @@ type WixApiOrder = {
   paymentStatus: string;
   fulfillmentStatus: string;
   status: string;
-  priceSummary: {
-    total: { formattedAmount: string };
-    subtotal: { formattedAmount: string };
-    shipping: { formattedAmount: string };
-    tax: { formattedAmount: string };
+  priceSummary?: {
+    total?: { formattedAmount: string };
+    subtotal?: { formattedAmount: string };
+    shipping?: { formattedAmount: string };
+    tax?: { formattedAmount: string };
   };
   lineItems: Array<{
     id: string;
-    productName: { original: string };
+    productName?: { original: string };
     quantity: number;
-    price: { formattedAmount: string };
+    price?: { formattedAmount: string };
   }>;
   recipientInfo?: {
     address?: {
@@ -148,7 +148,7 @@ function toOrderListItem(order: WixApiOrder): WixOrderListItem {
     number: order.number,
     createdDate: order.createdDate,
     buyerEmail: order.buyerInfo?.email ?? "—",
-    totalFormatted: order.priceSummary.total.formattedAmount,
+    totalFormatted: order.priceSummary?.total?.formattedAmount ?? "—",
     paymentStatusLabel: translatePaymentStatus(order.paymentStatus),
     fulfillmentStatusLabel: translateFulfillmentStatus(order.fulfillmentStatus),
     orderStatusLabel: translateOrderStatus(order.status),
@@ -190,16 +190,16 @@ function toOrderDetail(order: WixApiOrder): WixOrderDetail {
     ...toOrderListItem(order),
     lineItems: order.lineItems.map((item) => ({
       id: item.id,
-      name: item.productName.original,
+      name: item.productName?.original ?? "",
       quantity: item.quantity,
-      priceFormatted: item.price.formattedAmount,
+      priceFormatted: item.price?.formattedAmount ?? "—",
     })),
     shippingAddress: toOrderAddress(order),
     priceSummary: {
-      subtotalFormatted: order.priceSummary.subtotal.formattedAmount,
-      shippingFormatted: order.priceSummary.shipping.formattedAmount,
-      taxFormatted: order.priceSummary.tax.formattedAmount,
-      totalFormatted: order.priceSummary.total.formattedAmount,
+      subtotalFormatted: order.priceSummary?.subtotal?.formattedAmount ?? "—",
+      shippingFormatted: order.priceSummary?.shipping?.formattedAmount ?? "—",
+      taxFormatted: order.priceSummary?.tax?.formattedAmount ?? "—",
+      totalFormatted: order.priceSummary?.total?.formattedAmount ?? "—",
     },
   };
 }
@@ -207,7 +207,9 @@ function toOrderDetail(order: WixApiOrder): WixOrderDetail {
 /** 404 vira `null` (ORDER_NOT_FOUND) — quem chama decide o que fazer
  * (a Route Handler da Task 5 devolve 404 pro client). */
 export async function getOrder(orderId: string): Promise<WixOrderDetail | null> {
-  const res = await wixOrdersRequest(`/ecom/v1/orders/${orderId}`, { method: "GET" });
+  const res = await wixOrdersRequest(`/ecom/v1/orders/${encodeURIComponent(orderId)}`, {
+    method: "GET",
+  });
   if (res.status === 404) return null;
   if (!res.ok) {
     throw new Error(`Wix Orders get falhou: ${res.status}`);

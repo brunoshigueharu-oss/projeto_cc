@@ -16,10 +16,15 @@ export async function POST(request: Request, { params }: RouteContext<"/api/admi
   }
 
   const { id } = await params;
-  const order = await getOrder(id);
-  if (!order) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
-  }
+  try {
+    const order = await getOrder(id);
+    if (!order) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
 
-  return NextResponse.json({ order });
+    return NextResponse.json({ order });
+  } catch (error) {
+    console.error(`[POST /api/admin/orders/${id}] getOrder falhou:`, error);
+    return NextResponse.json({ error: "internal" }, { status: 500 });
+  }
 }

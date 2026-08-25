@@ -15,6 +15,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
-  const orders = await searchOrders();
-  return NextResponse.json({ orders });
+  try {
+    const orders = await searchOrders();
+    return NextResponse.json({ orders });
+  } catch (error) {
+    console.error("[POST /api/admin/orders] searchOrders falhou:", error);
+    return NextResponse.json({ error: "internal" }, { status: 500 });
+  }
 }

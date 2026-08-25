@@ -3,7 +3,10 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock server-only to allow testing server code in jsdom environment
+// `server-only`'s default export throws unconditionally on import (it only
+// resolves to a no-op via the `react-server` export condition, which Vitest's
+// module resolution doesn't set) — mock it regardless of test environment
+// (jsdom or node) so this server-only module can be imported here at all.
 vi.mock("server-only", () => ({}));
 
 import {
@@ -163,6 +166,40 @@ describe("searchOrders", () => {
 
     await expect(searchOrders()).rejects.toThrow();
   });
+
+  it("mapeia totalFormatted como \"—\" quando priceSummary vem ausente da Wix", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        jsonResponse({
+          orders: [
+            {
+              id: "order-4",
+              number: 1004,
+              createdDate: "2026-08-23T09:00:00.000Z",
+              buyerInfo: { email: "sem-preco@example.com" },
+              paymentStatus: "PAID",
+              fulfillmentStatus: "NOT_FULFILLED",
+              status: "APPROVED",
+              lineItems: [],
+            },
+          ],
+        }),
+      ),
+    );
+
+    const [order] = await searchOrders();
+    expect(order.totalFormatted).toBe("—");
+  });
+
+  it("lança com mensagem sobre a chave ausente quando WIX_ADMIN_API_KEY não está configurada", async () => {
+    vi.stubEnv("WIX_ADMIN_API_KEY", "");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(searchOrders()).rejects.toThrow(/WIX_ADMIN_API_KEY/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });
 
 describe("getOrder", () => {
@@ -292,5 +329,81 @@ describe("getOrder", () => {
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "boom" }, 500)));
 
     await expect(getOrder("order-1")).rejects.toThrow();
+  });
+
+  it("codifica o orderId na URL", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      expect(url).toBe(`${WIX_API_BASE}/ecom/v1/orders/order%2Fwith%20slash`);
+      return jsonResponse({ message: "not found" }, 404);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getOrder("order/with slash");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("mapeia priceSummary.shipping/tax ausentes como \"—\" ao invés de lançar", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        jsonResponse({
+          order: {
+            id: "order-5",
+            number: 1005,
+            createdDate: "2026-08-24T09:00:00.000Z",
+            buyerInfo: { email: "preco-parcial@example.com" },
+            paymentStatus: "PAID",
+            fulfillmentStatus: "NOT_FULFILLED",
+            status: "APPROVED",
+            priceSummary: {
+              total: { formattedAmount: "R$ 40,00" },
+              subtotal: { formattedAmount: "R$ 40,00" },
+              // shipping e tax ausentes de propósito
+            },
+            lineItems: [],
+          },
+        }),
+      ),
+    );
+
+    const order = await getOrder("order-5");
+    expect(order?.priceSummary).toEqual({
+      subtotalFormatted: "R$ 40,00",
+      shippingFormatted: "—",
+      taxFormatted: "—",
+      totalFormatted: "R$ 40,00",
+    });
+  });
+
+  it("mapeia line item sem price/productName com fallback seguro ao invés de lançar", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        jsonResponse({
+          order: {
+            id: "order-6",
+            number: 1006,
+            createdDate: "2026-08-24T10:00:00.000Z",
+            buyerInfo: { email: "item-incompleto@example.com" },
+            paymentStatus: "PAID",
+            fulfillmentStatus: "NOT_FULFILLED",
+            status: "APPROVED",
+            priceSummary: {
+              total: { formattedAmount: "R$ 10,00" },
+              subtotal: { formattedAmount: "R$ 10,00" },
+              shipping: { formattedAmount: "R$ 0,00" },
+              tax: { formattedAmount: "R$ 0,00" },
+            },
+            lineItems: [{ id: "item-2", quantity: 1 }],
+          },
+        }),
+      ),
+    );
+
+    const order = await getOrder("order-6");
+    expect(order?.lineItems).toEqual([
+      { id: "item-2", name: "", quantity: 1, priceFormatted: "—" },
+    ]);
   });
 });
