@@ -167,3 +167,51 @@ export async function searchOrders(): Promise<WixOrderListItem[]> {
   const orders: WixApiOrder[] = data?.orders ?? [];
   return orders.map(toOrderListItem);
 }
+
+function toOrderAddress(order: WixApiOrder): WixOrderAddress | null {
+  const address = order.recipientInfo?.address;
+  if (!address) return null;
+  const contact = order.recipientInfo?.contactDetails;
+  return {
+    recipientName: [contact?.firstName, contact?.lastName].filter(Boolean).join(" ") || "—",
+    phone: contact?.phone ?? "",
+    street: address.streetAddress?.name ?? "",
+    number: address.streetAddress?.number ?? "",
+    addressLine2: address.addressLine2 ?? "",
+    city: address.city,
+    subdivision: address.subdivision,
+    postalCode: address.postalCode,
+    country: address.country,
+  };
+}
+
+function toOrderDetail(order: WixApiOrder): WixOrderDetail {
+  return {
+    ...toOrderListItem(order),
+    lineItems: order.lineItems.map((item) => ({
+      id: item.id,
+      name: item.productName.original,
+      quantity: item.quantity,
+      priceFormatted: item.price.formattedAmount,
+    })),
+    shippingAddress: toOrderAddress(order),
+    priceSummary: {
+      subtotalFormatted: order.priceSummary.subtotal.formattedAmount,
+      shippingFormatted: order.priceSummary.shipping.formattedAmount,
+      taxFormatted: order.priceSummary.tax.formattedAmount,
+      totalFormatted: order.priceSummary.total.formattedAmount,
+    },
+  };
+}
+
+/** 404 vira `null` (ORDER_NOT_FOUND) — quem chama decide o que fazer
+ * (a Route Handler da Task 5 devolve 404 pro client). */
+export async function getOrder(orderId: string): Promise<WixOrderDetail | null> {
+  const res = await wixOrdersRequest(`/ecom/v1/orders/${orderId}`, { method: "GET" });
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`Wix Orders get falhou: ${res.status}`);
+  }
+  const data = await res.json();
+  return toOrderDetail(data.order as WixApiOrder);
+}

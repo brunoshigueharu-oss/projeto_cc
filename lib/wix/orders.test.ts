@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import {
+  getOrder,
   searchOrders,
   translateFulfillmentStatus,
   translateOrderStatus,
@@ -161,5 +162,135 @@ describe("searchOrders", () => {
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "boom" }, 500)));
 
     await expect(searchOrders()).rejects.toThrow();
+  });
+});
+
+describe("getOrder", () => {
+  beforeEach(() => {
+    vi.stubEnv("WIX_ADMIN_API_KEY", "test-admin-key");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  it("busca GET /ecom/v1/orders/{id} e mapeia itens, endereço e resumo de preço", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = typeof input === "string" ? input : input.toString();
+      expect(url).toBe(`${WIX_API_BASE}/ecom/v1/orders/order-1`);
+      expect(init?.method).toBe("GET");
+      return jsonResponse({
+        order: {
+          id: "order-1",
+          number: 1001,
+          createdDate: "2026-08-20T12:00:00.000Z",
+          buyerInfo: { email: "cliente@example.com" },
+          paymentStatus: "PAID",
+          fulfillmentStatus: "FULFILLED",
+          status: "APPROVED",
+          priceSummary: {
+            total: { formattedAmount: "R$ 189,99" },
+            subtotal: { formattedAmount: "R$ 169,99" },
+            shipping: { formattedAmount: "R$ 20,00" },
+            tax: { formattedAmount: "R$ 0,00" },
+          },
+          lineItems: [
+            {
+              id: "item-1",
+              productName: { original: "A Bruxa do Vale Sombrio" },
+              quantity: 2,
+              price: { formattedAmount: "R$ 84,99" },
+            },
+          ],
+          recipientInfo: {
+            address: {
+              streetAddress: { name: "Rua das Flores", number: "123" },
+              addressLine2: "Apto 45",
+              city: "São Paulo",
+              subdivision: "BR-SP",
+              postalCode: "01310-000",
+              country: "BR",
+            },
+            contactDetails: { firstName: "Maria", lastName: "Silva", phone: "11999999999" },
+          },
+        },
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const order = await getOrder("order-1");
+
+    expect(order).toEqual({
+      id: "order-1",
+      number: 1001,
+      createdDate: "2026-08-20T12:00:00.000Z",
+      buyerEmail: "cliente@example.com",
+      totalFormatted: "R$ 189,99",
+      paymentStatusLabel: "Pago",
+      fulfillmentStatusLabel: "Entregue",
+      orderStatusLabel: null,
+      lineItems: [
+        { id: "item-1", name: "A Bruxa do Vale Sombrio", quantity: 2, priceFormatted: "R$ 84,99" },
+      ],
+      shippingAddress: {
+        recipientName: "Maria Silva",
+        phone: "11999999999",
+        street: "Rua das Flores",
+        number: "123",
+        addressLine2: "Apto 45",
+        city: "São Paulo",
+        subdivision: "BR-SP",
+        postalCode: "01310-000",
+        country: "BR",
+      },
+      priceSummary: {
+        subtotalFormatted: "R$ 169,99",
+        shippingFormatted: "R$ 20,00",
+        taxFormatted: "R$ 0,00",
+        totalFormatted: "R$ 189,99",
+      },
+    });
+  });
+
+  it("retorna null quando a Wix responde 404 (ORDER_NOT_FOUND)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "not found" }, 404)));
+
+    expect(await getOrder("inexistente")).toBeNull();
+  });
+
+  it("retorna shippingAddress null quando o pedido não tem recipientInfo.address", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        jsonResponse({
+          order: {
+            id: "order-3",
+            number: 1003,
+            createdDate: "2026-08-22T09:00:00.000Z",
+            buyerInfo: { email: "sem-endereco@example.com" },
+            paymentStatus: "PAID",
+            fulfillmentStatus: "NOT_FULFILLED",
+            status: "APPROVED",
+            priceSummary: {
+              total: { formattedAmount: "R$ 30,00" },
+              subtotal: { formattedAmount: "R$ 30,00" },
+              shipping: { formattedAmount: "R$ 0,00" },
+              tax: { formattedAmount: "R$ 0,00" },
+            },
+            lineItems: [],
+          },
+        }),
+      ),
+    );
+
+    const order = await getOrder("order-3");
+    expect(order?.shippingAddress).toBeNull();
+  });
+
+  it("propaga outros erros", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "boom" }, 500)));
+
+    await expect(getOrder("order-1")).rejects.toThrow();
   });
 });
