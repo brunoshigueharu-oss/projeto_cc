@@ -106,25 +106,66 @@ tinha; a tela mostra dois badges traduzidos:
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
   PAID: "Pago",
   NOT_PAID: "Não pago",
+  PENDING: "Pagamento pendente",
+  PARTIALLY_PAID: "Parcialmente pago",
   PARTIALLY_REFUNDED: "Parcialmente reembolsado",
   FULLY_REFUNDED: "Reembolsado",
+  PENDING_MERCHANT: "Aguardando confirmação",
+  CANCELED: "Pagamento cancelado",
+  DECLINED: "Pagamento recusado",
 };
 
 const FULFILLMENT_STATUS_LABELS: Record<string, string> = {
   FULFILLED: "Entregue",
   NOT_FULFILLED: "Pendente",
   PARTIALLY_FULFILLED: "Parcialmente entregue",
-  CANCELLED: "Cancelado",
 };
 ```
 
-Valores fora do mapa caem no próprio valor cru da Wix (nunca quebra a
-tela por causa de um status novo que a Wix venha a introduzir).
+Valores fora do mapa (ex. `UNSPECIFIED`) caem no próprio valor cru da
+Wix (nunca quebra a tela por causa de um status novo que a Wix venha a
+introduzir).
+
+**Terceiro badge condicional — `order.status`.** `paymentStatus` e
+`fulfillmentStatus` não indicam cancelamento: o enum real de
+`fulfillmentStatus` é só `NOT_FULFILLED` / `FULFILLED` /
+`PARTIALLY_FULFILLED` (confirmado na documentação oficial — não existe
+`CANCELLED` aí, era um erro da primeira versão desta spec). Quem
+carrega esse sinal é o campo separado `order.status`, que inclui
+`CANCELED` e `REJECTED`. Sem lê-lo, um pedido cancelado ficaria com
+badges normais, indistinguível de um pedido em andamento. Por isso a
+tela mostra um terceiro badge (`variant="destructive"`) só quando
+`order.status` for `CANCELED` ou `REJECTED` — não aparece em pedidos
+normais (`APPROVED`/`PENDING`/`INITIALIZED`):
+
+```ts
+// lib/wix/orders.ts
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  CANCELED: "Cancelado",
+  REJECTED: "Rejeitado",
+};
+```
+
+Nota técnica pro plano de implementação: `searchOrders()` sem filtro
+já não traz pedidos com `status: PENDING`/`REJECTED`/`INITIALIZED` —
+é o comportamento *default* da própria API (confirmado na
+documentação), não algo que este código precisa filtrar. Só
+`REJECTED` pode aparecer via `getOrder(id)` direto (acesso a um link
+específico), daí o badge condicional valer também pro detalhe.
 
 Preço: a Wix já devolve `priceSummary.total.formattedAmount` (string
 pronta, ex. `"R$ 169,99"`) — usar direto, sem reimplementar formatação
 (o projeto tem `lib/format.ts`, mas ele trabalha em centavos; o pedido da
 Wix já vem formatado e não precisa dessa camada).
+
+Outros campos confirmados na documentação oficial (evita nomes
+chutados na hora de escrever o plano): nome do item é
+`lineItem.productName.original` (não `.name`); endereço de entrega é
+`order.recipientInfo.address` + `.contactDetails` (tipo
+`AddressWithContact`) — é o campo que a própria Wix recomenda para "quem
+efetivamente recebe o pedido", mais confiável que vasculhar
+`shippingInfo.logistics` (que fica vazio em pickup point/store pickup);
+e-mail do comprador é `order.buyerInfo.email`.
 
 `searchOrders()` usa `POST /ecom/v1/orders/search` sem filtro (traz tudo,
 ordenado por `createdDate DESC` por padrão da própria API,
@@ -137,12 +178,14 @@ volume de pedidos justificar; hoje a loja tem zero pedidos.
 antiga (`Link` por pedido, número + comprador + data à esquerda, total +
 badges à direita) — troca só a fonte do dado e os badges. Estados:
 carregando, erro (mensagem genérica), vazio ("Nenhum pedido ainda."),
-lista.
+lista. Badges: pagamento + fulfillment sempre; o badge de `order.status`
+(`variant="destructive"`) só aparece quando `CANCELED`/`REJECTED`.
 
 **Detalhe (`order-detail-content.tsx`)**: número do pedido, data,
 e-mail do comprador, itens (nome, quantidade, preço), endereço de
-entrega, resumo de preço (subtotal/frete/impostos/total), os dois badges
-de status. 404 → "Pedido não encontrado."
+entrega, resumo de preço (subtotal/frete/impostos/total), os mesmos
+badges de status da lista (payment + fulfillment sempre, `order.status`
+condicional). 404 → "Pedido não encontrado."
 
 ## Testes
 
