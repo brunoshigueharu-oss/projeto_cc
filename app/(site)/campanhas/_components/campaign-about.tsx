@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { ParallaxSection } from "@/components/parallax-section";
 import type { Book, Campaign } from "@/lib/data/schemas";
 
 /**
- * "Sobre o projeto" (node 211:1425 do Figma): título, texto em duas colunas
- * com a ficha técnica ao lado e a tira de páginas internas embaixo.
+ * "Sobre o projeto" (node 211:1425 do Figma): título, primeiro parágrafo
+ * isolado, a faixa de parallax do livro (`book.parallax`) como divisor
+ * full-width — mesma seção usada na página de catálogo — e o restante do
+ * texto em duas colunas com a ficha técnica ao lado, seguido da tira de
+ * páginas internas.
  *
  * A ficha é montada a partir do título principal da campanha, não de campos
  * próprios: `books.ts` já é a fonte de verdade de páginas, formato e ISBN, e
@@ -21,6 +25,7 @@ export function CampaignAbout({
   primaryBook: Book | undefined;
 }) {
   const paragraphs = campaign.about ?? [campaign.description];
+  const [firstParagraph, ...restParagraphs] = paragraphs;
   const specs = buildSpecs(primaryBook);
   const gallery = campaign.gallery ?? primaryBook?.gallery ?? [];
   // "Estimada" só faz sentido enquanto o exemplar ainda não foi impresso —
@@ -30,77 +35,86 @@ export function CampaignAbout({
     (campaign.kind === "pre-venda" || campaign.kind === "lancamento");
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-      <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-        Sobre o projeto
-      </p>
-      <h1 className="mt-3 max-w-3xl text-balance font-display text-3xl font-bold leading-[1.15] text-foreground sm:text-4xl">
-        {campaign.title}
-      </h1>
+    <>
+      <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 sm:pt-20">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
+          Sobre o projeto
+        </p>
+        <h1 className="mt-3 max-w-3xl text-balance font-display text-3xl font-bold leading-[1.15] text-foreground sm:text-4xl">
+          {campaign.title}
+        </h1>
+        <p className="mt-12 max-w-3xl text-lg leading-relaxed text-foreground">
+          {firstParagraph}
+        </p>
+      </section>
 
-      <div className="mt-12 flex flex-col gap-12 lg:flex-row lg:gap-16">
-        <div className="flex flex-1 flex-col gap-6 text-lg leading-relaxed text-foreground">
-          {paragraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+      <ParallaxSection layers={primaryBook?.parallax ?? []} />
+
+      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
+        <div className="flex flex-col gap-12 pt-12 sm:pt-16 lg:flex-row lg:gap-16">
+          <div className="flex flex-1 flex-col gap-6 text-lg leading-relaxed text-foreground">
+            {restParagraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+
+          {specs.length > 0 ? (
+            <div className="w-full shrink-0 rounded-3xl border border-border bg-card p-7 lg:w-[420px]">
+              <h2 className="font-display text-lg font-bold text-foreground">
+                {isEstimated ? "Ficha Técnica Estimada" : "Ficha Técnica"}
+              </h2>
+
+              <dl className="mt-4">
+                {specs.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-start justify-between gap-4 border-b border-border pb-2 pt-3 text-[13px] first:pt-0"
+                  >
+                    <dt className="text-muted-foreground">{row.label}</dt>
+                    <dd className="text-right font-bold text-foreground tabular-nums">
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              {primaryBook ? (
+                <Link
+                  href={`/catalogo/${primaryBook.slug}`}
+                  className="mt-6 inline-flex text-xs font-medium uppercase tracking-[0.2em] text-primary underline-offset-4 hover:underline"
+                >
+                  Ver o livro no catálogo →
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
-        {specs.length > 0 ? (
-          <div className="w-full shrink-0 rounded-3xl border border-border bg-card p-7 lg:w-[420px]">
-            <h2 className="font-display text-lg font-bold text-foreground">
-              {isEstimated ? "Ficha Técnica Estimada" : "Ficha Técnica"}
+        {gallery.length > 0 ? (
+          <div className="mt-16">
+            <h2 className="font-display text-xl font-bold text-foreground">
+              Visualização das páginas internas
             </h2>
-
-            <dl className="mt-4">
-              {specs.map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-start justify-between gap-4 border-b border-border pb-2 pt-3 text-[13px] first:pt-0"
+            <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {gallery.map((image) => (
+                <li
+                  key={image.src}
+                  className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-muted"
                 >
-                  <dt className="text-muted-foreground">{row.label}</dt>
-                  <dd className="text-right font-bold text-foreground tabular-nums">
-                    {row.value}
-                  </dd>
-                </div>
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </li>
               ))}
-            </dl>
-
-            {primaryBook ? (
-              <Link
-                href={`/catalogo/${primaryBook.slug}`}
-                className="mt-6 inline-flex text-xs font-medium uppercase tracking-[0.2em] text-primary underline-offset-4 hover:underline"
-              >
-                Ver o livro no catálogo →
-              </Link>
-            ) : null}
+            </ul>
           </div>
         ) : null}
-      </div>
-
-      {gallery.length > 0 ? (
-        <div className="mt-16">
-          <h2 className="font-display text-xl font-bold text-foreground">
-            Visualização das páginas internas
-          </h2>
-          <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {gallery.map((image) => (
-              <li
-                key={image.src}
-                className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-muted"
-              >
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </section>
+      </section>
+    </>
   );
 }
 
