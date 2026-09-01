@@ -10,7 +10,7 @@ import {
 } from "./_data-access/get-book";
 import { BookHero } from "./_components/book-hero";
 import { SetHtmlLang } from "./_components/set-html-lang";
-import { ParallaxSection } from "./_components/parallax-section";
+import { ParallaxSection } from "@/components/parallax-section";
 import { AboutBookSection } from "./_components/about-book-section";
 import { BoxContentsSection } from "./_components/box-contents-section";
 import { CompareEditionSection } from "./_components/compare-edition-section";
@@ -35,7 +35,8 @@ import { CombosSection } from "./_components/combos-section";
  *
  *   _data-access/get-book.ts       busca e integridade dos dados
  *   _components/book-hero          abertura escura: capa, título, sinopse, CTA
- *   _components/parallax-section   faixa decorativa opcional (book.parallax)
+ *   components/parallax-section    faixa decorativa opcional (book.parallax) —
+ *                                  compartilhada com a página de campanha
  *   _components/about-book-section "O Livro" + "Sobre o Autor" + ficha técnica
  *   _components/box-contents       "o que vem na caixa": vídeo da caixa
  *                                   abrindo + itens em vídeo, só quando
