@@ -51,7 +51,7 @@ export function CampaignCreator({
   );
 }
 
-/** Duas iniciais no máximo — "Mazzitielli e Alcatena" viraria "MEA" sem o corte. */
+/** Duas iniciais no máximo — "Enrique Alcatena e Eduardo Mazzitelli" viraria "EAM" sem o corte. */
 function getInitials(name: string): string {
   return name
     .split(/\s+/)

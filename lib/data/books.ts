@@ -6,10 +6,9 @@ const GUSTAVO = {
   bio: "Gustavo Ravaglio é um premiado autor de quadrinhos, vencedor dos prêmios Troféu HQ Mix e Prêmio Jabuti, reconhecido pela criação de universos e personagens originais, além de projetos gráficos sofisticados que elevam a experiência do livro a outro patamar. Ravaglio é designer, escritor, ilustrador, quadrinista, antropólogo — mestre pela UFPR — e analista técnico do mercado financeiro. Atualmente, dirige seu próprio estúdio de design, atuando nas áreas de entretenimento e educação com soluções estratégicas e criativas para esses setores. Também leciona na Pontifícia Universidade Católica do Paraná, nos cursos de graduação e pós-graduação lato sensu em Design.",
 };
 
-const MAZZITIELLI_E_ALCATENA = {
-  name: "Mazzitielli e Alcatena",
-  // PLACEHOLDER — substituir pela bio real assim que a editora enviar.
-  bio: "Mazzitielli e Alcatena formam uma dupla de autores dedicada a histórias que cruzam natureza e fantasia, com um traço que valoriza texturas orgânicas e composições densas de página. Yanayag é o primeiro trabalho da dupla publicado pela Hocus Pocus.",
+const ALCATENA_E_MAZZITELLI = {
+  name: "Enrique Alcatena e Eduardo Mazzitelli",
+  bio: "Enrique Alcatena é um dos grandes nomes da história dos quadrinhos argentinos. Com carreira iniciada profissionalmente em 1975, seu trabalho atravessou fronteiras e gêneros, passando por editoras e mercados da Argentina, Itália, França, Reino Unido e Estados Unidos, e deu vida a personagens como Batman, Superman, Conan, Predator e Judge Dredd. É quando tem liberdade para criar seus próprios mundos, porém, que sua arte alcança uma dimensão particularmente fascinante — e Yanayag é um dos grandes exemplos disso.\n\nAo lado do roteirista Eduardo Mazzitelli, seu parceiro em obras marcantes como Acero Líquido, Pesadillas e Shankar, Alcatena constrói em Yanayag um universo que parece possuir uma história muito mais antiga e profunda do que aquela encontrada nas páginas. Nesse título, a dupla retorna à chamada \"fantasia pura\", deixando de lado uma abordagem mais documental para mergulhar completamente na imaginação. Yanayag é o primeiro trabalho da dupla publicado pela Hocus Pocus.",
 };
 
 /**
@@ -731,12 +730,12 @@ const RAW_BOOKS = [
     // mas some do grid geral do catálogo até a campanha decidir o contrário.
     catalogVisible: false,
     universeSlug: "yanayag",
-    author: MAZZITIELLI_E_ALCATENA,
+    author: ALCATENA_E_MAZZITELLI,
     synopsis:
-      "Yanayag acompanha uma expedição perdida em uma floresta que parece se reorganizar a cada noite. Entre mito e sobrevivência, a tripulação precisa decifrar os sinais da mata antes que ela decida que eles não pertencem mais àquele lugar.",
+      "Em um mundo dominado por castas de feiticeiros renegados e ordens secretas, uma vingança ritualística altera para sempre o destino de um jovem: ao ser rejeitado por uma princesa, um influente bruxo lança 19 maldições mortais sobre seu filho, Yanayag. Para sobreviver, ele é forçado a cruzar territórios hostis e enfrentar, um a um, os 19 mestres das artes sombrias que sustentam seu suplício.",
     excerpt:
-      "Ambientado em uma floresta densa e quase consciente, Yanayag mistura aventura e horror ecológico, com um traço que alterna entre o realismo e o onírico conforme a mata avança sobre a narrativa.\n\nÉ a primeira colaboração de Mazzitielli e Alcatena publicada pela Hocus Pocus, e inaugura um universo autoral independente do restante do catálogo.",
-    coverAlt: "Capa do livro Yanayag, de Mazzitielli e Alcatena",
+      "Yanayag não é uma fantasia medieval convencional — não espere apenas castelos, cavaleiros e dragões. Aqui, a imaginação pode assumir qualquer forma: bruxos e confrarias misteriosas, seres de aparência impossível, criaturas grotescas, entidades sobrenaturais e povos estranhos habitam um mundo influenciado pelo universo fantástico de Lord Dunsany, com ecos de Clark Ashton Smith e do primeiro H. P. Lovecraft.\n\nÉ a primeira colaboração de Enrique Alcatena e Eduardo Mazzitelli publicada pela Hocus Pocus, e inaugura um universo autoral independente do restante do catálogo.",
+    coverAlt: "Capa do livro Yanayag, de Enrique Alcatena e Eduardo Mazzitelli",
     coverTone: "forest",
     coverVideoSrc: "/videos/livros/yanayag.mp4",
     coverVideoScale: 1.2,
@@ -776,6 +775,10 @@ const RAW_BOOKS = [
         origin: "top",
       },
     ],
+    // ATENÇÃO: specs abaixo são placeholder — a editora só confirmou os
+    // dados da edição argentina original (Yanayag: En el Reino de los
+    // Brujos, 2016, 288 páginas). Substituir pelos dados reais da edição
+    // brasileira assim que a editora enviar a ficha técnica definitiva.
     specs: {
       pages: 132,
       isbn: "978-0000000007",

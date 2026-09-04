@@ -307,6 +307,18 @@ export const campaignSchema = z.object({
   /** Opcional: banner de abertura da página da campanha. Sem ele, a faixa cai
    * no gradiente do `tone`. */
   banner: z.object({ src: z.string().min(1), alt: z.string().min(1) }).optional(),
+  /** Opcional: vídeo de abertura da campanha, mesmo padrão mudo/loop/autoplay
+   * do `videoBannerSrc` do livro. Tem prioridade sobre `banner` quando os
+   * dois existem. */
+  bannerVideo: z
+    .object({ src: z.string().min(1), alt: z.string().min(1) })
+    .optional(),
+  /** Opcional: variante noturna de `bannerVideo` — quando presente, a faixa
+   * ganha um botão sol/lua para alternar entre as duas versões, mesmo padrão
+   * do `videoBannerNightSrc` do livro. */
+  bannerVideoNight: z
+    .object({ src: z.string().min(1), alt: z.string().min(1) })
+    .optional(),
   /**
    * Opcional: números do financiamento coletivo. Sem eles a página de detalhe
    * omite a barra de progresso e mostra só o CTA — campanha de evento ou
@@ -322,6 +334,9 @@ export const campaignSchema = z.object({
   /** Opcional: parágrafos de "Sobre o projeto". Sem eles, a página usa
    * `description` como parágrafo único. */
   about: z.array(z.string().min(1)).min(1).optional(),
+  /** Opcional: lista curta ("indicado para quem gosta de..."), renderizada
+   * como lista com marcadores ao lado da ficha técnica. */
+  recommendedFor: z.array(z.string().min(1)).min(1).optional(),
   /** Opcional: amostras do miolo ("Visualização das páginas internas"). Sem
    * elas, a seção cai na galeria do título principal. */
   gallery: z

@@ -49,12 +49,12 @@ export function CampaignCountdown({
   // Antes de abrir, o que interessa é quando começa; depois, quanto falta.
   return phase === "upcoming" ? (
     <>
-      COMEÇA EM <span className="font-extrabold text-primary tabular-nums">{days}</span>{" "}
+      COMEÇA EM <span className="font-extrabold tabular-nums">{days}</span>{" "}
       {dayNoun}
     </>
   ) : (
     <>
-      <span className="font-extrabold text-primary tabular-nums">{days}</span> {dayNoun}{" "}
+      <span className="font-extrabold tabular-nums">{days}</span> {dayNoun}{" "}
       {days === 1 ? "RESTANTE" : "RESTANTES"}
     </>
   );

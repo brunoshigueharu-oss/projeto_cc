@@ -87,8 +87,8 @@ const RAW_UNIVERSES = [
     slug: "yanayag",
     order: 9,
     name: "Yanayag",
-    // TODO: tagline/descrição provisórias — confirmar copy oficial com a editora.
-    tagline: "Quadrinho de Mazzitielli e Alcatena.",
+    tagline:
+      "Um reino de bruxos, maldições e mundos que parecem existir além dos mapas conhecidos.",
     description:
       "Primeiro título do catálogo assinado fora do universo de Gustavo Ravaglio.",
     tone: "forest",
