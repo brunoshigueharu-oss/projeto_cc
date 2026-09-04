@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 
-import { isPurchasable } from "@/lib/data/book-availability";
+import { isPurchasable, resolveCartAvailability, type CartAvailability } from "@/lib/data/book-availability";
 import { BOOKS_BY_SLUG } from "@/lib/data/books";
 import { COMBOS } from "@/lib/data/combos";
 
@@ -14,19 +14,13 @@ export type CartLine = {
   quantity: number;
 };
 
+/** `wixProductId` só é `string` (sem `| undefined`) quando `available` é
+ * `true` — ver `resolveCartAvailability` em `lib/data/book-availability.ts`,
+ * fonte única dessa política pra book e combo. */
 export type ResolvedCartLine = CartLine & {
   title: string;
   unitPriceCents: number;
-  /** `true` só quando o item pode seguir pro checkout: status local permite
-   * compra E existe produto Wix mapeado. */
-  available: boolean;
-  /** Motivo de `available: false`, pra UI escolher a mensagem certa (`null`
-   * quando `available` é `true`). */
-  unavailableReason: "esgotado" | "sem-produto-wix" | null;
-  /** ID do produto Wix Stores correspondente — usado só no checkout pra
-   * montar o carrinho real via `addLineItemsToCart`. */
-  wixProductId: string | undefined;
-};
+} & CartAvailability;
 
 type CartContextValue = {
   resolvedLines: readonly ResolvedCartLine[];
@@ -157,34 +151,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (line.type === "book") {
           const book = BOOKS_BY_SLUG.get(line.slug);
           if (!book) return [];
-          const purchasableByStatus = isPurchasable(book.status);
-          const hasWixProduct = Boolean(book.wixProductId);
           return [
             {
               ...line,
               title: book.title,
               unitPriceCents: book.price.amount,
-              available: purchasableByStatus && hasWixProduct,
-              unavailableReason: !purchasableByStatus
-                ? "esgotado"
-                : !hasWixProduct
-                  ? "sem-produto-wix"
-                  : null,
-              wixProductId: book.wixProductId,
+              ...resolveCartAvailability(book.wixProductId, isPurchasable(book.status)),
             },
           ];
         }
         const combo = COMBOS.find((candidate) => candidate.slug === line.slug);
         if (!combo) return [];
-        const hasWixProduct = Boolean(combo.wixProductId);
         return [
           {
             ...line,
             title: combo.title,
             unitPriceCents: combo.price.amount,
-            available: hasWixProduct,
-            unavailableReason: hasWixProduct ? null : "sem-produto-wix",
-            wixProductId: combo.wixProductId,
+            ...resolveCartAvailability(combo.wixProductId),
           },
         ];
       }),
