@@ -76,6 +76,12 @@ export const bookSchema = z.object({
    *  mais largas que um livro), >1 amplia (vídeo cujo enquadramento original
    *  deixa o livro pequeno no quadro). */
   coverVideoScale: z.number().positive().max(2).optional(),
+  /** Como o vídeo preenche o quadro: "cover" (padrão) recorta as bordas para
+   *  preencher tudo; "contain" nunca corta, sobra moldura nos lados que não
+   *  fecham a proporção — usar quando a animação (giro/zoom de câmera) faz o
+   *  objeto encostar na borda do próprio vídeo em algum ponto do loop, e um
+   *  recorte fixo corta a peça em vez de só o fundo. */
+  coverVideoFit: z.enum(["cover", "contain"]).optional(),
   /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
   videoBannerSrc: z.string().optional(),
   /** Opcional: variante noturna de `videoBannerSrc` — quando presente, a faixa

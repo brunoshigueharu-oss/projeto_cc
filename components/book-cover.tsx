@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -20,11 +20,34 @@ type BookCoverProps = {
    *  inteiro. >1 amplia — usa quando o enquadramento original deixa o livro
    *  pequeno no quadro em relação aos vizinhos. */
   videoScale?: number;
+  /** Como o vídeo preenche o quadro. "cover" (padrão) recorta as bordas;
+   *  "contain" nunca corta — usa quando a animação faz o objeto encostar na
+   *  borda do próprio vídeo em algum ponto do loop (ver `coverVideoFit` em
+   *  lib/data/schemas.ts). */
+  videoFit?: "cover" | "contain";
   /** Mostra um botão glass de pausar/reproduzir sobre o vídeo. Só faz sentido
    *  no destaque grande do hero — nas miniaturas do catálogo/relacionados
    *  fica desligado por padrão. */
   showPauseControl?: boolean;
 };
+
+/** Métodos expostos por ref para iniciar/parar o vídeo no hover.
+ *
+ *  O BookCover nunca decide sozinho quando tocar: quem o envolve (o card, o
+ *  carrossel de combos) é quem detecta o hover e chama isso. Não dá pra deixar
+ *  o próprio BookCover escutar mouseenter/mouseleave no seu quadro — em cards
+ *  com link esticado (`after:inset-0`, ver components/book-card.tsx) esse
+ *  link fica por cima do vídeo na pilha de empilhamento e o quadro nunca
+ *  chegaria a receber o evento; centralizar o controle aqui evita ter dois
+ *  caminhos (um deles morto, dependendo de quem envolve o componente). */
+export type BookCoverHandle = {
+  play: () => void;
+  pause: () => void;
+};
+
+// Frame mínimo (não 0) para o navegador decodificar e exibir uma imagem de
+// repouso em vez de um retângulo preto quando o vídeo não está tocando.
+const REST_FRAME_TIME = 0.01;
 
 /**
  * Capa do livro: vídeo de preview quando disponível, senão placeholder em CSS.
@@ -38,19 +61,26 @@ type BookCoverProps = {
  * e só o conteúdo interno escala, contido pelo `overflow-hidden`. Depende do
  * `group` do card pai (ver components/book-card.tsx).
  */
-export function BookCover({
+export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function BookCover({
   title,
   alt,
   size = "sm",
   className,
   videoSrc,
   videoScale,
+  videoFit = "cover",
   showPauseControl,
-}: BookCoverProps) {
+}, ref) {
   const isLarge = size === "lg";
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const hasPauseControl = Boolean(videoSrc) && showPauseControl;
+
+  // Miniaturas (catálogo, relacionados, estante, combos) só tocam o vídeo no
+  // hover/foco — dezenas delas com autoplay simultâneo é o que deixava essas
+  // páginas pesadas. O destaque grande (showPauseControl) mantém o autoplay
+  // contínuo de sempre, com o controle manual de pausar/reproduzir.
+  const playsOnHover = Boolean(videoSrc) && !showPauseControl;
 
   function handleToggle() {
     const video = videoRef.current;
@@ -63,9 +93,33 @@ export function BookCover({
     }
   }
 
+  function handleHoverStart() {
+    if (!playsOnHover) return;
+    videoRef.current?.play();
+  }
+
+  function handleHoverEnd() {
+    if (!playsOnHover) return;
+    // Só pausa — sem voltar o currentTime ao frame de repouso. Resetar aqui
+    // fazia a capa "recomeçar" a cada hover, denunciando que é um vídeo; o
+    // efeito 3D pretendido é a capa congelar exatamente onde o mouse saiu.
+    videoRef.current?.pause();
+  }
+
+  function handleLoadedMetadata() {
+    if (!playsOnHover) return;
+    const video = videoRef.current;
+    if (video) video.currentTime = REST_FRAME_TIME;
+  }
+
+  useImperativeHandle(ref, () => ({
+    play: handleHoverStart,
+    pause: handleHoverEnd,
+  }));
+
   const frameStyle = videoScale ? { transform: `scale(${videoScale})` } : undefined;
 
-  // Nas miniaturas com vídeo, sem folga extra o zoom de hover (scale-110
+  // Nas miniaturas com vídeo, sem folga extra o zoom de hover (scale-105
   // abaixo) empurra a capa para fora e corta o livro — em vez de parecer um
   // "3D" da capa, parece um vídeo cortado.
   //
@@ -97,17 +151,22 @@ export function BookCover({
             ...frameStyle,
           }}
         >
-          <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-110 group-focus-within:scale-110">
+          <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105 group-focus-within:scale-105">
             {videoSrc ? (
               <video
                 ref={videoRef}
                 aria-hidden="true"
-                className="size-full object-cover"
+                className={cn(
+                  "size-full",
+                  videoFit === "contain" ? "object-contain" : "object-cover",
+                )}
                 src={videoSrc}
-                autoPlay
+                autoPlay={!playsOnHover}
                 loop
                 muted
                 playsInline
+                preload={playsOnHover ? "metadata" : "auto"}
+                onLoadedMetadata={handleLoadedMetadata}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
               />
@@ -161,4 +220,4 @@ export function BookCover({
       ) : null}
     </div>
   );
-}
+});

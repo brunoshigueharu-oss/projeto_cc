@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 
-import { BookCover } from "@/components/book-cover";
+import { AddToCartButton } from "@/components/add-to-cart-button";
+import { BookCover, type BookCoverHandle } from "@/components/book-cover";
 import {
   Carousel,
   CarouselContent,
@@ -15,8 +16,6 @@ import {
 import type { Book, Combo } from "@/lib/data/schemas";
 import { TONE_BACKGROUND } from "@/lib/tone";
 import { cn } from "@/lib/utils";
-
-import { AddToCartButton } from "./add-to-cart-button";
 
 /**
  * Preço já formatado por `combos-section.tsx` (Server Component): `formatPrice`
@@ -121,14 +120,7 @@ function ComboBanner({
     >
       <div className="flex shrink-0 -space-x-10 sm:-space-x-14">
         {books.map((book) => (
-          <div key={book.slug} className="w-28 sm:w-36">
-            <BookCover
-              title={book.title}
-              alt={book.coverAlt}
-              videoSrc={book.coverVideoSrc}
-              videoScale={book.coverVideoScale}
-            />
-          </div>
+          <ComboBookThumbnail key={book.slug} book={book} />
         ))}
       </div>
 
@@ -136,6 +128,29 @@ function ComboBanner({
         combo={combo}
         formattedPrice={formattedPrice}
         formattedOriginalPrice={formattedOriginalPrice}
+      />
+    </div>
+  );
+}
+
+/** Dono da ref do vídeo — o BookCover nunca toca sozinho, quem o envolve
+ *  detecta o hover e chama play/pause (ver comentário em book-cover.tsx). */
+function ComboBookThumbnail({ book }: { book: Book }) {
+  const coverRef = useRef<BookCoverHandle>(null);
+
+  return (
+    <div
+      className="w-28 sm:w-36"
+      onMouseEnter={() => coverRef.current?.play()}
+      onMouseLeave={() => coverRef.current?.pause()}
+    >
+      <BookCover
+        ref={coverRef}
+        title={book.title}
+        alt={book.coverAlt}
+        videoSrc={book.coverVideoSrc}
+        videoScale={book.coverVideoScale}
+        videoFit={book.coverVideoFit}
       />
     </div>
   );

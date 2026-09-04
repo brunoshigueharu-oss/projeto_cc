@@ -443,7 +443,7 @@ const RAW_BOOKS = [
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus-art-edition.mp4",
     // Vídeo mostra o estojo por inteiro, bem mais largo que o de um livro solto.
-    coverVideoScale: 0.72,
+    coverVideoScale: 0.8,
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition.mp4",
     // Mergulho no fundo do mar da Faccia Incógnita: mesma gramática dos livros
     // de O Planta (ver nota em `um-bipede-entre-plantas`) — o sinal do `shift`

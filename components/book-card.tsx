@@ -1,8 +1,11 @@
+"use client";
+
+import { useRef } from "react";
 import Link from "next/link";
 
 import type { Book } from "@/lib/data/schemas";
-import { formatPrice } from "@/lib/format";
-import { BookCover } from "./book-cover";
+import { formatPrice } from "@/lib/format-price";
+import { BookCover, type BookCoverHandle } from "./book-cover";
 import { BookStatusBadge } from "./book-status-badge";
 
 type BookCardProps = {
@@ -15,15 +18,30 @@ type BookCardProps = {
  * Só o título é link; ele se estica sobre o card inteiro com `after:inset-0`.
  * Assim o card todo é clicável, mas existe uma única parada de tabulação, e o
  * leitor de tela anuncia o link pelo título (não pela descrição da capa).
+ *
+ * Esse mesmo link esticado fica por cima do vídeo da capa na pilha de
+ * empilhamento, então o hover precisa ser detectado aqui no `<article>` (que
+ * o recebe normalmente, por ser ancestral do link) e repassado ao vídeo via
+ * ref — o próprio `BookCover` nunca veria o mouseenter/mouseleave.
  */
 export function BookCard({ book }: BookCardProps) {
+  const coverRef = useRef<BookCoverHandle>(null);
+
   return (
-    <article className="group relative flex flex-col">
+    <article
+      className="group relative flex flex-col"
+      onMouseEnter={() => coverRef.current?.play()}
+      onMouseLeave={() => coverRef.current?.pause()}
+      onFocus={() => coverRef.current?.play()}
+      onBlur={() => coverRef.current?.pause()}
+    >
       <BookCover
+        ref={coverRef}
         title={book.title}
         alt={book.coverAlt}
         videoSrc={book.coverVideoSrc}
         videoScale={book.coverVideoScale}
+        videoFit={book.coverVideoFit}
       />
 
       <div className="mt-4 flex flex-1 flex-col items-center text-center">

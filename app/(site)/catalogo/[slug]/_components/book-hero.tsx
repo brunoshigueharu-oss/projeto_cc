@@ -1,14 +1,14 @@
 import Link from "next/link";
 
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
+import { BookSynopsis } from "@/components/book-synopsis";
 import { isInStock, isPurchasable as isBookPurchasable } from "@/lib/data/book-availability";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 
-import { AddToCartButton } from "./add-to-cart-button";
 import { BookGallery } from "./book-gallery";
-import { BookSynopsis } from "./book-synopsis";
 
 type BookHeroProps = {
   book: Book;
@@ -67,6 +67,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
             alt={book.coverAlt}
             videoSrc={book.coverVideoSrc}
             videoScale={book.coverVideoScale}
+            videoFit={book.coverVideoFit}
             showPauseControl
             size="lg"
             className="w-full"
