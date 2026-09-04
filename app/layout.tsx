@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nunito_Sans, Poppins } from "next/font/google";
 
 import { CartProvider } from "@/lib/cart/cart-context";
+import { ThemeProvider } from "@/components/theme-provider";
 import { MemberProvider } from "@/lib/wix/member-context";
 import "./globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       className={`${poppins.variable} ${nunitoSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <a
@@ -37,9 +39,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Pular para o conteúdo
         </a>
-        <MemberProvider>
-          <CartProvider>{children}</CartProvider>
-        </MemberProvider>
+        <ThemeProvider>
+          <MemberProvider>
+            <CartProvider>{children}</CartProvider>
+          </MemberProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
