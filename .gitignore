@@ -41,3 +41,6 @@ next-env.d.ts
 
 # material bruto da editora (imagens, videos, textos)
 /Hocus Pocus Arquivos/
+
+# Wix CLI debug logs
+/.wix/
