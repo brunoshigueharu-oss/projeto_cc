@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { clearSession, setSessionTokens, WIX_API_BASE } from "./client";
 import { WIX_STORES_APP_ID } from "./config";
-import { addLineItemsToCart, clearCurrentCart, createCheckoutFromCart, redirectToCheckoutPayment } from "./ecom";
+import {
+  addLineItemsToCart,
+  clearCurrentCart,
+  createCheckoutFromCart,
+  redirectToCheckoutPayment,
+  startWixCheckout,
+} from "./ecom";
 
 /**
  * Mesmo padrão de client.test.ts: mocka `fetch` global e deixa o `wixApiRequest`
@@ -106,6 +112,64 @@ describe("lib/wix/ecom", () => {
           postFlowUrl: "https://example.com/checkout",
         }),
       ).rejects.toThrow();
+    });
+  });
+
+  describe("startWixCheckout", () => {
+    const callbacks = {
+      thankYouPageUrl: "https://example.com/checkout/confirmacao",
+      postFlowUrl: "https://example.com/checkout",
+    };
+
+    it("executa clear → add → create → redirect em sequência", async () => {
+      const calledUrls: string[] = [];
+      const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString();
+        calledUrls.push(`${init?.method ?? "POST"} ${url}`);
+        if (url === `${WIX_API_BASE}/ecom/v1/carts/current`) return jsonResponse({ message: "not found" }, 404);
+        if (url === `${WIX_API_BASE}/ecom/v1/carts/current/add-to-cart`) return jsonResponse({ cart: {} });
+        if (url === `${WIX_API_BASE}/ecom/v1/carts/current/create-checkout`) {
+          return jsonResponse({ checkoutId: "checkout-1" });
+        }
+        if (url === `${WIX_API_BASE}/_api/redirects-api/v1/redirect-session`) {
+          return jsonResponse({ redirectSession: { fullUrl: "https://wix.example/pay" } });
+        }
+        throw new Error(`unexpected url: ${url}`);
+      });
+      // `window.location` mockado como objeto plano: sem isso, a atribuição
+      // real de `redirectToCheckoutPayment` dispara "Not implemented:
+      // navigation" no jsdom. Com o mock, dá pra afirmar o href final também.
+      const locationMock = { href: "" };
+      vi.stubGlobal("location", locationMock);
+      vi.stubGlobal("fetch", fetchMock);
+
+      await startWixCheckout([{ catalogItemId: "prod-1", quantity: 1 }], {} as never, callbacks);
+
+      expect(calledUrls).toEqual([
+        `DELETE ${WIX_API_BASE}/ecom/v1/carts/current`,
+        `POST ${WIX_API_BASE}/ecom/v1/carts/current/add-to-cart`,
+        `POST ${WIX_API_BASE}/ecom/v1/carts/current/create-checkout`,
+        `POST ${WIX_API_BASE}/_api/redirects-api/v1/redirect-session`,
+      ]);
+      expect(locationMock.href).toBe("https://wix.example/pay");
+    });
+
+    it("para a sequência sem chamar create-checkout nem redirect quando add-to-cart falha", async () => {
+      const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
+        if (url === `${WIX_API_BASE}/ecom/v1/carts/current`) return jsonResponse({ message: "not found" }, 404);
+        if (url === `${WIX_API_BASE}/ecom/v1/carts/current/add-to-cart`) {
+          return jsonResponse({ message: "server error" }, 500);
+        }
+        throw new Error(`unexpected url: ${url}`);
+      });
+      vi.stubGlobal("fetch", fetchMock);
+
+      await expect(
+        startWixCheckout([{ catalogItemId: "prod-1", quantity: 1 }], {} as never, callbacks),
+      ).rejects.toThrow();
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
   });
 });

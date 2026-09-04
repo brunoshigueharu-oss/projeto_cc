@@ -182,3 +182,14 @@ export async function wixApiRequest(path: string, options: RequestOptions = {}) 
   if (res.status === 204) return undefined;
   return await res.json();
 }
+
+/** Extrai o `status` HTTP de um erro lançado por `wixApiRequest` — mesmo shape
+ * (`err.status`) reconstruído independentemente em vários call-sites antes
+ * desta função existir. `unknown` porque o erro chega de um `catch`; aceita
+ * qualquer objeto com `status` numérico (não só `instanceof Error`) pra
+ * casar com os testes existentes, que simulam o erro como objeto plano. */
+export function wixErrorStatus(e: unknown): number | undefined {
+  if (typeof e !== "object" || e === null) return undefined;
+  const status = (e as { status?: unknown }).status;
+  return typeof status === "number" ? status : undefined;
+}

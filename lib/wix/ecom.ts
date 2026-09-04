@@ -3,7 +3,7 @@
 // padrão de lib/wix/members-auth.ts: usa o token do visitante/membro atual
 // (via wixApiRequest/localStorage), então roda só no browser. Nunca chamar a
 // partir de Server Action/Route Handler.
-import { wixApiRequest } from "./client";
+import { wixApiRequest, wixErrorStatus } from "./client";
 import { WIX_STORES_APP_ID } from "./config";
 
 export type WixLineItemInput = { catalogItemId: string; quantity: number };
@@ -28,7 +28,7 @@ export async function clearCurrentCart(): Promise<void> {
   try {
     await wixApiRequest("/ecom/v1/carts/current", { method: "DELETE" });
   } catch (e) {
-    if ((e as { status?: number })?.status !== 404) throw e;
+    if (wixErrorStatus(e) !== 404) throw e;
   }
 }
 
@@ -69,4 +69,23 @@ export async function redirectToCheckoutPayment(
   const fullUrl: string | undefined = redirectSession?.fullUrl;
   if (!fullUrl) throw new Error("Wix não retornou a URL de pagamento.");
   window.location.href = fullUrl;
+}
+
+/**
+ * Orquestra o checkout completo — limpar o carrinho Wix, recriar a partir das
+ * linhas compráveis, criar o checkout e redirecionar pro pagamento. Único
+ * ponto que conhece essa sequência (antes vivia espalhada em
+ * `checkout-content.tsx`, sem teste da ordem das chamadas nem do que
+ * acontece se uma etapa falhar no meio). Caminho feliz não retorna —
+ * `redirectToCheckoutPayment` já navegou o browser.
+ */
+export async function startWixCheckout(
+  lines: readonly WixLineItemInput[],
+  shippingAddress: WixAddress,
+  callbacks: { thankYouPageUrl: string; postFlowUrl: string },
+): Promise<void> {
+  await clearCurrentCart();
+  await addLineItemsToCart(lines);
+  const checkoutId = await createCheckoutFromCart(shippingAddress);
+  await redirectToCheckoutPayment(checkoutId, callbacks);
 }

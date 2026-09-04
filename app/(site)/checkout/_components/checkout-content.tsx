@@ -5,10 +5,10 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { FormStatus, type FormResult } from "@/components/form-status";
-import { useCart } from "@/lib/cart/cart-context";
+import { useCart, type ResolvedCartLine } from "@/lib/cart/cart-context";
 import { formatPriceClient } from "@/lib/cart/format-price";
 import { cn } from "@/lib/utils";
-import { addLineItemsToCart, clearCurrentCart, createCheckoutFromCart, redirectToCheckoutPayment } from "@/lib/wix/ecom";
+import { startWixCheckout } from "@/lib/wix/ecom";
 import { AddressForm } from "./address-form";
 import type { NewAddressInput } from "../_lib/checkout-schema";
 import { toWixAddress } from "../_lib/to-wix-address";
@@ -40,26 +40,21 @@ export function CheckoutContent() {
     );
   }
 
-  const purchasableLines = resolvedLines.filter((line) => line.available);
+  const purchasableLines = resolvedLines.filter(
+    (line): line is Extract<ResolvedCartLine, { available: true }> => line.available,
+  );
   const hasBlockedItem = resolvedLines.some((line) => !line.available);
 
   async function handleSubmit(address: NewAddressInput) {
     setResult(null);
     setSubmitting(true);
     try {
-      await clearCurrentCart();
-      await addLineItemsToCart(
-        purchasableLines.map((line) => ({
-          catalogItemId: line.wixProductId!,
-          quantity: line.quantity,
-        })),
-      );
-      const checkoutId = await createCheckoutFromCart(toWixAddress(address));
       const origin = window.location.origin;
-      await redirectToCheckoutPayment(checkoutId, {
-        thankYouPageUrl: `${origin}/checkout/confirmacao`,
-        postFlowUrl: `${origin}/checkout`,
-      });
+      await startWixCheckout(
+        purchasableLines.map((line) => ({ catalogItemId: line.wixProductId, quantity: line.quantity })),
+        toWixAddress(address),
+        { thankYouPageUrl: `${origin}/checkout/confirmacao`, postFlowUrl: `${origin}/checkout` },
+      );
       // Caminho feliz não retorna — window.location.href já navegou o browser.
     } catch (e) {
       console.error(e);

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mapAuthError, MemberAuthError } from "./members-auth";
 
 describe("mapAuthError", () => {
@@ -36,5 +36,16 @@ describe("mapAuthError", () => {
   it("bubbles an unmapped error as-is (fail loudly)", () => {
     const original = new Error("network down");
     expect(mapAuthError(original)).toBe(original);
+  });
+
+  it("logs the real code for an unmapped Wix applicationError (e.g. SITE_NOT_PUBLISHED_EXCEPTION) but still bubbles it as-is", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const original = {
+      status: 400,
+      body: { message: "site is not published", details: { applicationError: { code: "SITE_NOT_PUBLISHED_EXCEPTION" } } },
+    };
+    expect(mapAuthError(original)).toBe(original);
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining("status 400"), "SITE_NOT_PUBLISHED_EXCEPTION");
+    spy.mockRestore();
   });
 });

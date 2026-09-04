@@ -5,6 +5,7 @@
 // exports, nunca editando o corpo das funções internas.
 import {
   wixApiRequest,
+  wixErrorStatus,
   WIX_API_BASE,
   setSessionTokens,
   clearSession,
@@ -159,7 +160,7 @@ export async function getCurrentMember(): Promise<WixMember | null> {
     const res = await wixApiRequest(CURRENT_MEMBER_URL, { method: "GET", query: { fieldSet: "FULL" } });
     return res?.member || null;
   } catch (e) {
-    const status = (e as { status?: number })?.status;
+    const status = wixErrorStatus(e);
     if (status === 401 || status === 403 || status === 404) return null;
     throw e;
   }
@@ -289,18 +290,29 @@ async function exchangeCode(
   return { accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in };
 }
 
-/** Exportado (era privada no original) só pra dar pra testar isoladamente — a
- * lógica de mapeamento não mudou uma linha. */
+/** Exportado (era privada no original) só pra dar pra testar isoladamente — as
+ * condições de mapeamento são as mesmas do original; só a extração do status
+ * do erro passou a usar `wixErrorStatus` (lib/wix/client.ts), compartilhada
+ * com outros call-sites que faziam esse cast de forma independente. */
 export function mapAuthError(e: unknown): MemberAuthError | Error {
-  const err = e as { body?: { details?: { applicationError?: { code?: string } } }; status?: number };
-  const code = err?.body?.details?.applicationError?.code;
-  if (code === "-19995" || err?.status === 409) {
+  const status = wixErrorStatus(e);
+  const body = (e as { body?: { message?: string; details?: { applicationError?: { code?: string } } } })?.body;
+  const code = body?.details?.applicationError?.code;
+  if (code === "-19995" || status === 409) {
     return new MemberAuthError("emailAlreadyExists", "An account with this email already exists — try logging in instead.");
   }
-  if (code === "-19999" || code === "-19976" || err?.status === 404 || err?.status === 401) {
+  if (code === "-19999" || code === "-19976" || status === 404 || status === 401) {
     return new MemberAuthError("invalidCredentials", "Incorrect email or password.");
   }
   if (e instanceof MemberAuthError) return e;
+  // Erro do Wix não coberto pelos mapeamentos acima (ex.: SITE_NOT_PUBLISHED_EXCEPTION
+  // quando o site está em rascunho) — sem isso, o único rastro fica escondido dentro
+  // da string de `Error.message` montada em wixApiRequest. Loga o código/mensagem
+  // reais separadamente, sem alterar o valor retornado (o caller ainda recebe `e`
+  // intacto — ver teste "bubbles an unmapped error as-is").
+  if (code || body?.message) {
+    console.error(`[wix-auth] erro não mapeado do Wix (status ${status ?? "?"}):`, code ?? body?.message);
+  }
   return e as Error;
 }
 
