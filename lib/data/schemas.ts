@@ -186,6 +186,12 @@ export const bookSchema = z.object({
   /** Default `true`. `false` tira a página do ar (404) sem apagar os dados —
    * usado para títulos que ainda não devem ir ao público. */
   published: z.boolean().default(true),
+  /** Default `true`. `false` tira o título da vitrine geral do catálogo
+   * (`/catalogo` e "outros livros do universo") sem afetar `published` — a
+   * página do livro continua no ar, então links diretos (ex. CTA de uma
+   * campanha) seguem funcionando. Usado para títulos que só devem aparecer
+   * dentro de uma campanha por enquanto. */
+  catalogVisible: z.boolean().default(true),
   /** Título exibido na prateleira de destaque da Home (ver `featured`). */
   featured: z.boolean().default(false),
   /** Obrigatório quando `featured`: still da capa usado no card da Home —

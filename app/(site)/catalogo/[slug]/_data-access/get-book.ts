@@ -33,7 +33,10 @@ export async function getBookBySlug(slug: string): Promise<BookDetail | undefine
 /** Outros livros do mesmo universo, excluindo o atual. */
 export async function getRelatedBooks(book: Book): Promise<readonly Book[]> {
   const sameUniverse = BOOKS_BY_UNIVERSE.get(book.universeSlug) ?? [];
-  return sameUniverse.filter((candidate) => candidate.slug !== book.slug && candidate.published);
+  return sameUniverse.filter(
+    (candidate) =>
+      candidate.slug !== book.slug && candidate.published && candidate.catalogVisible,
+  );
 }
 
 /** Livro-base de `book.compareEdition`, resolvido para exibir o título na legenda. */

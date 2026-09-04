@@ -722,9 +722,11 @@ const RAW_BOOKS = [
   {
     slug: "yanayag",
     title: "Yanayag",
-    // Página pronta, mas ainda não deve ir ao público — aguardando aviso
-    // para religar (ver `published` em schemas.ts).
-    published: false,
+    published: true,
+    // Por enquanto o título só deve aparecer na campanha de lançamento
+    // (/campanhas) — a página do livro segue no ar pro CTA "Ver na loja",
+    // mas some do grid geral do catálogo até a campanha decidir o contrário.
+    catalogVisible: false,
     universeSlug: "yanayag",
     author: MAZZITIELLI_E_ALCATENA,
     synopsis:
@@ -899,6 +901,13 @@ export const BOOKS: readonly Book[] = bookSchema
 
 /** `BOOKS` filtrado para `published !== false` — o que a vitrine pública usa. */
 export const PUBLISHED_BOOKS: readonly Book[] = BOOKS.filter((book) => book.published);
+
+/** `PUBLISHED_BOOKS` filtrado para `catalogVisible !== false` — a vitrine
+ * geral do catálogo (grid e "outros livros do universo"). Título com página
+ * própria no ar mas fora daqui só aparece dentro de uma campanha. */
+export const CATALOG_VISIBLE_BOOKS: readonly Book[] = PUBLISHED_BOOKS.filter(
+  (book) => book.catalogVisible,
+);
 
 export const BOOKS_BY_SLUG: ReadonlyMap<string, Book> = new Map(
   BOOKS.map((book) => [book.slug, book]),

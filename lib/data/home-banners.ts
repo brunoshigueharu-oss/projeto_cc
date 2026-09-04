@@ -77,6 +77,8 @@ export const HOME_BANNERS: readonly HomeBanner[] = RAW_HOME_BANNERS.flatMap((raw
   }
 
   const banner = homeBannerSchema.parse({ ...raw, bookTitle: book.title });
-  // Livro despublicado: some do carrossel sem precisar remover o banner daqui.
-  return book.published ? [banner] : [];
+  // Livro despublicado ou fora da vitrine geral do catálogo (`catalogVisible`
+  // false — ex. título só de campanha por enquanto): some do carrossel sem
+  // precisar remover o banner daqui.
+  return book.published && book.catalogVisible ? [banner] : [];
 });

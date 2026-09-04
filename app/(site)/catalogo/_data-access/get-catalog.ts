@@ -1,4 +1,4 @@
-import { PUBLISHED_BOOKS } from "@/lib/data/books";
+import { CATALOG_VISIBLE_BOOKS } from "@/lib/data/books";
 import type { Book } from "@/lib/data/schemas";
 
 export type Catalog = {
@@ -20,8 +20,8 @@ export type Catalog = {
  */
 export async function getCatalog(universeSlug?: string): Promise<Catalog> {
   const books = universeSlug
-    ? PUBLISHED_BOOKS.filter((book) => book.universeSlug === universeSlug)
-    : PUBLISHED_BOOKS;
+    ? CATALOG_VISIBLE_BOOKS.filter((book) => book.universeSlug === universeSlug)
+    : CATALOG_VISIBLE_BOOKS;
   const universeSlugsWithBooks = new Set(books.map((book) => book.universeSlug));
 
   return {
