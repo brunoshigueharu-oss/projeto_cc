@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Bell } from "lucide-react";
 
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { isPreOrder as isBookPreOrder, isSoldOut as isBookSoldOut } from "@/lib/data/book-availability";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 
-import { AddToCartButton } from "./add-to-cart-button";
 import { UniverseShowcaseImage } from "./universe-showcase-image";
 
 type UniverseSectionProps = {
