@@ -7,6 +7,12 @@ const MAX_TILT_DEG = 10;
 const FRONT_SHEET_ROTATE_DEG = -6;
 const BACK_SHEET_ROTATE_DEG = 9;
 
+/** Área opaca da folha dentro de `paper.png` (656×900: folha em x 11→607,
+ * y 11→855; o resto é a sombra embutida). O desenho vai só sobre essa área —
+ * na caixa inteira, o fundo branco do vídeo cobria a sombra e deslocava a
+ * folha. */
+const SHEET_AREA_CLASS = "absolute left-[1.68%] top-[1.22%] h-[93.89%] w-[91.01%]";
+
 /**
  * Duas folhas "jogadas" sobre a mesa, ambas inclinando levemente seguindo o
  * mouse (`rotateX`/`rotateY` via `perspective`, aplicado direto em
@@ -102,20 +108,24 @@ export function PaperTiltEffect() {
             transitionTimingFunction: "ease-out",
           }}
         >
-          <Image
-            src="/images/upsell/paper.png"
-            alt=""
-            fill
-            sizes="260px"
-            className="object-contain drop-shadow-md"
-          />
-          <Image
-            src="/images/upsell/paper-sketch-art.png"
-            alt=""
-            fill
-            sizes="260px"
-            className="pointer-events-none object-contain"
-          />
+          <div className="relative mx-auto aspect-[656/900] h-full">
+            <Image
+              src="/images/upsell/paper.png"
+              alt=""
+              fill
+              sizes="260px"
+              className="object-contain drop-shadow-md"
+            />
+            <div className={SHEET_AREA_CLASS}>
+              <Image
+                src="/images/upsell/paper-sketch-art.png"
+                alt=""
+                fill
+                sizes="260px"
+                className="pointer-events-none object-contain"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -134,23 +144,25 @@ export function PaperTiltEffect() {
             transitionTimingFunction: "ease-out",
           }}
         >
-          <Image
-            src="/images/upsell/paper.png"
-            alt=""
-            fill
-            sizes="260px"
-            className="object-contain drop-shadow-xl"
-          />
-          <video
-            ref={videoRef}
-            src="/videos/upsell/paper-sketch.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-            style={{ mixBlendMode: "multiply" }}
-          />
+          <div className="relative mx-auto aspect-[656/900] h-full">
+            <Image
+              src="/images/upsell/paper.png"
+              alt=""
+              fill
+              sizes="260px"
+              className="object-contain drop-shadow-xl"
+            />
+            {/* clip-path corta a coluna preta de 1px nas bordas laterais do vídeo */}
+            <video
+              ref={videoRef}
+              src="/videos/upsell/paper-sketch.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className={`${SHEET_AREA_CLASS} pointer-events-none object-cover mix-blend-multiply [clip-path:inset(0_1px)]`}
+            />
+          </div>
         </div>
       </div>
     </div>
