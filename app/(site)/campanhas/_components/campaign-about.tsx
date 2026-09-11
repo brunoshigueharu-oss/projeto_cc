@@ -8,15 +8,17 @@ import { ParallaxSection } from "@/components/parallax-section";
 import { Badge } from "@/components/ui/badge";
 import { isPurchasable as isBookPurchasable } from "@/lib/data/book-availability";
 import type { Book, Campaign } from "@/lib/data/schemas";
+import { formatPrice } from "@/lib/format";
 
 /**
  * "Sobre o projeto" (node 211:1425 do Figma, com o miolo revisado a partir de
- * referência visual do usuário): título, primeiro parágrafo isolado, a faixa
- * de parallax do livro (`book.parallax`) como divisor full-width — mesma
- * seção usada na página de catálogo — e o restante do texto na mesma vibe do
- * `BookHero`: capa com a prévia em vídeo rodando à esquerda, texto truncado
- * ("leia mais") e CTA de reserva à direita, em vez de um bloco corrido de
- * parágrafos. Sem `primaryBook`, cai de volta no texto corrido simples — não
+ * referência visual do usuário): título, primeiro parágrafo isolado, e logo
+ * em seguida a vitrine do livro principal — capa com a prévia em vídeo
+ * rodando à esquerda, título/autor/sinopse/preço/CTA à direita, no mesmo
+ * layout do `BookHero` da página de catálogo. Só depois vem a faixa de
+ * parallax do livro (`book.parallax`) como divisor full-width, e por fim a
+ * ficha técnica, as recomendações e a galeria. Sem `primaryBook`, a vitrine
+ * some e o texto cai de volta em parágrafos corridos após o parallax — não
  * há capa nem exemplar para reservar.
  *
  * A ficha é montada a partir do título principal da campanha, não de campos
@@ -58,11 +60,9 @@ export function CampaignAbout({
         </div>
       </section>
 
-      <ParallaxSection layers={primaryBook?.parallax ?? []} />
-
-      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
-        {primaryBook ? (
-          <div className="grid gap-10 pt-12 sm:pt-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
+      {primaryBook ? (
+        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
             <div className="mx-auto w-full max-w-xs lg:mx-0">
               <BookCover
                 title={primaryBook.title}
@@ -77,11 +77,27 @@ export function CampaignAbout({
             </div>
 
             <div>
-              {campaign.kind === "lancamento" ? <Badge>Lançamento</Badge> : null}
+              <h2 className="text-balance font-display text-3xl font-bold leading-[1.15] text-foreground sm:text-4xl">
+                {primaryBook.title}
+              </h2>
+              {primaryBook.subtitle ? (
+                <p className="mt-2 font-serif text-lg text-foreground/60">{primaryBook.subtitle}</p>
+              ) : null}
+
+              <p className="mt-1 font-serif text-base italic text-primary">
+                Por {primaryBook.author.name}
+              </p>
 
               {restParagraphs.length > 0 ? (
                 <BookSynopsis text={restParagraphs.join("\n\n")} locale={primaryBook.locale} />
               ) : null}
+
+              <div className="mt-6 flex flex-wrap items-center gap-4">
+                <span className="font-mono text-2xl font-bold text-foreground tabular-nums">
+                  {formatPrice(primaryBook.price.amount)}
+                </span>
+                {campaign.kind === "lancamento" ? <Badge>Lançamento</Badge> : null}
+              </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-5">
                 {isBookPurchasable(primaryBook.status) ? (
@@ -106,16 +122,26 @@ export function CampaignAbout({
               </div>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col gap-6 pt-12 font-serif text-base leading-relaxed text-foreground/70 sm:pt-16 sm:text-lg">
+        </section>
+      ) : null}
+
+      <ParallaxSection layers={primaryBook?.parallax ?? []} />
+
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        {!primaryBook ? (
+          <div className="flex flex-col gap-6 font-serif text-base leading-relaxed text-foreground/70 sm:text-lg">
             {restParagraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-        )}
+        ) : null}
 
         {specs.length > 0 || campaign.recommendedFor?.length ? (
-          <div className="mt-12 flex flex-col gap-6 sm:mt-16 sm:flex-row sm:flex-wrap">
+          <div
+            className={`flex flex-col gap-6 sm:flex-row sm:flex-wrap ${
+              primaryBook ? "" : "mt-12 sm:mt-16"
+            }`}
+          >
             {specs.length > 0 ? (
               <div className="w-full rounded-3xl border border-border bg-card p-7 sm:w-[420px]">
                 <h2 className="font-display text-lg font-bold text-foreground">
