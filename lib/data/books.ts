@@ -129,6 +129,21 @@ const RAW_BOOKS = [
     // Sem faixa própria enviada para a edição em inglês — reaproveita a faixa
     // já existente da edição em português (cena genérica, sem texto).
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
+    // Mesmas fotos de "outras visões" da edição em português — o miolo
+    // fotografado é o mesmo, só a capa impressa muda (inglês x português).
+    gallery: [
+      {
+        src: "/images/galeria/um-bipede-entre-plantas/01.jpg",
+        alt: "Página do miolo de Mr. Plant — A Biped Among Plants, mostrando a fachada de uma casa vitoriana à noite",
+      },
+      { src: "/images/galeria/um-bipede-entre-plantas/02.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
+      {
+        src: "/images/galeria/um-bipede-entre-plantas/03.jpg",
+        alt: "Página do miolo de Mr. Plant — A Biped Among Plants, mostrando o interior de uma sala iluminada por velas",
+      },
+      { src: "/images/galeria/um-bipede-entre-plantas/04.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
+      { src: "/images/galeria/um-bipede-entre-plantas/05.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
+    ],
     // Mesma arte de parallax da edição em português — ver nota de gramática de
     // shift/origin no bloco `um-bipede-entre-plantas`, no fim deste array.
     parallax: [
@@ -216,6 +231,13 @@ const RAW_BOOKS = [
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-1.mp4",
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-1.mp4",
+    gallery: [
+      { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/02.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/03.jpg", alt: "Página 8 do miolo de Os Contos do Planta — Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/04.jpg", alt: "Página 18 do miolo de Os Contos do Planta — Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/05.jpg", alt: "Página 21 do miolo de Os Contos do Planta — Vol. 1" },
+    ],
     // Mesma gramática do parallax de `um-bipede-entre-plantas` (ver nota lá):
     // a folhagem da base desce e sai por baixo, o Planta sobe e sai pelo topo,
     // cada camada mais à frente com deslocamento e zoom maiores. O sinal do
@@ -283,6 +305,13 @@ const RAW_BOOKS = [
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-2.mp4",
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-2.mp4",
+    gallery: [
+      { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/02.jpg", alt: "Página 7 do miolo de Os Contos do Planta — Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/03.jpg", alt: "Página 13 do miolo de Os Contos do Planta — Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/04.jpg", alt: "Página 19 do miolo de Os Contos do Planta — Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/05.jpg", alt: "Página 28 do miolo de Os Contos do Planta — Vol. 2" },
+    ],
     // Noite de tempestade: o fundo da cena sobe de leve, a colina da igreja e a
     // vegetação da base descem e saem por baixo, os galhos sobem e saem pelo
     // topo. Mesma gramática dos outros dois livros (ver nota em
@@ -371,6 +400,13 @@ const RAW_BOOKS = [
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus.mp4",
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus.mp4",
+    gallery: [
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/01.jpg", alt: "Detalhe da capa do Robô de Madeira, com o autômato entalhado em relevo dourado" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/02.jpg", alt: "Capa do Robô de Madeira aberta em ângulo, mostrando o acabamento dourado e a contracapa" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/03.jpg", alt: "Miolo do Robô de Madeira aberto em uma página de quadrinhos, com uma cena de tempestade no mar" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/04.jpg", alt: "Página de guarda ilustrada do Robô de Madeira, ao lado da capa fechada" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/05.jpg", alt: "Lombada em tecido do Robô de Madeira com o título gravado" },
+    ],
     // Fundo do mar da Faccia Incógnita: rolando a página, o leitor desce até o
     // leito — os corais e as pedras do primeiro plano descem e saem pela base,
     // enquanto a estrela-do-mar sobe pela coluna d'água. Mesma gramática dos
@@ -447,6 +483,16 @@ const RAW_BOOKS = [
     // Vídeo mostra o estojo por inteiro, bem mais largo que o de um livro solto.
     coverVideoScale: 0.8,
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition.mp4",
+    // Mesmas fotos de "outras visões" da edição padrão — o exemplar
+    // fotografado é o mesmo miolo/capa, a caixa e a luva da Art Edition ainda
+    // não foram fotografadas separadamente.
+    gallery: [
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/01.jpg", alt: "Detalhe da capa do Robô de Madeira, com o autômato entalhado em relevo dourado" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/02.jpg", alt: "Capa do Robô de Madeira aberta em ângulo, mostrando o acabamento dourado e a contracapa" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/03.jpg", alt: "Miolo do Robô de Madeira aberto em uma página de quadrinhos, com uma cena de tempestade no mar" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/04.jpg", alt: "Página de guarda ilustrada do Robô de Madeira, ao lado da capa fechada" },
+      { src: "/images/galeria/robo-de-madeira-atlas-cianus/05.jpg", alt: "Lombada em tecido do Robô de Madeira com o título gravado" },
+    ],
     // Mergulho no fundo do mar da Faccia Incógnita: mesma gramática dos livros
     // de O Planta (ver nota em `um-bipede-entre-plantas`) — o sinal do `shift`
     // é preso à borda do `origin`. Bolhas e algas sobem e saem pelo topo; o
@@ -535,6 +581,13 @@ const RAW_BOOKS = [
     // Vídeo mostra a caixa por inteiro, mais larga que a de um livro solto.
     coverVideoScale: 0.8,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-caixa-de-reliquias.mp4",
+    gallery: [
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/01.jpg", alt: "Caixa de Relíquias aberta, com o jornal O Noticiarista Oculto e o tabuleiro" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/02.jpg", alt: "Verso do tabuleiro da Caixa de Relíquias, com o mapa de Curytiba em 1930" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/03.jpg", alt: "Itens colecionáveis da Caixa de Relíquias de Os Contos do Planta" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/04.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2, incluído na caixa" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/05.jpg", alt: "Página 13 do miolo de Os Contos do Planta — Vol. 2, incluído na caixa" },
+    ],
     // Jardim de esculturas: mesma gramática dos outros livros (ver nota em
     // `um-bipede-entre-plantas`) — o sinal do `shift` é preso à borda do
     // `origin`. A folhagem e o Planta da frente descem e saem pela base;
@@ -658,6 +711,13 @@ const RAW_BOOKS = [
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/necroplanta.mp4",
     videoBannerSrc: "/videos/faixas/necroplanta.mp4",
+    gallery: [
+      { src: "/images/galeria/necroplanta/01.jpg", alt: "Página 10 do miolo de Necroplanta" },
+      { src: "/images/galeria/necroplanta/02.jpg", alt: "Página 17 do miolo de Necroplanta" },
+      { src: "/images/galeria/necroplanta/03.jpg", alt: "Página 22 do miolo de Necroplanta" },
+      { src: "/images/galeria/necroplanta/04.jpg", alt: "Página 34 do miolo de Necroplanta" },
+      { src: "/images/galeria/necroplanta/05.jpg", alt: "Página 91 do miolo de Necroplanta" },
+    ],
     // Poção do Necroplanta: mesma gramática dos outros livros (ver nota em
     // `um-bipede-entre-plantas`) — o sinal do `shift` é preso à borda do
     // `origin`. O portal encosta no topo e sobe por lá; o núcleo é recorte
@@ -741,6 +801,15 @@ const RAW_BOOKS = [
     coverVideoScale: 1.2,
     videoBannerSrc: "/videos/faixas/yanayag.mp4",
     videoBannerNightSrc: "/videos/faixas/yanayag-noite.mp4",
+    gallery: [
+      { src: "/images/galeria/yanayag/01.jpg", alt: "Página de abertura do Capítulo 2 de Yanayag" },
+      { src: "/images/galeria/yanayag/02.jpg", alt: "Página do Capítulo 12 de Yanayag" },
+      { src: "/images/galeria/yanayag/03.jpg", alt: "Página de abertura do Capítulo 14 de Yanayag" },
+      { src: "/images/galeria/yanayag/04.jpg", alt: "Página da história Los Asesinos del Círculo del Fuego Negro, do universo de Yanayag" },
+      { src: "/images/galeria/yanayag/05.jpg", alt: "Página da história Los Asesinos del Círculo del Fuego Negro, do universo de Yanayag" },
+      { src: "/images/galeria/yanayag/06.jpg", alt: "Página da história Los Asesinos del Círculo del Fuego Negro, do universo de Yanayag" },
+      { src: "/images/galeria/yanayag/07.jpg", alt: "Página da história Los Asesinos del Círculo del Fuego Negro, do universo de Yanayag" },
+    ],
     // Astrolábio suspenso sobre a névoa: a lua ao fundo quase não se move, o
     // arco de raízes no meio cresce a partir do centro (esconde o corte reto
     // dos dois lados), o medalhão central paira livre, e o anel externo
@@ -811,6 +880,19 @@ const RAW_BOOKS = [
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
+    gallery: [
+      {
+        src: "/images/galeria/um-bipede-entre-plantas/01.jpg",
+        alt: "Página do miolo de Um Bípede Entre Plantas, mostrando a fachada de uma casa vitoriana à noite",
+      },
+      { src: "/images/galeria/um-bipede-entre-plantas/02.jpg", alt: "Página do miolo de Um Bípede Entre Plantas" },
+      {
+        src: "/images/galeria/um-bipede-entre-plantas/03.jpg",
+        alt: "Página do miolo de Um Bípede Entre Plantas, mostrando o interior de uma sala iluminada por velas",
+      },
+      { src: "/images/galeria/um-bipede-entre-plantas/04.jpg", alt: "Página do miolo de Um Bípede Entre Plantas" },
+      { src: "/images/galeria/um-bipede-entre-plantas/05.jpg", alt: "Página do miolo de Um Bípede Entre Plantas" },
+    ],
     // Câmera atravessando a mata: rolando a página, as copas sobem pelo topo
     // e os arbustos descem pela base — a vegetação se abre em torno do
     // leitor, cada camada mais à frente com deslocamento e zoom maiores.
