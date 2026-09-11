@@ -36,13 +36,18 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2 justify-self-start">
           <Seal className="size-8" />
           <Wordmark className="h-6 w-auto text-foreground" />
         </Link>
 
         {/* `md` e não `sm`: com cinco itens a navegação estoura entre 640px e 768px. */}
+        {/* Grid de 3 colunas com as pontas em `1fr`: como elas dividem o
+            espaço sobrante igualmente, a coluna central (auto) fica
+            centralizada de verdade, mesmo o bloco de ícones sendo mais largo
+            que o logo (com `auto_1fr_auto` ou flex justify-between o centro
+            do nav fica deslocado pela diferença de largura entre as pontas). */}
         <nav aria-label="Navegação principal" className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
             <NavLink
@@ -56,7 +61,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-end gap-1 justify-self-end">
           <ThemeToggle className={THEME_TOGGLE_CLASS} />
 
           <CartLink className={ICON_LINK_CLASS} />
