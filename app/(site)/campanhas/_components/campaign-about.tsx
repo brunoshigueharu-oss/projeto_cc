@@ -68,6 +68,7 @@ export function CampaignAbout({
                 title={primaryBook.title}
                 alt={primaryBook.coverAlt}
                 videoSrc={primaryBook.coverVideoSrc}
+                videoDarkSrc={primaryBook.coverVideoDarkSrc}
                 videoScale={primaryBook.coverVideoScale}
                 videoFit={primaryBook.coverVideoFit}
                 showPauseControl

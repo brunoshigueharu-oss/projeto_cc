@@ -126,6 +126,8 @@ const RAW_BOOKS = [
       "Capa do livro Mr. Plant — A Biped Among Plants, edição em inglês, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/mr-plant-a-biped-among-plants.mp4",
+    // Variante de fundo preto pro modo escuro do site.
+    coverVideoDarkSrc: "/videos/livros/mr-plant-a-biped-among-plants-dark.mp4",
     // Sem faixa própria enviada para a edição em inglês — reaproveita a faixa
     // já existente da edição em português (cena genérica, sem texto).
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
@@ -230,6 +232,10 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Os Contos do Planta, Volume 1, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-1.mp4",
+    coverVideoDarkSrc: "/videos/livros/os-contos-do-planta-1-dark.mp4",
+    // Render mostra o livro mais "afastado" no quadro que o de outros
+    // títulos — compensa pra ficar do mesmo tamanho aparente na vitrine.
+    coverVideoScale: 1.4,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-1.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
@@ -304,6 +310,9 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Os Contos do Planta, Volume 2, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-2.mp4",
+    coverVideoDarkSrc: "/videos/livros/os-contos-do-planta-2-dark.mp4",
+    // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
+    coverVideoScale: 1.4,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
@@ -399,6 +408,9 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Robô de Madeira — Atlas Cianus, de Gustavo Ravaglio",
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus.mp4",
+    coverVideoDarkSrc: "/videos/livros/robo-de-madeira-atlas-cianus-dark.mp4",
+    // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
+    coverVideoScale: 1.39,
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus.mp4",
     gallery: [
       { src: "/images/galeria/robo-de-madeira-atlas-cianus/01.jpg", alt: "Detalhe da capa do Robô de Madeira, com o autômato entalhado em relevo dourado" },
@@ -480,8 +492,10 @@ const RAW_BOOKS = [
       "Capa do livro Robô de Madeira — Atlas Cianus, Art Edition, de Gustavo Ravaglio",
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus-art-edition.mp4",
-    // Vídeo mostra o estojo por inteiro, bem mais largo que o de um livro solto.
-    coverVideoScale: 0.8,
+    coverVideoDarkSrc: "/videos/livros/robo-de-madeira-atlas-cianus-art-edition-dark.mp4",
+    // O enquadramento do estojo lê como maior que o dos livros vizinhos —
+    // reduz um pouco o zoom pra equilibrar o tamanho aparente na vitrine.
+    coverVideoScale: 0.92,
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition.mp4",
     // Mesmas fotos de "outras visões" da edição padrão — o exemplar
     // fotografado é o mesmo miolo/capa, a caixa e a luva da Art Edition ainda
@@ -578,9 +592,18 @@ const RAW_BOOKS = [
     coverAlt: "Capa da Caixa de Relíquias de Os Contos do Planta, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-caixa-de-reliquias.mp4",
-    // Vídeo mostra a caixa por inteiro, mais larga que a de um livro solto.
-    coverVideoScale: 0.8,
+    coverVideoDarkSrc: "/videos/livros/os-contos-do-planta-caixa-de-reliquias-dark.mp4",
+    // Mesmo ajuste de enquadramento dos outros livros — ver nota em
+    // `os-contos-do-planta-1`.
+    coverVideoScale: 0.98,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-caixa-de-reliquias.mp4",
+    // Vídeo mostra a caixa abrindo — faixa padrão corta demais o movimento
+    // vertical, por isso ganha altura extra + parallax (ver `videoBannerTall`
+    // em `VideoBannerSection`).
+    videoBannerTall: true,
+    // O vídeo original tem pillarbox (barras pretas ~8% de cada lado); a
+    // faixa é full-bleed, então o zoom horizontal corta essas barras.
+    videoBannerScale: 1.2,
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/01.jpg", alt: "Caixa de Relíquias aberta, com o jornal O Noticiarista Oculto e o tabuleiro" },
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/02.jpg", alt: "Verso do tabuleiro da Caixa de Relíquias, com o mapa de Curytiba em 1930" },
@@ -657,29 +680,44 @@ const RAW_BOOKS = [
       publishedAt: "2023-08-01",
     },
     boxContents: {
+      // TODO: religar quando o vídeo da caixa abrindo estiver pronto.
       items: [
         {
-          videoSrc:
-            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-1.mp4",
+          // Reaproveita o vídeo de capa do volume avulso: é o mesmo livro
+          // que acompanha a caixa (ver nota no topo deste registro).
+          videoSrc: "/videos/livros/os-contos-do-planta-2.mp4",
+          videoSrcDark: "/videos/livros/os-contos-do-planta-2-dark.mp4",
           label: "Contos do Planta 2",
         },
         {
           videoSrc:
-            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-2.mp4",
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-4.mp4",
+          videoSrcDark:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-4-dark.mp4",
           label: "Jornal",
         },
         {
           videoSrc:
-            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-3.mp4",
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-1.mp4",
+          videoSrcDark:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-1-dark.mp4",
           label: "Tabuleiro",
         },
         {
           videoSrc:
-            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-4.mp4",
-          label: "Cards e Postais",
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-2.mp4",
+          videoSrcDark:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-2-dark.mp4",
+          label: "Postais",
+        },
+        {
+          videoSrc:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-3.mp4",
+          videoSrcDark:
+            "/videos/livros/os-contos-do-planta-caixa-de-reliquias/item-3-dark.mp4",
+          label: "Cards",
         },
       ],
-      // openingVideoSrc: adicionar quando o vídeo da caixa abrindo for enviado
     },
     price: { amount: 35999, currency: "BRL" },
     wixProductId: "31186e71-4a54-4e84-b244-0b66f0f51975",
@@ -710,6 +748,9 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Necroplanta, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/necroplanta.mp4",
+    coverVideoDarkSrc: "/videos/livros/necroplanta-dark.mp4",
+    // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
+    coverVideoScale: 1.39,
     videoBannerSrc: "/videos/faixas/necroplanta.mp4",
     gallery: [
       { src: "/images/galeria/necroplanta/01.jpg", alt: "Página 10 do miolo de Necroplanta" },
@@ -798,7 +839,9 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Yanayag, de Enrique Alcatena e Eduardo Mazzitelli",
     coverTone: "forest",
     coverVideoSrc: "/videos/livros/yanayag.mp4",
-    coverVideoScale: 1.2,
+    coverVideoDarkSrc: "/videos/livros/yanayag-dark.mp4",
+    // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
+    coverVideoScale: 1.4,
     videoBannerSrc: "/videos/faixas/yanayag.mp4",
     videoBannerNightSrc: "/videos/faixas/yanayag-noite.mp4",
     gallery: [
@@ -879,6 +922,7 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Um Bípede Entre Plantas, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
+    coverVideoDarkSrc: "/videos/livros/um-bipede-entre-plantas-dark.mp4",
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
     gallery: [
       {

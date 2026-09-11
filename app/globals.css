@@ -100,7 +100,12 @@
 }
 
 .dark {
-  --background: #0b0f0c;
+  /* #0e0e0e, não #101010: os vídeos de capa (H.264/Rec.709) passam pelo
+     pipeline de cor de vídeo do navegador/SO na hora de renderizar e saem
+     ~2 tons mais escuros na tela do que o valor gravado no arquivo — mesmo
+     o arquivo estando gravado certinho em #101010 (confirmado por leitura de
+     pixel bruto). #0e0e0e é o tom que bate com o preto do vídeo *na tela*. */
+  --background: #0e0e0e;
   --foreground: #ffffff;
   --card: #131a14;
   --card-foreground: #ffffff;

@@ -72,6 +72,11 @@ export const bookSchema = z.object({
   coverTone: toneSchema,
   /** Preview em vídeo (mudo, loop) que substitui a capa estática no card. */
   coverVideoSrc: z.string().optional(),
+  /** Opcional: variante de `coverVideoSrc` para o modo escuro do site (fundo
+   * preto, pensado pra combinar com o tema dark) — quando presente, substitui
+   * `coverVideoSrc` automaticamente enquanto o site estiver em dark mode, sem
+   * botão de alternância (diferente de `videoBannerNightSrc`, que é manual). */
+  coverVideoDarkSrc: z.string().optional(),
   /** Ajusta o zoom do vídeo dentro do quadro: <1 reduz (capas de caixa/estojo,
    *  mais largas que um livro), >1 amplia (vídeo cujo enquadramento original
    *  deixa o livro pequeno no quadro). */
@@ -89,6 +94,16 @@ export const bookSchema = z.object({
    * floresta que muda de dia para noite). Preencher só quando a editora
    * enviar as duas versões do mesmo plano. */
   videoBannerNightSrc: z.string().optional(),
+  /** Opcional: faixa mais alta + vídeo com movimento parallax vertical dentro
+   * dela — usar quando o vídeo precisa de mais altura pra ficar legível (ex.:
+   * mostrar a caixa abrindo, que numa faixa baixa fica cortada demais). */
+  videoBannerTall: z.boolean().optional(),
+  /** Opcional: zoom horizontal extra do vídeo dentro da faixa (>1 amplia,
+   * cortando as bordas laterais) — usar quando o vídeo original tem pillarbox
+   * (barras pretas nas laterais) que a faixa, sendo full-bleed, não deve
+   * mostrar. Só a largura é afetada (`scaleX`); a altura já é recortada pelo
+   * `object-cover` da faixa. */
+  videoBannerScale: z.number().positive().max(2).optional(),
   /** Opcional: comparação com a edição-base da qual este título deriva (ex.:
    * Necroplanta é uma variante de "Os Contos do Planta — Vol. 2"). Renderiza
    * duas folhas de sulfite lado a lado com um "X" entre elas — a mesma arte
@@ -111,10 +126,18 @@ export const bookSchema = z.object({
   boxContents: z
     .object({
       openingVideoSrc: z.string().optional(),
+      /** Opcional: variante de `openingVideoSrc` para o modo escuro do site — mesmo
+       * tratamento de `videoSrcDark` dos itens (troca só por CSS, os dois vídeos
+       * tocam juntos para não perder o ponto do loop ao alternar o tema). */
+      openingVideoSrcDark: z.string().optional(),
       items: z
         .array(
           z.object({
             videoSrc: z.string().min(1),
+            /** Opcional: variante de `videoSrc` para o modo escuro do site — mesmo
+             * tratamento de `coverVideoDarkSrc` (troca só por CSS, os dois vídeos
+             * tocam juntos para não perder o ponto do loop ao alternar o tema). */
+            videoSrcDark: z.string().min(1).optional(),
             label: z.string().min(1).optional(),
           }),
         )
