@@ -13,9 +13,10 @@ const MAX_TILT_DEGREES = 6;
 /**
  * Ilustração do universo com leve tilt 3D que reage à posição do cursor em
  * qualquer ponto da tela — não precisa o mouse estar em cima da imagem, ela
- * "percebe" o cursor à distância e vira sutilmente na direção dele. Zoom e
- * sombra extra continuam reservados pro hover direto (`group-hover`, puro
- * CSS), como uma resposta a mais quando o cursor chega perto.
+ * "percebe" o cursor à distância e vira sutilmente na direção dele. Zoom
+ * extra continua reservado pro hover direto (`group-hover`, puro CSS), como
+ * uma resposta a mais quando o cursor chega perto. Sem sombra própria — só o
+ * tilt e o zoom.
  *
  * Ângulo escrito direto via CSS custom property (não `useState`) pra não
  * re-renderizar a cada `mousemove`; throttle por `requestAnimationFrame`
@@ -65,7 +66,7 @@ export function UniverseShowcaseImage({ src, alt }: UniverseShowcaseImageProps) 
     <div className="w-full max-w-md shrink-0 lg:w-[420px] [perspective:1200px]">
       <div
         ref={frameRef}
-        className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-lg shadow-foreground/10 transition-[transform,box-shadow] duration-300 ease-out [transform:rotateX(var(--tilt-x,0deg))_rotateY(var(--tilt-y,0deg))] hover:shadow-2xl hover:shadow-foreground/20"
+        className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl transition-transform duration-300 ease-out [transform:rotateX(var(--tilt-x,0deg))_rotateY(var(--tilt-y,0deg))]"
       >
         <Image
           src={src}
