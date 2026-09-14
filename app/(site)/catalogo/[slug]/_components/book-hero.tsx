@@ -4,6 +4,7 @@ import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
 import { BookSynopsis } from "@/components/book-synopsis";
+import { LanguageFlag } from "@/components/language-flag";
 import { isInStock, isPurchasable as isBookPurchasable } from "@/lib/data/book-availability";
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
@@ -106,6 +107,9 @@ export function BookHero({ book, universe }: BookHeroProps) {
 
           <h1 className="mt-4 text-balance font-display text-4xl leading-[1.1] sm:text-5xl">
             {book.title}
+            {book.languageFlag ? (
+              <LanguageFlag flag={book.languageFlag} locale={book.locale} />
+            ) : null}
           </h1>
           {book.subtitle ? (
             <p className="mt-2 font-serif text-lg text-foreground/60">

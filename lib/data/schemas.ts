@@ -55,6 +55,12 @@ export const bookSchema = z.object({
    * Default "pt": só edições impressas em outro idioma (ex.
    * `mr-plant-a-biped-among-plants`) precisam declarar "en". */
   locale: z.enum(["pt", "en"]).default("pt"),
+  /** Opcional: bandeira exibida ao lado do título (página do livro, card do
+   * catálogo e card de upsell), para sinalizar edição impressa em outro
+   * idioma (ex. "us" em `mr-plant-a-biped-among-plants`). Independe de
+   * `locale`: a página pode seguir com rótulos em português e ainda assim
+   * mostrar a bandeira. */
+  languageFlag: z.enum(["us"]).optional(),
   author: z.object({
     name: z.string().min(1),
     /** Opcional: nem todo autor cadastrado já tem bio recebida da editora. */

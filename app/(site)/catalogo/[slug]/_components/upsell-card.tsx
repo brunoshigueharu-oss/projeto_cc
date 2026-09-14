@@ -1,3 +1,4 @@
+import { LanguageFlag } from "@/components/language-flag";
 import { buttonVariants } from "@/components/ui/button";
 import type { Book, Locale } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
@@ -39,6 +40,9 @@ export function UpsellCard({ book }: { book: Book }) {
 
             <h2 className="font-display text-2xl text-foreground sm:text-3xl">
               {upsell.title}
+              {book.languageFlag ? (
+                <LanguageFlag flag={book.languageFlag} locale={book.locale} />
+              ) : null}
             </h2>
 
             <p className="font-serif leading-relaxed text-muted-foreground">

@@ -7,6 +7,7 @@ import type { Book } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format-price";
 import { BookCover, type BookCoverHandle } from "./book-cover";
 import { BookStatusBadge } from "./book-status-badge";
+import { LanguageFlag } from "./language-flag";
 
 type BookCardProps = {
   book: Book;
@@ -55,6 +56,9 @@ export function BookCard({ book }: BookCardProps) {
             className="rounded underline underline-offset-4 outline-none after:absolute after:inset-0 after:content-[''] group-hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {book.title}
+            {book.languageFlag ? (
+              <LanguageFlag flag={book.languageFlag} locale={book.locale} className="h-[0.6em]" />
+            ) : null}
           </Link>
         </h3>
 
