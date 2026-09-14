@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 export default function PerfilPage() {
   return (
     <MaintenanceNotice
-      title="Em manutenção"
       description="Estamos migrando o backend da loja. Sua conta, pedidos e estante voltam a aparecer aqui em breve."
     />
   );

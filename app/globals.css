@@ -63,6 +63,22 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* Pontinhos de "trabalhando" do MaintenanceNotice. O repouso (0%/80%/100%)
+     é o estado base visível, então com reduced-motion eles ficam parados;
+     `backwards` segura o 0% durante o delay de cada ponto. */
+  --animate-working-dot: working-dot 1.4s ease-in-out infinite backwards;
+  @keyframes working-dot {
+    0%,
+    80%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.35;
+    }
+    40% {
+      transform: translateY(-0.5rem);
+      opacity: 1;
+    }
+  }
 }
 
 :root {
