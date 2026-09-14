@@ -2,16 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { SHEET_AREA_CLASS } from "./paper-sheet-area";
 
 const MAX_TILT_DEG = 10;
 const FRONT_SHEET_ROTATE_DEG = -6;
 const BACK_SHEET_ROTATE_DEG = 9;
-
-/** Área opaca da folha dentro de `paper.png` (656×900: folha em x 11→607,
- * y 11→855; o resto é a sombra embutida). O desenho vai só sobre essa área —
- * na caixa inteira, o fundo branco do vídeo cobria a sombra e deslocava a
- * folha. */
-const SHEET_AREA_CLASS = "absolute left-[1.68%] top-[1.22%] h-[93.89%] w-[91.01%]";
 
 /**
  * Duas folhas "jogadas" sobre a mesa, ambas inclinando levemente seguindo o

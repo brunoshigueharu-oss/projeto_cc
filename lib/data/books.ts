@@ -789,6 +789,8 @@ const RAW_BOOKS = [
       headline: "Tiragem Única e Limitada.",
       description:
         "Todos os exemplares são numerados. Ao adquirir esta obra, você leva para sua coleção uma edição, que não será republicada.",
+      basePageSrc: "/images/comparacao/os-contos-do-planta-2.jpg",
+      pageSrc: "/images/comparacao/necroplanta.jpg",
     },
     upsell: {
       title: "Necroplanta + Assinatura + Sketch",

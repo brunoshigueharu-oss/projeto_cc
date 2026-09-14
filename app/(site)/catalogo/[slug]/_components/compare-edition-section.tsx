@@ -8,8 +8,9 @@ type CompareEditionSectionProps = {
 
 /**
  * "Contos do Planta 2 × Necroplanta": duas folhas de sulfite lado a lado
- * (sem capa real — mesma arte do `PaperTiltEffect` do upsell) com um "X"
- * entre elas, cada uma inclinando levemente ao sabor do mouse, seguidas do
+ * (mesma arte do `PaperTiltEffect` do upsell), cada uma com a mesma página do
+ * miolo na cor da sua edição (`basePageSrc`/`pageSrc`, quando houver), com um
+ * "X" entre elas, inclinando levemente ao sabor do mouse, seguidas do
  * destaque de tiragem — mesma composição do site anterior (Wix). Só
  * renderiza quando `book.compareEdition` existe e o `baseBookSlug` resolve
  * para um livro real do catálogo.
@@ -26,7 +27,14 @@ export function CompareEditionSection({ book, baseBook }: CompareEditionSectionP
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
         <div className="flex flex-col items-center justify-center gap-8 sm:flex-row sm:items-end sm:gap-12">
           <figure className="flex flex-col items-center gap-4">
-            <TiltingPaper className="w-56 sm:w-72" />
+            <TiltingPaper
+              className="w-56 sm:w-72"
+              page={
+                compareEdition.basePageSrc
+                  ? { src: compareEdition.basePageSrc, alt: `Página do miolo de ${baseBook.title}` }
+                  : undefined
+              }
+            />
             <figcaption className="font-display text-sm uppercase tracking-wide text-foreground/70 sm:text-base">
               {baseBook.title}
             </figcaption>
@@ -41,7 +49,14 @@ export function CompareEditionSection({ book, baseBook }: CompareEditionSectionP
           </svg>
 
           <figure className="flex flex-col items-center gap-4">
-            <TiltingPaper className="w-56 sm:w-72" />
+            <TiltingPaper
+              className="w-56 sm:w-72"
+              page={
+                compareEdition.pageSrc
+                  ? { src: compareEdition.pageSrc, alt: `Página do miolo de ${book.title}` }
+                  : undefined
+              }
+            />
             <figcaption className="font-display text-sm uppercase tracking-wide text-foreground/70 sm:text-base">
               {book.title}
             </figcaption>

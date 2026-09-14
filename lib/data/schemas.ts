@@ -101,12 +101,19 @@ export const bookSchema = z.object({
    * de `paper.png` do upsell, sem capa real —, cada uma com o título embaixo,
    * seguidas de um texto de destaque sobre a tiragem/edição. Preencher só
    * quando o livro for uma variante/edição especial de outro título já
-   * cadastrado em `books.ts`. */
+   * cadastrado em `books.ts`.
+   *
+   * `basePageSrc`/`pageSrc` (opcionais, em `public/images/comparacao/`): a
+   * mesma página do miolo nas duas edições, "impressa" em cada folha para
+   * comparar a cor. Já em retrato (~0.7) — página em paisagem vai girada no
+   * arquivo. Sem elas, a folha fica em branco. */
   compareEdition: z
     .object({
       baseBookSlug: slug,
       headline: z.string().min(1),
       description: z.string().min(1),
+      basePageSrc: z.string().min(1).optional(),
+      pageSrc: z.string().min(1).optional(),
     })
     .optional(),
   /** Opcional: conteúdo de uma caixa/kit — vídeo da caixa abrindo seguido dos
