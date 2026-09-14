@@ -590,13 +590,6 @@ const RAW_BOOKS = [
     // `os-contos-do-planta-1`.
     coverVideoScale: 0.98,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-caixa-de-reliquias.mp4",
-    // Vídeo mostra a caixa abrindo — faixa padrão corta demais o movimento
-    // vertical, por isso ganha altura extra + parallax (ver `videoBannerTall`
-    // em `VideoBannerSection`).
-    videoBannerTall: true,
-    // O vídeo original tem pillarbox (barras pretas ~8% de cada lado); a
-    // faixa é full-bleed, então o zoom horizontal corta essas barras.
-    videoBannerScale: 1.2,
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/01.jpg", alt: "Caixa de Relíquias aberta, com o jornal O Noticiarista Oculto e o tabuleiro" },
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/02.jpg", alt: "Verso do tabuleiro da Caixa de Relíquias, com o mapa de Curytiba em 1930" },
