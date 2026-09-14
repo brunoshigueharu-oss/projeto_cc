@@ -24,8 +24,9 @@ const NAV_BUTTON_CLASSNAME =
 
 /**
  * Faixa com os vídeos dos itens da caixa, em carrossel infinito (embla) —
- * todos os itens no mesmo tamanho. No desktop mostra ~3 itens inteiros mais
- * uma fatia do próximo, centralizado dentro do `max-w-6xl` (não ocupa a
+ * todos os itens no mesmo tamanho, com o nome de cada um logo abaixo do
+ * vídeo. No desktop mostra 2 itens inteiros mais uma fatia do próximo (pra
+ * convidar ao scroll), centralizado dentro do `max-w-6xl` (não ocupa a
  * largura inteira da página); no mobile o item ocupa quase a faixa toda.
  * O plugin `embla-carousel-wheel-gestures` dá suporte a scroll do
  * mouse/trackpad (por padrão o embla só responde a arrasto e aos botões).
@@ -43,9 +44,6 @@ export function BoxContentsSection({ book }: { book: Book }) {
   const [wheelGesturesPlugin] = useState(() => WheelGesturesPlugin());
 
   const items = boxContents?.items ?? [];
-  const itemLabels = items
-    .map((item) => item.label)
-    .filter((label): label is string => Boolean(label));
 
   const close = useCallback(() => setOpenIndex(null), []);
   const showPrevious = useCallback(
@@ -96,20 +94,9 @@ export function BoxContentsSection({ book }: { book: Book }) {
         </div>
       ) : null}
 
-      <h2
-        className={cn(
-          "mx-auto max-w-6xl px-4 text-center font-display text-2xl text-foreground sm:px-6 sm:text-3xl",
-          itemLabels.length === 0 && "mb-8",
-        )}
-      >
-        Confira o que Vem Dentro da Caixa
+      <h2 className="mx-auto mb-8 max-w-6xl px-4 text-center font-display text-2xl text-foreground sm:px-6 sm:text-3xl">
+        Confira os itens da Caixa
       </h2>
-
-      {itemLabels.length > 0 ? (
-        <p className="mx-auto mb-8 mt-3 max-w-6xl px-4 text-center font-serif text-muted-foreground sm:px-6">
-          {itemLabels.join(" · ")}
-        </p>
-      ) : null}
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <Carousel
@@ -121,7 +108,7 @@ export function BoxContentsSection({ book }: { book: Book }) {
             {items.map((item, index) => (
               <CarouselItem
                 key={item.videoSrc}
-                className="basis-[78%] sm:basis-[42%] sm:pl-6 lg:basis-[30%]"
+                className="basis-[78%] sm:basis-[55%] sm:pl-6 lg:basis-[42%]"
               >
                 <button
                   type="button"
