@@ -2,6 +2,10 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* O site não tem modo escuro. A variante continua presa à classe `.dark`
+   (que nada aplica) só para os `dark:` dos primitivos shadcn ficarem
+   inertes — sem ela o Tailwind 4 cai no `prefers-color-scheme` e esses
+   estilos passariam a reagir ao tema do sistema operacional. */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -97,46 +101,6 @@
   --sidebar-accent-foreground: #17190f;
   --sidebar-border: #ded2b0;
   --sidebar-ring: #453f33;
-}
-
-.dark {
-  /* #0e0e0e, não #101010: os vídeos de capa (H.264/Rec.709) passam pelo
-     pipeline de cor de vídeo do navegador/SO na hora de renderizar e saem
-     ~2 tons mais escuros na tela do que o valor gravado no arquivo — mesmo
-     o arquivo estando gravado certinho em #101010 (confirmado por leitura de
-     pixel bruto). #0e0e0e é o tom que bate com o preto do vídeo *na tela*. */
-  --background: #0e0e0e;
-  --foreground: #ffffff;
-  --card: #131a14;
-  --card-foreground: #ffffff;
-  --popover: #131a14;
-  --popover-foreground: #ffffff;
-  /* Amarelo forte da marca (mesmo tom da logo) — troca do verde original. */
-  --primary: #ffc00c;
-  --primary-foreground: #0b0f0c;
-  --secondary: #1c261e;
-  --secondary-foreground: #ffffff;
-  --muted: #1c261e;
-  --muted-foreground: #9aa398;
-  --accent: #c9a227;
-  --accent-foreground: #0b0f0c;
-  --destructive: #d9553d;
-  --border: color-mix(in oklab, #ffffff 12%, transparent);
-  --input: color-mix(in oklab, #ffffff 15%, transparent);
-  --ring: #ffc00c;
-  --chart-1: #ffc00c;
-  --chart-2: #c9a227;
-  --chart-3: #6e1423;
-  --chart-4: #9aa398;
-  --chart-5: #ffffff;
-  --sidebar: #131a14;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffc00c;
-  --sidebar-primary-foreground: #0b0f0c;
-  --sidebar-accent: #1c261e;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: color-mix(in oklab, #ffffff 12%, transparent);
-  --sidebar-ring: #ffc00c;
 }
 
 @layer base {

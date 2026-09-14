@@ -1,9 +1,9 @@
 ---
 name: design-guide
 description: >
-  Guia de design (brandbook) do site Hocus Pocus — paleta de cores clara e
-  escura, tipografia, escala de tamanhos, variantes de botão, componentes
-  base (Card/Badge), diagramação, hierarquia de informação, formas/ícones e
+  Guia de design (brandbook) do site Hocus Pocus — paleta de cores (só tema
+  claro; o site não tem modo escuro), tipografia, escala de tamanhos,
+  variantes de botão, componentes base (Card/Badge), diagramação, hierarquia de informação, formas/ícones e
   regras de motion/acessibilidade. Use sempre que for criar, ajustar ou
   revisar qualquer página, seção, componente ou classe Tailwind do site —
   novo componente em `_components/`, nova rota, ajuste visual, novo estado
@@ -14,7 +14,7 @@ description: >
 # Guia de Design — Hocus Pocus
 
 Fonte de verdade viva: os tokens reais estão em `app/globals.css` (bloco
-`@theme inline`, `:root` e `.dark`) e nos componentes de
+`@theme inline` e `:root`) e nos componentes de
 `components/ui/`. Este guia é um resumo navegável desses arquivos — na
 dúvida sobre um valor exato, confira o arquivo fonte antes de usar um valor
 "de memória".
@@ -57,7 +57,14 @@ Tokens semânticos (`app/globals.css`). Sempre usar a classe semântica
 (`bg-primary`, `text-muted-foreground`...) — nunca hex direto num
 componente.
 
-### Modo claro (`:root`)
+O site **não tem modo escuro** (retirado em 2026-09): só existe a paleta de
+`:root`. Não adicionar bloco `.dark`, toggle de tema nem variante `-dark` de
+vídeo. Os `dark:` que vêm nos primitivos shadcn (`components/ui/`) ficam
+inertes porque `@custom-variant dark` segue preso à classe `.dark`, que nada
+aplica — não remova essa linha de `globals.css`, senão eles passam a reagir
+ao `prefers-color-scheme` do sistema.
+
+### Paleta (`:root`)
 
 | Token | Hex | Uso |
 |---|---|---|
@@ -74,23 +81,7 @@ componente.
 | `border` / `input` | `#ded2b0` | Bordas, campos de formulário |
 | `ring` | `#453f33` | Anel de foco |
 
-### Modo escuro (`.dark`)
-
-| Token | Hex | Uso |
-|---|---|---|
-| `background` | `#0b0f0c` | Fundo geral |
-| `foreground` | `#ffffff` | Texto principal |
-| `card` / `popover` | `#131a14` | Superfícies elevadas |
-| `primary` | `#ffc00c` | Amarelo forte da marca (mesmo tom da logo) — ações primárias |
-| `primary-foreground` | `#0b0f0c` | Texto sobre `primary` |
-| `secondary` / `muted` | `#1c261e` | Fundos secundários |
-| `muted-foreground` | `#9aa398` | Texto de apoio |
-| `accent` | `#c9a227` | Destaque pontual |
-| `destructive` | `#d9553d` | Erros |
-| `border` / `input` | branco a 12%/15% via `color-mix` | Bordas translúcidas |
-| `ring` | `#ffc00c` | Anel de foco |
-
-### Tons de universo (`lib/tone.ts`, iguais nos dois modos)
+### Tons de universo (`lib/tone.ts`)
 
 | Tom | Hex | Classe (cheia) | Classe (soft, 20%) |
 |---|---|---|---|

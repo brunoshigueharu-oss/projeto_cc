@@ -66,7 +66,6 @@ export function BookHero({ book, universe }: BookHeroProps) {
             title={book.title}
             alt={book.coverAlt}
             videoSrc={book.coverVideoSrc}
-            videoDarkSrc={book.coverVideoDarkSrc}
             videoScale={book.coverVideoScale}
             videoFit={book.coverVideoFit}
             showPauseControl

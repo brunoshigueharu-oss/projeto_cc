@@ -21,12 +21,6 @@ type BookCoverProps = {
   className?: string;
   /** Preview em vídeo (mudo, loop, autoplay) — quando presente, substitui o placeholder. */
   videoSrc?: string;
-  /** Opcional: variante de `videoSrc` para o modo escuro do site (fundo
-   *  preto) — quando presente, fica empilhada sobre `videoSrc` e a troca é só
-   *  visual (classe `dark:`, sem JS), então os dois tocam juntos e nenhum
-   *  perde o ponto do loop ao alternar o tema. Ver `coverVideoDarkSrc` em
-   *  lib/data/schemas.ts. */
-  videoDarkSrc?: string;
   /** Ajusta o zoom do vídeo dentro do quadro. <1 reduz — usa em capas de
    *  caixa/estojo, cujo enquadramento original é mais largo que o dos livros
    *  e por isso lê como "maior" que os vizinhos quando preenche o quadro
@@ -80,17 +74,14 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   size = "sm",
   className,
   videoSrc,
-  videoDarkSrc,
   videoScale,
   videoFit = "cover",
   showPauseControl,
 }, ref) {
   const isLarge = size === "lg";
-  const lightVideoRef = useRef<HTMLVideoElement>(null);
-  const darkVideoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const hasPauseControl = Boolean(videoSrc) && showPauseControl;
-  const hasDarkVariant = Boolean(videoSrc) && Boolean(videoDarkSrc);
 
   // Miniaturas (catálogo, relacionados, estante, combos) só tocam o vídeo no
   // hover/foco — dezenas delas com autoplay simultâneo é o que deixava essas
@@ -98,28 +89,19 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   // contínuo de sempre, com o controle manual de pausar/reproduzir.
   const playsOnHover = Boolean(videoSrc) && !showPauseControl;
 
-  // Com variante dark, os dois vídeos tocam/pausam sempre juntos — só um fica
-  // visível por vez (classe `dark:`), então quem está oculto precisa seguir
-  // no mesmo ponto do loop pra troca de tema não saltar de frame.
-  function getVideos() {
-    return [lightVideoRef.current, darkVideoRef.current].filter(
-      (video): video is HTMLVideoElement => Boolean(video),
-    );
-  }
-
   function handleToggle() {
-    for (const video of getVideos()) {
-      if (video.paused) {
-        video.play();
-      } else {
-        video.pause();
-      }
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
     }
   }
 
   function handleHoverStart() {
     if (!playsOnHover) return;
-    for (const video of getVideos()) video.play();
+    videoRef.current?.play();
   }
 
   function handleHoverEnd() {
@@ -127,7 +109,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
     // Só pausa — sem voltar o currentTime ao frame de repouso. Resetar aqui
     // fazia a capa "recomeçar" a cada hover, denunciando que é um vídeo; o
     // efeito 3D pretendido é a capa congelar exatamente onde o mouse saiu.
-    for (const video of getVideos()) video.pause();
+    videoRef.current?.pause();
   }
 
   function handleLoadedMetadata(event: SyntheticEvent<HTMLVideoElement>) {
@@ -141,11 +123,10 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   // (preto/em branco). No mount, se o readyState já indica metadata
   // carregado, aplica o frame de repouso direto, sem depender do evento.
   useEffect(() => {
-    if (!playsOnHover) return;
-    for (const video of getVideos()) {
-      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
-        video.currentTime = REST_FRAME_TIME;
-      }
+    const video = videoRef.current;
+    if (!playsOnHover || !video) return;
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      video.currentTime = REST_FRAME_TIME;
     }
   }, [playsOnHover]);
 
@@ -176,7 +157,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
         role="img"
         aria-label={alt}
         className={cn(
-          "absolute inset-y-0 overflow-hidden rounded-lg bg-white dark:bg-background",
+          "absolute inset-y-0 overflow-hidden rounded-lg bg-white",
           hasVideoBleed ? "-inset-x-[7%]" : "inset-x-0",
         )}
       >
@@ -190,43 +171,23 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
         >
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105 group-focus-within:scale-105">
             {videoSrc ? (
-              <>
-                <video
-                  ref={lightVideoRef}
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute inset-0 size-full",
-                    videoFit === "contain" ? "object-contain" : "object-cover",
-                    hasDarkVariant && "dark:hidden",
-                  )}
-                  src={videoSrc}
-                  autoPlay={!playsOnHover}
-                  loop
-                  muted
-                  playsInline
-                  preload={playsOnHover ? "metadata" : "auto"}
-                  onLoadedMetadata={handleLoadedMetadata}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                />
-                {hasDarkVariant ? (
-                  <video
-                    ref={darkVideoRef}
-                    aria-hidden="true"
-                    className={cn(
-                      "absolute inset-0 hidden size-full dark:block",
-                      videoFit === "contain" ? "object-contain" : "object-cover",
-                    )}
-                    src={videoDarkSrc}
-                    autoPlay={!playsOnHover}
-                    loop
-                    muted
-                    playsInline
-                    preload={playsOnHover ? "metadata" : "auto"}
-                    onLoadedMetadata={handleLoadedMetadata}
-                  />
-                ) : null}
-              </>
+              <video
+                ref={videoRef}
+                aria-hidden="true"
+                className={cn(
+                  "absolute inset-0 size-full",
+                  videoFit === "contain" ? "object-contain" : "object-cover",
+                )}
+                src={videoSrc}
+                autoPlay={!playsOnHover}
+                loop
+                muted
+                playsInline
+                preload={playsOnHover ? "metadata" : "auto"}
+                onLoadedMetadata={handleLoadedMetadata}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
             ) : (
               <>
                 <div

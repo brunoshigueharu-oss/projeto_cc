@@ -86,26 +86,13 @@ export function BoxContentsSection({ book }: { book: Book }) {
       {boxContents.openingVideoSrc ? (
         <div className="mx-auto mb-12 max-w-2xl overflow-hidden rounded-2xl px-4 sm:px-6">
           <video
-            className={cn(
-              "h-full w-full object-cover",
-              boxContents.openingVideoSrcDark && "dark:hidden",
-            )}
+            className="h-full w-full object-cover"
             src={boxContents.openingVideoSrc}
             autoPlay
             loop
             muted
             playsInline
           />
-          {boxContents.openingVideoSrcDark ? (
-            <video
-              className="hidden h-full w-full object-cover dark:block"
-              src={boxContents.openingVideoSrcDark}
-              autoPlay
-              loop
-              muted
-              playsInline
-            />
-          ) : null}
         </div>
       ) : null}
 
@@ -143,10 +130,7 @@ export function BoxContentsSection({ book }: { book: Book }) {
                   className="group relative aspect-[1670/1970] w-full overflow-hidden rounded-2xl transition-shadow duration-300 ease-out hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   <video
-                    className={cn(
-                      "absolute inset-0 h-full w-full object-cover",
-                      item.videoSrcDark && "dark:hidden",
-                    )}
+                    className="absolute inset-0 h-full w-full object-cover"
                     src={item.videoSrc}
                     autoPlay
                     loop
@@ -154,18 +138,12 @@ export function BoxContentsSection({ book }: { book: Book }) {
                     playsInline
                     draggable={false}
                   />
-                  {item.videoSrcDark ? (
-                    <video
-                      className="absolute inset-0 hidden h-full w-full object-cover dark:block"
-                      src={item.videoSrcDark}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      draggable={false}
-                    />
-                  ) : null}
                 </button>
+                {item.label ? (
+                  <p className="mt-3 text-center font-serif text-muted-foreground">
+                    {item.label}
+                  </p>
+                ) : null}
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -231,10 +209,7 @@ export function BoxContentsSection({ book }: { book: Book }) {
           >
             <video
               key={items[openIndex].videoSrc}
-              className={cn(
-                "h-full w-full object-contain",
-                items[openIndex].videoSrcDark && "dark:hidden",
-              )}
+              className="h-full w-full object-contain"
               src={items[openIndex].videoSrc}
               autoPlay
               loop
@@ -242,18 +217,6 @@ export function BoxContentsSection({ book }: { book: Book }) {
               playsInline
               controls
             />
-            {items[openIndex].videoSrcDark ? (
-              <video
-                key={items[openIndex].videoSrcDark}
-                className="absolute inset-0 hidden h-full w-full object-contain dark:block"
-                src={items[openIndex].videoSrcDark}
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-              />
-            ) : null}
           </div>
         </div>
       ) : null}

@@ -10,14 +10,10 @@ import { CartLink } from "./cart-link";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 import { Seal } from "./seal";
-import { ThemeToggle } from "./theme-toggle";
 import { Wordmark } from "./wordmark";
 
 const ICON_LINK_CLASS =
   "hidden size-9 items-center justify-center rounded-full bg-foreground/5 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex";
-
-const THEME_TOGGLE_CLASS =
-  "inline-flex size-9 items-center justify-center rounded-full bg-foreground/5 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground";
 
 function getInitials(displayName: string) {
   return displayName
@@ -62,8 +58,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center justify-end gap-1 justify-self-end">
-          <ThemeToggle className={THEME_TOGGLE_CLASS} />
-
           <CartLink className={ICON_LINK_CLASS} />
 
           {!loading && loggedIn ? (

@@ -40,7 +40,6 @@ export function BookCard({ book }: BookCardProps) {
         title={book.title}
         alt={book.coverAlt}
         videoSrc={book.coverVideoSrc}
-        videoDarkSrc={book.coverVideoDarkSrc}
         videoScale={book.coverVideoScale}
         videoFit={book.coverVideoFit}
       />
