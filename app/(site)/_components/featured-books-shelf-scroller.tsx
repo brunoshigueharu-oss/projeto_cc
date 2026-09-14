@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 
 import type { Book } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ type FeaturedBooksShelfScrollerProps = {
 };
 
 /**
- * Prateleira horizontal com arrasto (pointer capture) em telas grandes —
+ * Prateleira horizontal com arrasto do mouse em telas grandes —
  * espelha o comportamento definido no Figma. Em telas menores vira grade
  * 2 colunas estática (sem necessidade de scroll/dots).
  */
@@ -61,17 +61,27 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
     return () => track.removeEventListener("scroll", updateActiveIndex);
   }, [updateActiveIndex]);
 
-  function handlePointerDown(event: PointerEvent<HTMLUListElement>) {
+  // Arrasto só para mouse — toque já ganha scroll nativo com inércia. NÃO
+  // usar `setPointerCapture`: capturar o ponteiro no <ul> redireciona o
+  // "click" para o próprio <ul> em vez do Link do card, e clicar no card
+  // deixa de abrir o livro. Mesmo padrão (e mesmo motivo) de
+  // `catalogo/[slug]/_components/book-gallery.tsx`.
+  function handlePointerDown(event: ReactPointerEvent<HTMLUListElement>) {
+    // Zera para qualquer ponteiro: num aparelho híbrido, um toque no card
+    // depois de um arrasto com mouse não pode herdar o bloqueio do clique.
+    dragDistance.current = 0;
+    if (event.pointerType !== "mouse") return;
     const track = trackRef.current;
     if (!track) return;
 
     isDragging.current = true;
-    dragDistance.current = 0;
     dragOrigin.current = { x: event.clientX, scrollLeft: track.scrollLeft };
-    track.setPointerCapture(event.pointerId);
+
+    window.addEventListener("pointermove", handleWindowPointerMove);
+    window.addEventListener("pointerup", handleWindowPointerUp);
   }
 
-  function handlePointerMove(event: PointerEvent<HTMLUListElement>) {
+  function handleWindowPointerMove(event: globalThis.PointerEvent) {
     const track = trackRef.current;
     if (!track || !isDragging.current) return;
 
@@ -80,10 +90,17 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
     track.scrollLeft = dragOrigin.current.scrollLeft - delta;
   }
 
-  function handlePointerUp(event: PointerEvent<HTMLUListElement>) {
-    const track = trackRef.current;
+  function handleWindowPointerUp() {
     isDragging.current = false;
-    track?.releasePointerCapture(event.pointerId);
+    window.removeEventListener("pointermove", handleWindowPointerMove);
+    window.removeEventListener("pointerup", handleWindowPointerUp);
+  }
+
+  function handleDragStart(event: React.DragEvent) {
+    // O card é um <a> (com <img> dentro): sem isso o navegador inicia o
+    // drag nativo do link no primeiro movimento, dispara `pointercancel` e o
+    // arrasto da prateleira para depois de poucos pixels.
+    event.preventDefault();
   }
 
   function handleClickCapture(event: React.MouseEvent) {
@@ -105,11 +122,9 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
       <ul
         ref={trackRef}
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onDragStart={handleDragStart}
         onClickCapture={handleClickCapture}
-        className="grid grid-cols-2 gap-5 lg:relative lg:flex lg:cursor-grab lg:touch-pan-y lg:gap-6 lg:overflow-x-auto lg:scroll-smooth lg:pb-1 lg:active:cursor-grabbing lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
+        className="grid grid-cols-2 gap-5 lg:relative lg:flex lg:cursor-grab lg:gap-6 lg:overflow-x-auto lg:scroll-smooth lg:pb-1 lg:active:cursor-grabbing lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
       >
         {books.map((book) => (
           <li key={book.slug} className="lg:w-[293px] lg:shrink-0">
