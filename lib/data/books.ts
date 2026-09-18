@@ -295,6 +295,12 @@ const RAW_BOOKS = [
       src: "/images/livros/home/os-contos-do-planta-1.png",
       alt: "Capa do livro Os Contos do Planta, Volume 1, de Gustavo Ravaglio",
     },
+    upsell: {
+      title: "Os Contos do Planta — Vol. 1 + Assinatura + Sketch",
+      description:
+        "Você pode receber seu exemplar de Os Contos do Planta 1 autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+      price: { amount: 4999, currency: "BRL" },
+    },
     universeShowcase: PLANTA_UNIVERSE_SHOWCASE,
     universeFamily: PLANTA_UNIVERSE_FAMILY,
   },
@@ -477,6 +483,12 @@ const RAW_BOOKS = [
       src: "/images/livros/home/robo-de-madeira-atlas-cianus.png",
       alt: "Capa do livro Robô de Madeira — Atlas Cianus, de Gustavo Ravaglio",
     },
+    upsell: {
+      title: "Robô de Madeira — Atlas Cianus + Assinatura + Sketch",
+      description:
+        "Você pode receber seu exemplar de Robô de Madeira — Atlas Cianus autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+      price: { amount: 4999, currency: "BRL" },
+    },
   },
   {
     slug: "robo-de-madeira-atlas-cianus-art-edition",
@@ -575,6 +587,12 @@ const RAW_BOOKS = [
     featuredCardImage: {
       src: "/images/livros/home/robo-de-madeira-atlas-cianus-art-edition.png",
       alt: "Capa do livro Robô de Madeira — Atlas Cianus, Art Edition, de Gustavo Ravaglio",
+    },
+    upsell: {
+      title: "Robô de Madeira — Art Edition + Assinatura + Sketch",
+      description:
+        "Você pode receber seu exemplar de Robô de Madeira — Art Edition autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+      price: { amount: 4999, currency: "BRL" },
     },
   },
   {

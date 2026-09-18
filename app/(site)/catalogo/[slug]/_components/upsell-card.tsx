@@ -14,7 +14,7 @@ const LABELS: Record<Locale, { exclusive: string }> = {
 /**
  * Card de item avulso (ex. exemplar autografado), equivalente ao
  * "UpsellCardSection" do Figma. Retorna `null` quando `book.upsell` não
- * existe — nenhum título tem esse dado hoje, fica pronto pra editora enviar.
+ * existe.
  *
  * Layout simples: card de texto (borda + fundo branco, igual ao resto do
  * site) ao lado das folhas soltas, sem nenhum painel colorido por trás delas
