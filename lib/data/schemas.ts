@@ -279,12 +279,25 @@ export const comboSchema = z.object({
   /** Opcional: banner dedicado (arte da editora). Sem ele, o card cai no
    * fallback de capas dos livros do kit lado a lado. */
   image: z.object({ src: z.string().min(1), alt: z.string().min(1) }).optional(),
-  /** Slugs dos livros que compõem o kit. */
+  /** Slugs dos livros que compõem o kit — a ordem é a das capas no banner. */
   bookSlugs: z.array(slug).min(2),
-  /** Preço promocional final do combo, em centavos. O preço "de" (riscado)
-   * não é campo daqui — é calculado somando o preço de cada livro do kit,
-   * pra nunca divergir do preço real do livro. */
+  /** Páginas de livro em que o combo aparece. É lista própria, não derivada de
+   * `bookSlugs`: a editora escolhe onde divulgar cada combo, e nem sempre é a
+   * página de quem está no kit (o COMBO 2 aparece na página da graphic novel
+   * em inglês, que não faz parte dele — ver `lib/data/combos.ts`). */
+  showOnBookSlugs: z.array(slug).min(1),
+  /** Preço promocional final do combo, em centavos. */
   price: z.object({ amount: z.number().int().nonnegative(), currency: z.literal("BRL") }),
+  /** Preço "de" (riscado), em centavos, como a editora informou na planilha.
+   * Não dá pra somar o preço dos livros do kit: a Caixa de Relíquias já traz o
+   * Contos do Planta 2 dentro, então o volume aparece no banner sem ser cobrado
+   * à parte. Ausente quando o combo não tem desconto sobre o avulso (COMBO 3) —
+   * aí o banner não mostra preço riscado. */
+  originalPrice: z
+    .object({ amount: z.number().int().nonnegative(), currency: z.literal("BRL") })
+    .optional(),
+  /** Frete grátis incluso na oferta — vira uma linha abaixo do preço. */
+  freeShipping: z.boolean().default(false),
   ctaLabel: z.string().min(1).default("Comprar combo"),
   buyUrl: z.url().optional(),
   /** Opcional: ID do produto correspondente no Wix Stores (Catalog V3) — o

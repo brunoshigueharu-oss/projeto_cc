@@ -129,7 +129,7 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
         // deste universo" ficaria mostrando a outra edição do mesmo título.
         <RelatedBooks books={relatedBooks} universe={universe} />
       ) : null}
-      <CombosSection combos={combos} />
+      <CombosSection book={book} combos={combos} />
     </>
   );
 }

@@ -12,6 +12,9 @@ type AddToCartButtonProps = {
   slug: string;
   label: string;
   addedLabel: string;
+  /** `default` (marrom) serve para fundos em que o dourado do `accent` some;
+   *  `brand` é o amarelo da marca, para o CTA largo do banner de combo. */
+  variant?: "accent" | "default" | "brand";
   className?: string;
 };
 
@@ -20,6 +23,7 @@ export function AddToCartButton({
   slug,
   label,
   addedLabel,
+  variant = "accent",
   className,
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
@@ -36,7 +40,7 @@ export function AddToCartButton({
       type="button"
       onClick={handleClick}
       className={cn(
-        buttonVariants({ variant: "accent", size: "lg" }),
+        buttonVariants({ variant, size: "lg" }),
         "h-11 gap-2 rounded-full px-7",
         className,
       )}

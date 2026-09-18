@@ -57,21 +57,22 @@ export type ResolvedCombo = {
   combo: Combo;
   /** Livros do kit, resolvidos e na ordem de `combo.bookSlugs`. */
   books: readonly Book[];
-  /** Soma do preço de cada livro do kit, em centavos — o preço "de" (riscado). */
-  originalPrice: number;
 };
 
-/** Combos do catálogo cujo kit inclui `book`, com os livros já resolvidos. */
+/**
+ * Combos divulgados na página de `book`, com os livros já resolvidos.
+ *
+ * Filtra por `showOnBookSlugs` (onde a editora quer o combo), não pelo kit:
+ * um combo pode aparecer na página de um livro que não faz parte dele — ver
+ * `lib/data/combos.ts`.
+ */
 export async function getCombosForBook(book: Book): Promise<readonly ResolvedCombo[]> {
-  return COMBOS.filter((combo) => combo.bookSlugs.includes(book.slug)).map((combo) => {
-    const books = combo.bookSlugs
-      .map((slug) => BOOKS_BY_SLUG.get(slug))
-      .filter((candidate): candidate is Book => candidate !== undefined);
-
-    return {
+  return COMBOS.filter((combo) => combo.showOnBookSlugs.includes(book.slug)).map(
+    (combo) => ({
       combo,
-      books,
-      originalPrice: books.reduce((total, candidate) => total + candidate.price.amount, 0),
-    };
-  });
+      books: combo.bookSlugs
+        .map((slug) => BOOKS_BY_SLUG.get(slug))
+        .filter((candidate): candidate is Book => candidate !== undefined),
+    }),
+  );
 }

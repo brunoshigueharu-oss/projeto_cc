@@ -95,6 +95,21 @@ A versão "soft" existe porque a cor cheia satura demais em áreas grandes
 (`` `bg-universe-${tone}` `` é descartada no build do Tailwind 4) — sempre
 mapear via objeto literal, como em `lib/tone.ts`.
 
+### Amarelo da marca
+
+| Token | Hex | Classe | Uso |
+|---|---|---|---|
+| `brand-yellow` | `#ffc00c` | `bg-brand-yellow` | Amarelo da logo (mesmo hex fixo do `Seal`). Sempre com texto `text-foreground` por cima, nunca claro |
+
+Um uso hoje: o **CTA do banner de combo** (`combos-carousel.tsx`), via
+`variant="brand"` do Button — amarelo sobre o painel branco do card.
+
+O amarelo é acento pontual, nunca fundo de seção. A seção de combos já teve
+a faixa inteira em `bg-brand-yellow` e foi revertida para branco (2026-09):
+em área grande ele briga com o banner, que é quem deve puxar o olho ali.
+Toda seção do site público é branca (`bg-background`) com `border-t
+border-border` separando as vizinhas.
+
 ## 3. Botões (`components/ui/button.tsx`)
 
 Base: `rounded-lg`, borda transparente, `text-sm font-medium`,
@@ -105,6 +120,7 @@ pressiona 1px no `active`, `opacity-50` quando `disabled`.
 |---|---|---|
 | `default` | Ação primária padrão | `bg-primary` / hover 80% opacidade |
 | `accent` | CTA de destaque (ex.: comprar) | `accent` misturado com 25% de `foreground`, `shadow-sm` |
+| `brand` | CTA largo sobre superfície neutra (banner de combo) | `bg-brand-yellow`, texto `foreground`, `shadow-sm` |
 | `outline` | Ação secundária | borda + `bg-background`, hover `bg-muted` |
 | `secondary` | Ação neutra | `bg-secondary` |
 | `ghost` | Ação de baixa ênfase | transparente, hover `bg-muted` |
@@ -121,6 +137,10 @@ botão usa `size-4` por padrão (`size-3.5` no `sm`, `size-3` no `xs`).
   usa `ring-1 ring-foreground/10` (mais sutil que `border`). Espaçamento
   interno via `--card-spacing` (`4` no padrão, `3` em `size="sm"`).
   `CardTitle` usa `font-heading text-base font-medium`.
+  Exceção: card branco sobre seção branca (o banner de combo) troca o anel
+  pela `border border-border` bege — o `ring-foreground/10` é escuro demais
+  pra correr rente a uma mídia e claro demais pra segurar o painel branco,
+  e some contra o fundo da seção.
 - **Badge** (`components/ui/badge.tsx`): formato pílula (`rounded-4xl`),
   `h-5 text-xs font-medium`, mesma paleta de variantes do Button.
 
@@ -182,6 +202,22 @@ Escala de raio (`app/globals.css`, base `--radius: 0.5rem`):
   customizada (usa o default do Tailwind).
 - Foco sempre visível via `focus-visible:ring-3 ring-ring/50` +
   `focus-visible:border-ring` — nunca remover outline sem substituto.
+- Keyframe novo entra como token `--animate-*` no `@theme inline` de
+  `app/globals.css` (nunca `animate-[...]` inline no componente), com um
+  comentário dizendo qual é o estado de repouso. Regra do repouso: o estado
+  base do elemento tem que ser o **correto**, e a animação só mostra o
+  gesto — porque com `prefers-reduced-motion` a duração vira 0.01ms e o que
+  sobra é o fim da animação. Ver `--animate-working-dot` (repouso visível) e
+  `--animate-combo-strike` (o traço já nasce riscado e a animação roda sem
+  fill-mode, então sem JS ou com reduced-motion — que também corta a
+  repetição pra 1 — o preço antigo continua cortado).
+- Gesto que se repete em loop fecha o ciclo nos dois extremos com o elemento
+  invisível, pra volta do loop não piscar: ver `combo-strike`, cujo 0% e 100%
+  têm o traço em `scaleX(0)` encostado em pontas opostas (a origem troca no
+  meio, onde `scaleX(1)` a deixa sem efeito visual).
+- Animação que precisa disparar ao entrar em cena usa `IntersectionObserver`
+  no próprio componente (padrão em `combos-carousel.tsx`), não
+  `animation-timeline: view()` — Safari e Firefox ainda não suportam.
 
 ## 9. Regras de ouro
 
