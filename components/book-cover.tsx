@@ -36,6 +36,20 @@ type BookCoverProps = {
    *  no destaque grande do hero — nas miniaturas do catálogo/relacionados
    *  fica desligado por padrão. */
   showPauseControl?: boolean;
+  /** Congela o vídeo no frame frontal e nunca toca — nem no hover, nem em
+   *  autoplay. Usa onde a capa é só referência visual de um item numa lista
+   *  (o que vem no kit, em combos-carousel.tsx), não o objeto em destaque. */
+  still?: boolean;
+  /** Mesmo giro de `videoSrc`, com a contracapa (ver `backVideoSrc` em
+   *  lib/data/schemas.ts). Fica empilhado sobre a frente e aparece por
+   *  `showBack` — quem decide quando virar é quem envolve o componente
+   *  (book-cover-flip.tsx), não o BookCover. */
+  backVideoSrc?: string;
+  /** Mostra o verso em vez da frente. Só tem efeito com `backVideoSrc`. */
+  showBack?: boolean;
+  /** Descrição da contracapa — substitui `alt` enquanto o verso está à
+   *  mostra. Sem ela, o rótulo acessível continua descrevendo a frente. */
+  backAlt?: string;
 };
 
 /** Métodos expostos por ref para iniciar/parar o vídeo no hover.
@@ -55,6 +69,14 @@ export type BookCoverHandle = {
 // Frame mínimo (não 0) para o navegador decodificar e exibir uma imagem de
 // repouso em vez de um retângulo preto quando o vídeo não está tocando.
 const REST_FRAME_TIME = 0.01;
+
+// Frame de repouso do modo `still`: o ponto do giro em que o livro encara a
+// câmera de frente, com a capa inteira legível. Vale para todas as faixas de
+// capa — todas saem do mesmo render de 200 frames a 24 fps (ver a skill
+// `preparar-video-capa`), cuja pose frontal é o frame 53 (≈ 2,2 s). Os
+// arquivos têm keyframe a cada 0,5 s, então o seek até aqui decodifica só os
+// poucos frames depois de 2 s.
+const FRONT_FRAME_TIME = 2.22;
 
 /**
  * Capa do livro: vídeo de preview quando disponível, senão placeholder em CSS.
@@ -77,25 +99,50 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   videoScale,
   videoFit = "cover",
   showPauseControl,
+  still,
+  backVideoSrc,
+  showBack,
+  backAlt,
 }, ref) {
   const isLarge = size === "lg";
   const videoRef = useRef<HTMLVideoElement>(null);
+  const backVideoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const hasPauseControl = Boolean(videoSrc) && showPauseControl;
+  const hasPauseControl = Boolean(videoSrc) && showPauseControl && !still;
 
-  // Miniaturas (catálogo, relacionados, estante, combos) só tocam o vídeo no
+  // A troca só acontece depois que o verso tem frame decodificado: cruzar a
+  // opacidade antes disso mostraria o retângulo preto do vídeo ainda vazio no
+  // primeiro clique (o arquivo do verso só começa a baixar aí — ver
+  // book-cover-flip.tsx).
+  const [isBackReady, setIsBackReady] = useState(false);
+  const isShowingBack = Boolean(backVideoSrc) && Boolean(showBack) && isBackReady;
+
+  // Miniaturas (catálogo, relacionados, estante) só tocam o vídeo no
   // hover/foco — dezenas delas com autoplay simultâneo é o que deixava essas
   // páginas pesadas. O destaque grande (showPauseControl) mantém o autoplay
   // contínuo de sempre, com o controle manual de pausar/reproduzir.
-  const playsOnHover = Boolean(videoSrc) && !showPauseControl;
+  const playsOnHover = Boolean(videoSrc) && !showPauseControl && !still;
 
+  // Nos dois casos em que o vídeo não toca sozinho, ele precisa ser levado na
+  // mão até um frame decodificável — senão fica no frame 0, que o navegador
+  // mostra como retângulo preto/vazio.
+  const restFrameTime = still ? FRONT_FRAME_TIME : REST_FRAME_TIME;
+  const hasRestFrame = Boolean(videoSrc) && (playsOnHover || Boolean(still));
+
+  // Frente e verso tocam empilhados enquanto os dois existem, então o controle
+  // manual vale para os dois — senão virar a capa depois de pausar traria um
+  // vídeo tocando de volta.
   function handleToggle() {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
+    const shouldPlay = video.paused;
+    for (const current of [video, backVideoRef.current]) {
+      if (!current) continue;
+      if (shouldPlay) {
+        current.play();
+      } else {
+        current.pause();
+      }
     }
   }
 
@@ -113,8 +160,8 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   }
 
   function handleLoadedMetadata(event: SyntheticEvent<HTMLVideoElement>) {
-    if (!playsOnHover) return;
-    event.currentTarget.currentTime = REST_FRAME_TIME;
+    if (!hasRestFrame) return;
+    event.currentTarget.currentTime = restFrameTime;
   }
 
   // Cobre o vídeo já em cache do navegador: nesse caso o evento nativo
@@ -124,11 +171,11 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   // carregado, aplica o frame de repouso direto, sem depender do evento.
   useEffect(() => {
     const video = videoRef.current;
-    if (!playsOnHover || !video) return;
+    if (!hasRestFrame || !video) return;
     if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      video.currentTime = REST_FRAME_TIME;
+      video.currentTime = restFrameTime;
     }
-  }, [playsOnHover]);
+  }, [hasRestFrame, restFrameTime]);
 
   useImperativeHandle(ref, () => ({
     play: handleHoverStart,
@@ -155,7 +202,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
     <div className={cn("group/cover relative aspect-3/4", className)}>
       <div
         role="img"
-        aria-label={alt}
+        aria-label={isShowingBack && backAlt ? backAlt : alt}
         className={cn(
           "absolute inset-y-0 overflow-hidden rounded-lg bg-white",
           hasVideoBleed ? "-inset-x-[7%]" : "inset-x-0",
@@ -171,23 +218,48 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
         >
           <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105 group-focus-within:scale-105">
             {videoSrc ? (
-              <video
-                ref={videoRef}
-                aria-hidden="true"
-                className={cn(
-                  "absolute inset-0 size-full",
-                  videoFit === "contain" ? "object-contain" : "object-cover",
-                )}
-                src={videoSrc}
-                autoPlay={!playsOnHover}
-                loop
-                muted
-                playsInline
-                preload={playsOnHover ? "metadata" : "auto"}
-                onLoadedMetadata={handleLoadedMetadata}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
+              <>
+                <video
+                  ref={videoRef}
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute inset-0 size-full transition-opacity duration-500",
+                    videoFit === "contain" ? "object-contain" : "object-cover",
+                  )}
+                  style={backVideoSrc ? { opacity: isShowingBack ? 0 : 1 } : undefined}
+                  src={videoSrc}
+                  autoPlay={!hasRestFrame}
+                  loop={!still}
+                  muted
+                  playsInline
+                  preload={hasRestFrame ? "metadata" : "auto"}
+                  onLoadedMetadata={handleLoadedMetadata}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                />
+                {backVideoSrc ? (
+                  <video
+                    ref={backVideoRef}
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute inset-0 size-full transition-opacity duration-500",
+                      videoFit === "contain" ? "object-contain" : "object-cover",
+                    )}
+                    style={{ opacity: isShowingBack ? 1 : 0 }}
+                    src={backVideoSrc}
+                    // Monta já tocando só se a frente também estiver — o verso
+                    // só entra na árvore depois do primeiro clique, e nesse
+                    // ponto o usuário pode já ter pausado a capa.
+                    autoPlay={!hasRestFrame && isPlaying}
+                    loop={!still}
+                    muted
+                    playsInline
+                    preload={hasRestFrame ? "metadata" : "auto"}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onLoadedData={() => setIsBackReady(true)}
+                  />
+                ) : null}
+              </>
             ) : (
               <>
                 <div

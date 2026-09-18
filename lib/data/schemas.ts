@@ -88,6 +88,12 @@ export const bookSchema = z.object({
    *  objeto encostar na borda do próprio vídeo em algum ponto do loop, e um
    *  recorte fixo corta a peça em vez de só o fundo. */
   coverVideoFit: z.enum(["cover", "contain"]).optional(),
+  /** Opcional: mesmo giro de `coverVideoSrc`, mas com a contracapa. Quando
+   *  presente, a página do livro (só ela — o card do catálogo não) ganha um
+   *  botão abaixo da capa que vira o exemplar. Sai do mesmo render de 200
+   *  frames que a frente (ver a skill `preparar-video-capa`), então reaproveita
+   *  o `coverVideoScale`/`coverVideoFit` do título sem ajuste próprio. */
+  backVideoSrc: z.string().optional(),
   /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
   videoBannerSrc: z.string().optional(),
   /** Opcional: variante noturna de `videoBannerSrc` — quando presente, a faixa

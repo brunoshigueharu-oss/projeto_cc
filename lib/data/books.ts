@@ -127,6 +127,7 @@ const RAW_BOOKS = [
       "Capa do livro Mr. Plant — A Biped Among Plants, edição em inglês, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/mr-plant-a-biped-among-plants.mp4",
+    backVideoSrc: "/videos/livros/verso/mr-plant-a-biped-among-plants.mp4",
     // Sem faixa própria enviada para a edição em inglês — reaproveita a faixa
     // já existente da edição em português (cena genérica, sem texto).
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
@@ -234,6 +235,7 @@ const RAW_BOOKS = [
     // Render mostra o livro mais "afastado" no quadro que o de outros
     // títulos — compensa pra ficar do mesmo tamanho aparente na vitrine.
     coverVideoScale: 1.4,
+    backVideoSrc: "/videos/livros/verso/os-contos-do-planta-1.mp4",
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-1.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
@@ -310,6 +312,7 @@ const RAW_BOOKS = [
     coverVideoSrc: "/videos/livros/os-contos-do-planta-2.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.4,
+    backVideoSrc: "/videos/livros/verso/os-contos-do-planta-2.mp4",
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
@@ -407,6 +410,7 @@ const RAW_BOOKS = [
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.39,
+    backVideoSrc: "/videos/livros/verso/robo-de-madeira-atlas-cianus.mp4",
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus.mp4",
     gallery: [
       { src: "/images/galeria/robo-de-madeira-atlas-cianus/01.jpg", alt: "Detalhe da capa do Robô de Madeira, com o autômato entalhado em relevo dourado" },
@@ -491,6 +495,7 @@ const RAW_BOOKS = [
     // O enquadramento do estojo lê como maior que o dos livros vizinhos —
     // reduz um pouco o zoom pra equilibrar o tamanho aparente na vitrine.
     coverVideoScale: 0.92,
+    backVideoSrc: "/videos/livros/verso/robo-de-madeira-atlas-cianus-art-edition.mp4",
     videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition.mp4",
     // Mesmas fotos de "outras visões" da edição padrão — o exemplar
     // fotografado é o mesmo miolo/capa, a caixa e a luva da Art Edition ainda
@@ -728,6 +733,7 @@ const RAW_BOOKS = [
     coverVideoSrc: "/videos/livros/necroplanta.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.39,
+    backVideoSrc: "/videos/livros/verso/necroplanta.mp4",
     videoBannerSrc: "/videos/faixas/necroplanta.mp4",
     gallery: [
       { src: "/images/galeria/necroplanta/01.jpg", alt: "Página 10 do miolo de Necroplanta" },
@@ -900,6 +906,7 @@ const RAW_BOOKS = [
     coverAlt: "Capa do livro Um Bípede Entre Plantas, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
+    backVideoSrc: "/videos/livros/verso/um-bipede-entre-plantas.mp4",
     videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
     gallery: [
       {

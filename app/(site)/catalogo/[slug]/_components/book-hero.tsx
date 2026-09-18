@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { BookCover } from "@/components/book-cover";
 import { BookStatusBadge } from "@/components/book-status-badge";
 import { BookSynopsis } from "@/components/book-synopsis";
 import { LanguageFlag } from "@/components/language-flag";
@@ -9,6 +8,7 @@ import { isInStock, isPurchasable as isBookPurchasable } from "@/lib/data/book-a
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 
+import { BookCoverFlip } from "./book-cover-flip";
 import { BookGallery } from "./book-gallery";
 
 type BookHeroProps = {
@@ -63,16 +63,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
     <section className="relative overflow-hidden bg-background text-foreground">
       <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 sm:py-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
         <div className="mx-auto w-full max-w-xs lg:mx-0">
-          <BookCover
-            title={book.title}
-            alt={book.coverAlt}
-            videoSrc={book.coverVideoSrc}
-            videoScale={book.coverVideoScale}
-            videoFit={book.coverVideoFit}
-            showPauseControl
-            size="lg"
-            className="w-full"
-          />
+          <BookCoverFlip book={book} />
 
           {book.gallery && book.gallery.length > 0 ? (
             <BookGallery images={book.gallery} bookTitle={book.title} />
