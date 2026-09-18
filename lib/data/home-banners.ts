@@ -2,10 +2,20 @@ import { BOOKS_BY_SLUG } from "./books";
 import { homeBannerSchema, type HomeBanner } from "./schemas";
 
 /**
- * Banners de vídeo do Hero da Home, na ordem de exibição do carrossel.
- * Cada banner linka para a página do livro correspondente.
+ * Banners de vídeo do Hero da Home, na ordem de exibição do carrossel — o
+ * primeiro é o que aparece ao abrir o site. Cada banner linka para a página do
+ * livro correspondente, exceto os de chamada de campanha (com `label` próprio).
  */
 const RAW_HOME_BANNERS = [
+  {
+    // Chamada de campanha: não pertence a um livro, então não passa pelo
+    // filtro de publicação abaixo e leva para `/campanhas`.
+    slug: "chamada-novos-quadrinhos",
+    videoSrc: "/videos/home/chamada-novos-quadrinhos.mp4",
+    videoSrcMobile: "/videos/home/chamada-novos-quadrinhos-square.mp4",
+    href: "/campanhas",
+    label: "campanhas de novos quadrinhos",
+  },
   {
     slug: "robo-de-madeira-atlas-cianus-art-edition",
     videoSrc: "/videos/home/robo-de-madeira-atlas-cianus-art-edition.mp4",
@@ -70,13 +80,15 @@ const RAW_HOME_BANNERS = [
 ] as const;
 
 export const HOME_BANNERS: readonly HomeBanner[] = RAW_HOME_BANNERS.flatMap((raw) => {
+  if ("label" in raw) return [homeBannerSchema.parse(raw)];
+
   const bookSlug = "bookSlug" in raw ? raw.bookSlug : raw.slug;
   const book = BOOKS_BY_SLUG.get(bookSlug);
   if (!book) {
     throw new Error(`Banner da Home aponta para um livro que não existe em books.ts: ${bookSlug}`);
   }
 
-  const banner = homeBannerSchema.parse({ ...raw, bookTitle: book.title });
+  const banner = homeBannerSchema.parse({ ...raw, label: book.title });
   // Livro despublicado ou fora da vitrine geral do catálogo (`catalogVisible`
   // false — ex. título só de campanha por enquanto): some do carrossel sem
   // precisar remover o banner daqui.

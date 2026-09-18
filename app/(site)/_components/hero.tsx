@@ -17,8 +17,9 @@ type HeroProps = {
 
 /**
  * Hero da Home = carrossel de vídeos em faixa cheia (mudo/loop/autoplay),
- * sem texto sobreposto. Cada vídeo é um link para a página do livro
- * correspondente. Troca de banner por setas, bolinhas ou swipe (toque).
+ * sem texto sobreposto. Cada vídeo é um link para o destino do banner
+ * (página do livro ou `/campanhas`). Troca de banner por setas, bolinhas ou
+ * swipe (toque).
  */
 export function Hero({ banners }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -78,7 +79,7 @@ export function Hero({ banners }: HeroProps) {
           página); o horizontal chega aos handlers como swipe. */}
       <Link
         href={banner.href}
-        aria-label={`Ver ${banner.bookTitle}`}
+        aria-label={`Ver ${banner.label}`}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}

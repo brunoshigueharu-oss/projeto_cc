@@ -385,9 +385,10 @@ export const homeBannerSchema = z.object({
    * `videoSrc` em telas mobile (abaixo do breakpoint `sm`). Sem ele, o hero
    * cai no vídeo widescreen também no mobile. */
   videoSrcMobile: z.string().min(1).optional(),
-  /** Página do livro para onde o banner leva ao ser clicado. */
+  /** Para onde o banner leva ao ser clicado (página do livro ou `/campanhas`). */
   href: z.string().min(1),
-  /** Título do livro do banner — vira o rótulo acessível do link no hero. */
-  bookTitle: z.string().min(1),
+  /** Rótulo acessível do link no hero ("Ver <label>") — o título do livro,
+   * ou um texto próprio no banner de chamada de campanha. */
+  label: z.string().min(1),
 });
 export type HomeBanner = z.infer<typeof homeBannerSchema>;
