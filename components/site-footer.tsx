@@ -34,7 +34,8 @@ export function SiteFooter() {
             <Wordmark className="h-5 w-auto text-foreground" />
           </Link>
           <p className="max-w-xs font-serif text-sm text-muted-foreground">
-            Ficção sombria ilustrada, em pequenas tiragens de colecionador.
+            Universos foram feitos para serem explorados. Conheça nossas obras
+            e mergulhe de cabeça.
           </p>
           <div className="flex items-center gap-4">
             {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
