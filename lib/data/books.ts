@@ -28,6 +28,26 @@ const PLANTA_UNIVERSE_SHOWCASE = {
   },
 };
 
+/**
+ * Cada capa aqui é um print do `coverVideoSrc` do próprio livro, no frame em
+ * que o giro passa pelo zero (a pose de frente: topo e base da silhueta
+ * horizontais, por volta de n=47–53 nos renders atuais), com o fundo branco
+ * recortado para alfa — por isso o PNG é só o livro, sem sombra embutida: a
+ * sombra é do CSS, em `universe-family-section.tsx`, e pode ser ajustada sem
+ * refazer arte. Trocar a capa aqui é reextrair o print do vídeo novo, nunca
+ * pedir arte nova.
+ *
+ * `position` está em % do palco (não da arte: abaixo do `sm` o palco fica
+ * mais alto que os 1920×1080 do fundo). Ao trocar o recorte de uma capa,
+ * pense na *altura* do livro e recalcule `width` pela proporção do PNG novo:
+ * é a altura que dá a sensação de tamanho na composição — a largura muda
+ * sozinha conforme o ângulo da pose.
+ *
+ * A composição está no limite vertical: a legenda de duas linhas da capa de
+ * cima passa a ~1,2% do topo da fileira de baixo. Crescer as capas ou subir
+ * a fileira de baixo faz o texto entrar embaixo da capa do Vol. 1 — conferir
+ * as duas fileiras juntas depois de mexer em `top`/`width`.
+ */
 const PLANTA_UNIVERSE_FAMILY = {
   backgroundSrc: "/images/universo/familia/o-planta/fundo.svg",
   covers: [
@@ -37,10 +57,10 @@ const PLANTA_UNIVERSE_FAMILY = {
       image: {
         src: "/images/universo/familia/o-planta/um-bipede-entre-plantas.png",
         alt: "Capa de O Planta — Um Bípede Entre Plantas",
-        width: 307,
-        height: 418,
+        width: 538,
+        height: 760,
       },
-      position: { top: 5.4, left: 48.2, width: 16.0 },
+      position: { top: 0.2, left: 46.9, width: 17.6 },
     },
     {
       bookSlug: "necroplanta",
@@ -48,10 +68,10 @@ const PLANTA_UNIVERSE_FAMILY = {
       image: {
         src: "/images/universo/familia/o-planta/necroplanta.png",
         alt: "Capa de Necroplanta",
-        width: 297,
-        height: 402,
+        width: 536,
+        height: 760,
       },
-      position: { top: 54.9, left: 29.6, width: 15.5 },
+      position: { top: 50.2, left: 30.0, width: 17.0 },
     },
     {
       bookSlug: "os-contos-do-planta-1",
@@ -59,10 +79,10 @@ const PLANTA_UNIVERSE_FAMILY = {
       image: {
         src: "/images/universo/familia/o-planta/os-contos-do-planta-1.png",
         alt: "Capa de Os Contos do Planta — Vol. 1",
-        width: 302,
-        height: 402,
+        width: 538,
+        height: 760,
       },
-      position: { top: 55.2, left: 64.7, width: 15.7 },
+      position: { top: 50.2, left: 60.9, width: 17.1 },
     },
     {
       bookSlug: "os-contos-do-planta-2",
@@ -70,10 +90,10 @@ const PLANTA_UNIVERSE_FAMILY = {
       image: {
         src: "/images/universo/familia/o-planta/os-contos-do-planta-2.png",
         alt: "Capa de Os Contos do Planta — Vol. 2",
-        width: 296,
-        height: 402,
+        width: 538,
+        height: 760,
       },
-      position: { top: 55.2, left: 80.2, width: 15.4 },
+      position: { top: 50.2, left: 80.4, width: 17.1 },
     },
   ],
 };

@@ -19,9 +19,20 @@ const universeHeading: Record<Locale, (name: string) => string> = {
  * uma. Só renderiza quando `book.universeFamily` existe — os demais livros
  * continuam com o grid genérico (`RelatedBooks`), decidido em `page.tsx`.
  *
- * O palco mantém a razão de aspecto original da arte (1920×1080) e usa
- * unidades `cqw` (Tailwind 4, container query nativa) pro texto escalar
- * junto com a composição em qualquer largura de tela.
+ * O palco usa a razão de aspecto original da arte (1920×1080) e unidades
+ * `cqw` (Tailwind 4, container query nativa) pro texto escalar junto com a
+ * composição em qualquer largura de tela. Abaixo do `sm` a legenda dobra de
+ * tamanho relativo (`text-[2.6cqw]`) e não caberia entre a fileira de cima e
+ * a de baixo, então o palco fica mais alto ali — o fundo é `object-cover`,
+ * logo o que muda é o quanto da arte aparece nas laterais, não a posição das
+ * capas, que é % do palco.
+ *
+ * As capas são PNGs recortados só do livro (ver nota em
+ * `PLANTA_UNIVERSE_FAMILY`, em `lib/data/books.ts`) — a sombra é o
+ * `drop-shadow` daqui, não arte embutida. Mexer nela é mexer nesta classe.
+ * São duas camadas (contato curto + difusa), por isso `[filter:…]` em vez de
+ * `drop-shadow-[…]`: duas utilities `drop-shadow` na mesma classe disputam a
+ * mesma variável e só a última vale.
  */
 export function UniverseFamilySection({ book, universe }: UniverseFamilySectionProps) {
   const { universeFamily } = book;
@@ -33,7 +44,7 @@ export function UniverseFamilySection({ book, universe }: UniverseFamilySectionP
   return (
     <section className="border-t border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="@container relative aspect-[1920/1080] w-full">
+        <div className="@container relative aspect-[1920/1510] w-full sm:aspect-[1920/1080]">
           <Image
             src={universeFamily.backgroundSrc}
             alt=""
@@ -67,9 +78,9 @@ export function UniverseFamilySection({ book, universe }: UniverseFamilySectionP
                   width={cover.image.width}
                   height={cover.image.height}
                   sizes="(min-width: 1280px) 20vw, 30vw"
-                  className="h-auto w-full drop-shadow-md transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                  className="block h-auto w-full [filter:drop-shadow(0_1px_2px_color-mix(in_oklch,var(--foreground),transparent_88%))_drop-shadow(0_10px_18px_color-mix(in_oklch,var(--foreground),transparent_88%))] transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                 />
-                <span className="mt-2 block text-center text-[2.6cqw] leading-snug text-foreground/80 sm:text-[1.3cqw]">
+                <span className="mt-[0.8cqw] block text-center text-[2.6cqw] leading-snug text-foreground/80 sm:text-[1.3cqw]">
                   {cover.caption}
                 </span>
               </>
