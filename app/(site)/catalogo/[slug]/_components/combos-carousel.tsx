@@ -8,6 +8,7 @@ import { Star, Truck } from "lucide-react";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
+import { LazyVideo } from "@/components/lazy-video";
 import {
   Carousel,
   CarouselContent,
@@ -112,7 +113,10 @@ function ComboStage({ combo, videoSrc }: { combo: Combo; videoSrc: string | null
     // `min-h-64` que bastaria para o vídeo sozinho.
     <div className="relative min-h-72 overflow-hidden bg-primary sm:min-h-80 lg:min-h-[26rem]">
       {videoSrc ? (
-        <video
+        // `LazyVideo` porque o embla monta TODOS os slides do carrossel de
+        // uma vez: com `<video src>` cru, os combos fora de tela baixavam a
+        // faixa inteira cada um, em paralelo com o resto da página.
+        <LazyVideo
           aria-hidden="true"
           className="absolute inset-0 size-full object-cover"
           src={videoSrc}

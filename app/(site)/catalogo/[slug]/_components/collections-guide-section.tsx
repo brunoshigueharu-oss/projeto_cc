@@ -1,4 +1,5 @@
 import type { Locale, Universe } from "@/lib/data/schemas";
+import { LazyVideo } from "@/components/lazy-video";
 
 /** Universo cujas coleções este texto explica (Graphic Novel / Contos). */
 const PLANTA_UNIVERSE_SLUG = "necroplanta";
@@ -91,7 +92,7 @@ export function CollectionsGuideSection({
           aria-hidden="true"
           className="relative aspect-[3/4] w-full max-w-sm shrink-0 overflow-hidden rounded-2xl lg:w-[420px]"
         >
-          <video
+          <LazyVideo
             className="h-full w-full object-cover"
             src="/videos/colecoes/planta-rotacao.mp4"
             autoPlay

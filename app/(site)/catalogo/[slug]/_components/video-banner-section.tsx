@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Moon, Pause, Play, Sun } from "lucide-react";
 import type { Book } from "@/lib/data/schemas";
+import { LazyVideo } from "@/components/lazy-video";
 
 /**
  * Faixa de vídeo em largura cheia, entre o card de exemplar avulso e o
@@ -25,7 +26,9 @@ export function VideoBannerSection({ book }: { book: Book }) {
     return null;
   }
 
-  const hasDayNight = Boolean(book.videoBannerNightSrc);
+  // Guardado numa const (em vez de `Boolean(...)`) pro TS estreitar o tipo
+  // no JSX: `LazyVideo` exige `src: string`, e o campo é opcional.
+  const nightSrc = book.videoBannerNightSrc;
 
   function handleTogglePlay() {
     for (const ref of [dayRef, nightRef]) {
@@ -41,11 +44,12 @@ export function VideoBannerSection({ book }: { book: Book }) {
 
   return (
     <section className="group/video relative border-t border-border bg-background">
-      <video
+      {/* Faixa fica no meio da página: só baixa quando o usuário chega nela. */}
+      <LazyVideo
         ref={dayRef}
         aria-hidden="true"
         className="h-40 w-full object-cover transition-opacity duration-500 sm:h-56 md:h-64 lg:h-72"
-        style={hasDayNight ? { opacity: isNight ? 0 : 1 } : undefined}
+        style={nightSrc ? { opacity: isNight ? 0 : 1 } : undefined}
         src={book.videoBannerSrc}
         autoPlay
         loop
@@ -54,13 +58,13 @@ export function VideoBannerSection({ book }: { book: Book }) {
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
-      {hasDayNight ? (
-        <video
+      {nightSrc ? (
+        <LazyVideo
           ref={nightRef}
           aria-hidden="true"
           className="absolute inset-0 h-40 w-full object-cover transition-opacity duration-500 sm:h-56 md:h-64 lg:h-72"
           style={{ opacity: isNight ? 1 : 0 }}
-          src={book.videoBannerNightSrc}
+          src={nightSrc}
           autoPlay
           loop
           muted
@@ -79,7 +83,7 @@ export function VideoBannerSection({ book }: { book: Book }) {
           <Play className="size-3.5 fill-current" />
         )}
       </button>
-      {hasDayNight ? (
+      {nightSrc ? (
         <button
           type="button"
           onClick={() => setIsNight((prev) => !prev)}

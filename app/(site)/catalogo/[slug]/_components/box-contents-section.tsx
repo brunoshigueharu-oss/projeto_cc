@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LazyVideo } from "@/components/lazy-video";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 
@@ -83,7 +84,7 @@ export function BoxContentsSection({ book }: { book: Book }) {
     <section className="border-t border-border py-20">
       {boxContents.openingVideoSrc ? (
         <div className="mx-auto mb-12 max-w-2xl overflow-hidden rounded-2xl px-4 sm:px-6">
-          <video
+          <LazyVideo
             className="h-full w-full object-cover"
             src={boxContents.openingVideoSrc}
             autoPlay
@@ -116,7 +117,8 @@ export function BoxContentsSection({ book }: { book: Book }) {
                   aria-label={item.label ? `Ver em tela cheia: ${item.label}` : "Ver em tela cheia"}
                   className="group relative aspect-[1670/1970] w-full overflow-hidden rounded-2xl transition-shadow duration-300 ease-out hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
-                  <video
+                  {/* Carrossel monta todos os itens da caixa de uma vez. */}
+                  <LazyVideo
                     className="absolute inset-0 h-full w-full object-cover"
                     src={item.videoSrc}
                     autoPlay
