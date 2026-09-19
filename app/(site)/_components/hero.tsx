@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -10,6 +10,10 @@ import { getSwipeStep } from "../_lib/get-swipe-step";
 
 const CAROUSEL_ARROW_CLASSNAME =
   "absolute top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16 lg:size-11";
+
+/** Breakpoint do vídeo quadrado — o mesmo `sm:` em que o container do
+ * banner deixa de ser quadrado e vira a faixa 1785/650. */
+const MOBILE_BANNER_MEDIA = "(max-width: 639px)";
 
 type HeroProps = {
   banners: readonly HomeBanner[];
@@ -23,12 +27,46 @@ type HeroProps = {
  */
 export function Hero({ banners }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const swipeOrigin = useRef<{ x: number; y: number } | null>(null);
   const hasSwiped = useRef(false);
+  const banner = banners[activeIndex];
+
+  // O <video> escolhe a fonte UMA vez, quando entra no documento, e nunca
+  // reavalia o `media` dos <source>. No Safari do iPhone o primeiro slide (o
+  // único que vem pronto no HTML do servidor) caía no vídeo widescreen mesmo
+  // com o CSS já em modo mobile — provavelmente porque a media query é testada
+  // antes de o `meta viewport` valer, contra os 980px iniciais. Chrome,
+  // Firefox e Safari do macOS acertam. Aqui a escolha é refeita no cliente com
+  // `matchMedia`, sem depender do `media`, e repetida quando o breakpoint muda
+  // (girar o aparelho).
+  useEffect(() => {
+    if (!banner) return;
+
+    const query = window.matchMedia(MOBILE_BANNER_MEDIA);
+
+    function syncVideoSource() {
+      const video = videoRef.current;
+      if (!video || !banner) return;
+
+      const wanted =
+        query.matches && banner.videoSrcMobile ? banner.videoSrcMobile : banner.videoSrc;
+      const current = video.currentSrc ? new URL(video.currentSrc).pathname : "";
+      if (current === wanted) return;
+
+      // `src` no elemento tem precedência sobre os <source> filhos, então não
+      // depende mais do `media` ter sido avaliado na viewport certa.
+      video.src = wanted;
+      video.load();
+    }
+
+    syncVideoSource();
+    query.addEventListener("change", syncVideoSource);
+    return () => query.removeEventListener("change", syncVideoSource);
+  }, [banner]);
 
   if (banners.length === 0) return null;
 
-  const banner = banners[activeIndex];
   const hasMultipleBanners = banners.length > 1;
 
   function goTo(index: number) {
@@ -88,6 +126,7 @@ export function Hero({ banners }: HeroProps) {
       >
         <video
           key={banner.slug}
+          ref={videoRef}
           aria-hidden="true"
           className="size-full object-cover"
           autoPlay
@@ -96,7 +135,7 @@ export function Hero({ banners }: HeroProps) {
           playsInline
         >
           {banner.videoSrcMobile && (
-            <source src={banner.videoSrcMobile} media="(max-width: 639px)" />
+            <source src={banner.videoSrcMobile} media={MOBILE_BANNER_MEDIA} />
           )}
           <source src={banner.videoSrc} />
         </video>
