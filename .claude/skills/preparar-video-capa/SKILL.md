@@ -100,7 +100,15 @@ objetivo for reduzir tamanho.
 
 `-b:v 5M` é ponto de partida (rendeu ~5MB pra um 992×1216 de 8s nos testes).
 Ajuste conforme a resolução/duração real e compare tamanho final com o
-arquivo que está sendo substituído.
+arquivo que está sendo substituído. Com os flags acima, 2M já entrega ~2MB
+sem perda visível (SSIM 0,99) e com o canto em `ff` — medido em todo o
+catálogo por `scripts/optimize-videos.sh`.
+
+**Nunca passe `-maxrate` junto com esses flags.** Com `-maxrate`, o
+`h264_videotoolbox` entrega o branco em 248 — exatamente o mesmo resultado de
+não passar flag de cor nenhuma (as duas variantes foram medidas lado a lado).
+O bitrate alvo sozinho (`-b:v`) basta: a arte da capa não tem pico de
+movimento que justifique limitar o teto.
 
 ## 3. Validar antes de gravar em `public/`
 
