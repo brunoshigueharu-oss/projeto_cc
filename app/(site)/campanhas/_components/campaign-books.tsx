@@ -16,7 +16,7 @@ export function CampaignBooks({ books }: { books: readonly Book[] }) {
   return (
     <section className="border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        <h2 className="font-display text-xl font-bold text-foreground">
+        <h2 className="font-display text-2xl text-foreground sm:text-3xl">
           Também nesta campanha
         </h2>
 

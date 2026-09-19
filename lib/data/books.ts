@@ -933,6 +933,32 @@ const RAW_BOOKS = [
     price: { amount: 11999, currency: "BRL" },
   },
   {
+    // Variante de capa do Yanayag — mesma obra, tiragem limitada com a lua em
+    // vermelho no lugar do dourado. Existe como título próprio só para ter
+    // slug de carrinho (`AddToCartButton` resolve por `BOOKS_BY_SLUG`, que
+    // não filtra por `published`); a vitrine dela é a seção "Edição Noite" de
+    // `/campanhas`, e por isso `published: false` — sem página em
+    // `/catalogo/yanayag-noite` enquanto a editora não fechar a edição.
+    slug: "yanayag-noite",
+    title: "Yanayag — Edição Noite",
+    subtitle: "Edição limitada",
+    published: false,
+    catalogVisible: false,
+    universeSlug: "yanayag",
+    author: ALCATENA_E_MAZZITELLI,
+    coverAlt:
+      "Capa da Edição Noite de Yanayag: o bruxo sentado no cubo de símbolos diante de uma lua vermelha",
+    coverTone: "forest",
+    coverVideoSrc: "/videos/livros/yanayag-noite.mp4",
+    // Mesmo render (992×1216, 200 frames) da edição padrão — reaproveita o
+    // enquadramento calibrado lá.
+    coverVideoScale: 1.4,
+    // ATENÇÃO: espelha o preço da edição padrão enquanto a editora não
+    // confirma o valor da tiragem limitada. A seção da campanha não exibe
+    // preço justamente por isso — substituir antes de abrir a venda.
+    price: { amount: 11999, currency: "BRL" },
+  },
+  {
     // Edição canônica em português — esgotada. A edição em inglês
     // (`mr-plant-a-biped-among-plants`, à venda) ocupa agora o lugar de
     // destaque no catálogo que era desta; ver nota no início do array.

@@ -359,12 +359,6 @@ export const campaignSchema = z.object({
   bannerVideo: z
     .object({ src: z.string().min(1), alt: z.string().min(1) })
     .optional(),
-  /** Opcional: variante noturna de `bannerVideo` — quando presente, a faixa
-   * ganha um botão sol/lua para alternar entre as duas versões, mesmo padrão
-   * do `videoBannerNightSrc` do livro. */
-  bannerVideoNight: z
-    .object({ src: z.string().min(1), alt: z.string().min(1) })
-    .optional(),
   /**
    * Opcional: números do financiamento coletivo. Sem eles a página de detalhe
    * omite a barra de progresso e mostra só o CTA — campanha de evento ou
@@ -380,13 +374,33 @@ export const campaignSchema = z.object({
   /** Opcional: parágrafos de "Sobre o projeto". Sem eles, a página usa
    * `description` como parágrafo único. */
   about: z.array(z.string().min(1)).min(1).optional(),
-  /** Opcional: lista curta ("indicado para quem gosta de..."), renderizada
-   * como lista com marcadores ao lado da ficha técnica. */
+  /** Opcional: parágrafo que abre o bloco "O Livro" da campanha e apresenta a
+   * lista de `recommendedFor`. Sem ele, a lista aparece sozinha. */
+  recommendedIntro: z.string().min(1).optional(),
+  /** Opcional: lista curta ("indicada para quem gosta de..."), renderizada
+   * com marcadores logo abaixo de `recommendedIntro`, no bloco "O Livro". */
   recommendedFor: z.array(z.string().min(1)).min(1).optional(),
   /** Opcional: amostras do miolo ("Visualização das páginas internas"). Sem
    * elas, a seção cai na galeria do título principal. */
   gallery: z
     .array(z.object({ src: z.string().min(1), alt: z.string().min(1) }))
+    .optional(),
+  /** Opcional: edição especial do título da campanha (ex. variante de capa em
+   * tiragem limitada), destacada numa seção própria no fim da página.
+   *
+   * `bookSlug` aponta para um título já cadastrado em `books.ts` — é dele que
+   * saem capa em vídeo, alt e preço, como no resto da página. Fica fora de
+   * `relatedBookSlugs` de propósito: aquele array alimenta "Também nesta
+   * campanha", e a edição especial merece vitrine própria, não uma miniatura
+   * na grade. */
+  specialEdition: z
+    .object({
+      bookSlug: slug,
+      kicker: z.string().min(1),
+      headline: z.string().min(1),
+      description: z.string().min(1),
+      ctaLabel: z.string().min(1).default("Reservar exemplar"),
+    })
     .optional(),
 });
 export type Campaign = z.infer<typeof campaignSchema>;

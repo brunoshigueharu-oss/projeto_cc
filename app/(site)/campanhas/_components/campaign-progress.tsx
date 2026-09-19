@@ -31,10 +31,20 @@ import { CampaignCountdown } from "./campaign-countdown";
  * é `font-bold` e o prazo (dias restantes / data) é `font-medium` — sem
  * isso, os dois em bold com o prazo alinhado à direita (assim como o "%"
  * abaixo da barra) deixava o layout visualmente pesado pro lado direito.
+ *
+ * Fecha a seção o parágrafo de abertura da campanha (`about[0]`), que antes
+ * abria "Sobre o projeto": é o convite do projeto, e lido logo abaixo do CTA
+ * funciona como argumento da reserva, não como introdução de uma seção que
+ * vem depois. Ele é o único elemento alinhado à esquerda da coluna — texto
+ * corrido de várias linhas centralizado fica ruim de ler; a largura acompanha
+ * a do botão para o bloco não parecer solto.
  */
 export function CampaignProgress({ campaign }: { campaign: Campaign }) {
   const progress = getFundingProgress(campaign);
   const isClosed = campaign.status === "encerrada";
+  // Mesmo fallback de `campaign-about`: sem `about`, a descrição faz as vezes
+  // do parágrafo de abertura.
+  const [intro] = campaign.about ?? [campaign.description];
 
   return (
     <section
@@ -46,7 +56,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
           {progress ? (
             <>
               <div>
-                <p className="font-display text-4xl font-extrabold leading-none text-foreground tabular-nums sm:text-5xl lg:text-[56px]">
+                <p className="font-display text-4xl font-bold leading-none text-foreground tabular-nums sm:text-5xl lg:text-[56px]">
                   {formatPrice(progress.raised)}
                 </p>
                 <p className="mt-2 text-base text-foreground/60">
@@ -85,7 +95,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
                 </p>
               </div>
 
-              <div className="flex w-full flex-col gap-2 text-sm uppercase tracking-[0.08em] sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex w-full flex-col gap-2 text-xs uppercase tracking-[0.15em] sm:flex-row sm:items-center sm:justify-between">
                 <p className="font-bold text-foreground tabular-nums">
                   Meta: {formatPrice(progress.goal)}
                 </p>
@@ -95,7 +105,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
               </div>
             </>
           ) : (
-            <div className="flex w-full flex-col gap-2 text-sm uppercase tracking-[0.08em] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex w-full flex-col gap-2 text-xs uppercase tracking-[0.15em] sm:flex-row sm:items-center sm:justify-between">
               <p className="font-bold text-foreground">
                 {formatDateRange(campaign.startsAt, campaign.endsAt)}
               </p>
@@ -106,17 +116,23 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
           )}
 
           {isClosed ? (
-            <p className="w-full rounded-lg border border-border px-6 py-3.5 text-center font-display text-sm uppercase tracking-[0.12em] text-foreground/60">
+            <p className="w-full rounded-lg border border-border px-6 py-3.5 text-center text-sm font-medium text-foreground/60">
               Campanha encerrada
             </p>
           ) : (
             <Link
               href={campaign.ctaHref}
-              className="w-full rounded-lg border border-border px-6 py-3.5 text-center font-display text-sm uppercase tracking-[0.12em] text-foreground transition-colors hover:border-foreground hover:bg-secondary"
+              className="w-full rounded-lg border border-border px-6 py-3.5 text-center text-sm font-medium text-foreground transition-colors hover:border-foreground hover:bg-secondary"
             >
               {campaign.ctaLabel}
             </Link>
           )}
+
+          {intro ? (
+            <p className="w-full text-left font-serif leading-relaxed text-foreground/70">
+              {intro}
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

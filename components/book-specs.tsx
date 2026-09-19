@@ -40,14 +40,19 @@ const LABELS: Record<
 };
 
 /**
- * Ficha técnica, para uso dentro de `AboutBookSection`.
+ * Ficha técnica do livro — usada na página de livro (`AboutBookSection`) e na
+ * página de campanha, que mostra a mesma ficha do título principal.
  *
  * Usa `<dl>/<dt>/<dd>` de propósito: leitores de tela anunciam a relação
  * rótulo→valor, o que uma lista de `<div>` não daria. Linhas com `border-b`
  * (uma por spec), no lugar da grade multi-coluna anterior — mesmo padrão do
  * "SpecsGrid" do Figma.
+ *
+ * `heading` existe só para a campanha: enquanto o exemplar não foi impresso a
+ * ficha é anunciada como "Ficha Técnica Estimada". Sem ele, vale o título
+ * padrão do idioma do livro.
  */
-export function BookSpecs({ book }: { book: Book }) {
+export function BookSpecs({ book, heading }: { book: Book; heading?: string }) {
   // Ficha técnica ainda não recebida da editora para este título.
   if (!book.specs) {
     return null;
@@ -69,7 +74,7 @@ export function BookSpecs({ book }: { book: Book }) {
 
   return (
     <div className="w-full">
-      <h3 className="font-display text-xl text-foreground sm:text-2xl">{labels.heading}</h3>
+      <h3 className="font-display text-xl text-foreground sm:text-2xl">{heading ?? labels.heading}</h3>
 
       <dl className="mt-6">
         {rows.map((row) => (

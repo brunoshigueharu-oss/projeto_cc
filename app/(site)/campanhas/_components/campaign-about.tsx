@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
+import { BookSpecs } from "@/components/book-specs";
 import { BookSynopsis } from "@/components/book-synopsis";
 import { ParallaxSection } from "@/components/parallax-section";
 import { Badge } from "@/components/ui/badge";
@@ -12,20 +12,38 @@ import { formatPrice } from "@/lib/format";
 
 /**
  * "Sobre o projeto" (node 211:1425 do Figma, com o miolo revisado a partir de
- * referência visual do usuário): título, primeiro parágrafo isolado, e logo
- * em seguida a vitrine do livro principal — capa com a prévia em vídeo
- * rodando à esquerda, título/autor/sinopse/preço/CTA à direita, no mesmo
- * layout do `BookHero` da página de catálogo. Só depois vem a faixa de
- * parallax do livro (`book.parallax`) como divisor full-width, e por fim a
- * ficha técnica, as recomendações e a galeria. Sem `primaryBook`, a vitrine
- * some e o texto cai de volta em parágrafos corridos após o parallax — não
- * há capa nem exemplar para reservar.
+ * referência visual do usuário): a abertura do livro da campanha usa a mesma
+ * diagramação do topo das páginas de livro (`BookHero`, no catálogo) — grade
+ * `0.8fr_1.2fr` com a capa à esquerda e, à direita, a ficha de leitura na
+ * mesma ordem: kicker no lugar do breadcrumb, título, subtítulo, autoria,
+ * sinopse com "Leia mais", preço + selo e CTA.
  *
- * A ficha é montada a partir do título principal da campanha, não de campos
- * próprios: `books.ts` já é a fonte de verdade de páginas, formato e ISBN, e
- * duplicar isso no registro da campanha só criaria divergência. Por isso o
- * rótulo do Figma — "Ficha Técnica Estimada" — vira "Ficha Técnica" quando o
- * livro já saiu, e continua "Estimada" enquanto a campanha está aberta.
+ * Antes o cabeçalho (kicker + título + autoria) vivia numa seção própria
+ * acima da vitrine: o título ficava solto no topo da página e sobrava um vazio
+ * grande ao lado da capa, porque a coluna direita — só sinopse, preço e botão
+ * — era curta demais para acompanhá-la. Juntando os dois, a campanha lê igual
+ * a qualquer outra página de livro do site.
+ *
+ * Ao lado da capa vai só o parágrafo seguinte ao de abertura (o primeiro subiu
+ * para `campaign-progress`); do terceiro em diante o texto continua na seção
+ * depois do parallax, onde tem largura de leitura. Entre os dois, a faixa de
+ * parallax do livro (`book.parallax`) entra como divisor full-width.
+ *
+ * Depois do parallax a campanha adota o mesmo modelo das páginas de livro
+ * (`AboutBookSection` do catálogo): duas colunas, "O Livro" à esquerda e
+ * "Sobre o Autor" + ficha técnica à direita — o mesmo `BookSpecs` de
+ * `components/`, não uma ficha paralela. O que muda é a fonte do texto da
+ * coluna esquerda: na página de livro é o `excerpt`, aqui é o convite da
+ * campanha (`recommendedIntro` + `recommendedFor`), que é o argumento de
+ * venda do financiamento. A galeria de páginas internas fecha o bloco. Sem
+ * `primaryBook` não há capa, autor nem ficha: sobra o cabeçalho e o texto
+ * corrido.
+ *
+ * A ficha sai do título principal da campanha, não de campos próprios:
+ * `books.ts` já é a fonte de verdade de páginas, formato e ISBN, e duplicar
+ * isso no registro da campanha só criaria divergência. Por isso o rótulo do
+ * Figma — "Ficha Técnica Estimada" — só vale enquanto a campanha está aberta;
+ * com o livro já publicado, cai no título padrão do `BookSpecs`.
  */
 export function CampaignAbout({
   campaign,
@@ -34,9 +52,15 @@ export function CampaignAbout({
   campaign: Campaign;
   primaryBook: Book | undefined;
 }) {
-  const paragraphs = campaign.about ?? [campaign.description];
-  const [firstParagraph, ...restParagraphs] = paragraphs;
-  const specs = buildSpecs(primaryBook);
+  // O parágrafo de abertura (`about[0]`) não fica mais aqui: subiu para
+  // `campaign-progress`, logo abaixo do CTA. Esta seção começa no parágrafo
+  // seguinte.
+  const [, ...restParagraphs] = campaign.about ?? [campaign.description];
+  // A vitrine acompanha só o parágrafo seguinte ao de abertura — o bastante
+  // para apresentar o livro ao lado da capa. O resto do texto continua na
+  // seção depois do parallax, onde tem largura de leitura.
+  const showcaseParagraph = primaryBook ? restParagraphs.at(0) : undefined;
+  const storyParagraphs = primaryBook ? restParagraphs.slice(1) : restParagraphs;
   const gallery = campaign.gallery ?? primaryBook?.gallery ?? [];
   // "Estimada" só faz sentido enquanto o exemplar ainda não foi impresso —
   // numa campanha de evento ou assinatura o livro já existe, com ficha fechada.
@@ -44,24 +68,24 @@ export function CampaignAbout({
     campaign.status !== "encerrada" &&
     (campaign.kind === "pre-venda" || campaign.kind === "lancamento");
 
+  // Kicker + título ocupam o lugar do breadcrumb + H1 da página de livro, e
+  // são os mesmos com ou sem capa ao lado — por isso saem daqui, e não
+  // repetidos nos dois ramos do JSX.
+  const heading = (
+    <>
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+        Sobre o projeto
+      </p>
+      <h1 className="mt-4 text-balance font-display text-4xl leading-[1.1] text-foreground sm:text-5xl">
+        {campaign.title}
+      </h1>
+    </>
+  );
+
   return (
     <>
-      <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 sm:pt-20">
-        <div className="flex flex-col items-start gap-6 pb-12 sm:pb-16">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-            Sobre o projeto
-          </p>
-          <h1 className="text-balance font-display text-3xl font-bold leading-[1.15] text-foreground sm:text-4xl">
-            {campaign.title}
-          </h1>
-          <p className="font-serif text-base leading-relaxed text-foreground/70 sm:text-lg">
-            {firstParagraph}
-          </p>
-        </div>
-      </section>
-
-      {primaryBook ? (
-        <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        {primaryBook ? (
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
             <div className="mx-auto w-full max-w-xs lg:mx-0">
               <BookCover
@@ -77,19 +101,20 @@ export function CampaignAbout({
             </div>
 
             <div>
-              <h2 className="text-balance font-display text-3xl font-bold leading-[1.15] text-foreground sm:text-4xl">
-                {primaryBook.title}
-              </h2>
+              {heading}
+
               {primaryBook.subtitle ? (
-                <p className="mt-2 font-serif text-lg text-foreground/60">{primaryBook.subtitle}</p>
+                <p className="mt-2 font-serif text-lg text-foreground/60">
+                  {primaryBook.subtitle}
+                </p>
               ) : null}
 
               <p className="mt-1 font-serif text-base italic text-primary">
                 Por {primaryBook.author.name}
               </p>
 
-              {restParagraphs.length > 0 ? (
-                <BookSynopsis text={restParagraphs.join("\n\n")} locale={primaryBook.locale} />
+              {showcaseParagraph ? (
+                <BookSynopsis text={showcaseParagraph} locale={primaryBook.locale} />
               ) : null}
 
               <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -112,80 +137,78 @@ export function CampaignAbout({
                     Tiragem esgotada
                   </span>
                 )}
-
-                <Link
-                  href={`/catalogo/${primaryBook.slug}`}
-                  className="text-sm font-medium text-foreground/70 underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  Ver o livro no catálogo →
-                </Link>
               </div>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-3xl">{heading}</div>
+        )}
+      </section>
+
+      <ParallaxSection layers={primaryBook?.parallax ?? []} />
+
+      {storyParagraphs.length > 0 ? (
+        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+          <div className="flex max-w-3xl flex-col gap-6 font-serif leading-relaxed text-foreground/70">
+            {storyParagraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {primaryBook ? (
+        <section className="border-t border-border">
+          <div className="mx-auto grid max-w-6xl gap-16 px-4 py-20 sm:px-6 lg:grid-cols-2">
+            <div>
+              <h2 className="font-display text-2xl text-foreground sm:text-3xl">O Livro</h2>
+
+              {campaign.recommendedIntro ? (
+                <p className="mt-6 font-serif leading-relaxed text-muted-foreground">
+                  {campaign.recommendedIntro}
+                </p>
+              ) : null}
+
+              {campaign.recommendedFor?.length ? (
+                <ul className="ml-5 mt-6 flex list-disc flex-col gap-2 font-serif leading-relaxed text-muted-foreground">
+                  {campaign.recommendedFor.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col gap-12">
+              <div>
+                <h2 className="font-display text-2xl text-foreground sm:text-3xl">Sobre o Autor</h2>
+                <p className="mt-2 font-display text-lg text-foreground">
+                  {primaryBook.author.name}
+                </p>
+                {primaryBook.author.bio ? (
+                  /* `whitespace-pre-line`: a bio vem em parágrafos separados por
+                     quebra dupla em `books.ts`. */
+                  <p className="mt-6 whitespace-pre-line font-serif leading-relaxed text-muted-foreground">
+                    {primaryBook.author.bio}
+                  </p>
+                ) : null}
+              </div>
+
+              <BookSpecs
+                book={primaryBook}
+                heading={isEstimated ? "Ficha Técnica Estimada" : undefined}
+              />
             </div>
           </div>
         </section>
       ) : null}
 
-      <ParallaxSection layers={primaryBook?.parallax ?? []} />
-
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        {!primaryBook ? (
-          <div className="flex flex-col gap-6 font-serif text-base leading-relaxed text-foreground/70 sm:text-lg">
-            {restParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-        ) : null}
-
-        {specs.length > 0 || campaign.recommendedFor?.length ? (
-          <div
-            className={`flex flex-col gap-6 sm:flex-row sm:flex-wrap ${
-              primaryBook ? "" : "mt-12 sm:mt-16"
-            }`}
-          >
-            {specs.length > 0 ? (
-              <div className="w-full rounded-3xl border border-border bg-card p-7 sm:w-[420px]">
-                <h2 className="font-display text-lg font-bold text-foreground">
-                  {isEstimated ? "Ficha Técnica Estimada" : "Ficha Técnica"}
-                </h2>
-
-                <dl className="mt-4">
-                  {specs.map((row) => (
-                    <div
-                      key={row.label}
-                      className="flex items-start justify-between gap-4 border-b border-border pb-2 pt-3 text-[13px] first:pt-0"
-                    >
-                      <dt className="text-muted-foreground">{row.label}</dt>
-                      <dd className="text-right font-bold text-foreground tabular-nums">
-                        {row.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            ) : null}
-
-            {campaign.recommendedFor?.length ? (
-              <div className="w-full rounded-3xl border border-border bg-card p-7 sm:w-[420px]">
-                <h2 className="font-display text-lg font-bold text-foreground">
-                  Indicada para quem gosta de
-                </h2>
-
-                <ul className="ml-4 mt-4 flex list-disc flex-col gap-2 font-serif text-[13px] text-foreground/70">
-                  {campaign.recommendedFor.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
-
-        {gallery.length > 0 ? (
-          <div className="mt-16">
-            <h2 className="font-display text-xl font-bold text-foreground">
+      {gallery.length > 0 ? (
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <h2 className="font-display text-2xl text-foreground sm:text-3xl">
               Visualização das páginas internas
             </h2>
-            <ul className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {gallery.map((image) => (
                 <li
                   key={image.src}
@@ -202,27 +225,8 @@ export function CampaignAbout({
               ))}
             </ul>
           </div>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
     </>
   );
-}
-
-/** Linhas da ficha, na ordem do Figma. Cada uma some quando o dado não veio. */
-function buildSpecs(book: Book | undefined): Array<{ label: string; value: string }> {
-  if (!book) {
-    return [];
-  }
-
-  return [
-    { label: "Autor", value: book.author.name },
-    { label: "Editora", value: "Hocus Pocus" },
-    ...(book.specs
-      ? [
-          { label: "Páginas", value: String(book.specs.pages) },
-          { label: "Formato", value: `${book.specs.dimensions} (${book.specs.format})` },
-          { label: "ISBN", value: book.specs.isbn },
-        ]
-      : []),
-  ];
 }

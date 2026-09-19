@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import type { Book, Locale } from "@/lib/data/schemas";
-import { BookSpecs } from "./book-specs";
+import { BookSpecs } from "@/components/book-specs";
 
 const LABELS: Record<Locale, { theBook: string; aboutAuthor: string }> = {
   pt: { theBook: "O Livro", aboutAuthor: "Sobre o Autor" },
@@ -55,7 +55,9 @@ export function AboutBookSection({ book }: { book: Book }) {
               {labels.aboutAuthor}
             </h2>
             {book.author.bio ? (
-              <p className="mt-6 font-serif leading-relaxed text-muted-foreground">
+              /* `whitespace-pre-line`: parte das bios vem em mais de um
+                 parágrafo, separados por quebra dupla em `books.ts`. */
+              <p className="mt-6 whitespace-pre-line font-serif leading-relaxed text-muted-foreground">
                 {book.author.bio}
               </p>
             ) : (

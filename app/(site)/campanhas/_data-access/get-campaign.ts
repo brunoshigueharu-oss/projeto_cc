@@ -15,6 +15,11 @@ export type CampaignDetail = {
   primaryBook: Book | undefined;
   /** Demais títulos citados, na ordem de `relatedBookSlugs`. */
   otherBooks: readonly Book[];
+  /**
+   * Título da edição especial (`campaign.specialEdition`), quando a campanha
+   * tem uma. `undefined` quando não tem — a seção do fim da página some.
+   */
+  specialEditionBook: Book | undefined;
 };
 
 export async function getCampaign(): Promise<CampaignDetail> {
@@ -23,9 +28,14 @@ export async function getCampaign(): Promise<CampaignDetail> {
     return book ? [book] : [];
   });
 
+  const specialEditionSlug = CAMPAIGN.specialEdition?.bookSlug;
+
   return {
     campaign: CAMPAIGN,
     primaryBook: books.at(0),
     otherBooks: books.slice(1),
+    specialEditionBook: specialEditionSlug
+      ? BOOKS_BY_SLUG.get(specialEditionSlug)
+      : undefined,
   };
 }
