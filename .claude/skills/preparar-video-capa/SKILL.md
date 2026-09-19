@@ -143,4 +143,10 @@ Se o enquadramento do render ficar "menor"/"maior" que os vizinhos do
 catálogo, ajuste `coverVideoScale` (ver comentário do campo em
 `components/book-cover.tsx`) — não reexporte o vídeo só por causa de escala.
 
+Num par frente/verso, confira também se o livro sai na **mesma altura** nos
+dois vídeos — nem sempre sai, e com `coverVideoScale` alto a diferença vira
+contracapa cortada no pé. Compare a borda do livro em alguns frames dos dois
+arquivos e, se houver desencontro, corrija por `backVideoOffsetY` (também em
+`lib/data/schemas.ts`), não reexportando.
+
 Depois, `npm run dev` e confira a página do livro antes de considerar pronto.

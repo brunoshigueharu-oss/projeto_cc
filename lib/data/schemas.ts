@@ -92,8 +92,22 @@ export const bookSchema = z.object({
    *  presente, a página do livro (só ela — o card do catálogo não) ganha um
    *  botão abaixo da capa que vira o exemplar. Sai do mesmo render de 200
    *  frames que a frente (ver a skill `preparar-video-capa`), então reaproveita
-   *  o `coverVideoScale`/`coverVideoFit` do título sem ajuste próprio. */
+   *  o `coverVideoScale`/`coverVideoFit` do título sem ajuste próprio — salvo
+   *  o `backVideoOffsetY` abaixo, quando as duas passadas do render não
+   *  saíram na mesma altura. */
   backVideoSrc: z.string().optional(),
+  /** Opcional: sobe (negativo) ou desce (positivo) o vídeo do verso dentro do
+   *  quadro, em % da altura do vídeo — só o verso, a frente não se mexe.
+   *
+   *  Existe porque nem todo par frente/verso saiu da mesma posição de câmera:
+   *  em alguns títulos o livro aparece ~11% mais baixo no render do verso.
+   *  Centrado o quadro não perdoa: o `coverVideoScale`, calibrado na frente,
+   *  amplia esse deslocamento e empurra o pé do livro para fora do
+   *  recorte — a contracapa abre cortada na base.
+   *
+   *  Medir em vez de chutar: extraia frames dos dois vídeos e compare a altura
+   *  do livro no quadro (ver nota nos títulos que usam o campo). */
+  backVideoOffsetY: z.number().min(-50).max(50).optional(),
   /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
   videoBannerSrc: z.string().optional(),
   /** Opcional: variante noturna de `videoBannerSrc` — quando presente, a faixa

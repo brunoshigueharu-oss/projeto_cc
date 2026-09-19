@@ -256,6 +256,10 @@ const RAW_BOOKS = [
     // títulos — compensa pra ficar do mesmo tamanho aparente na vitrine.
     coverVideoScale: 1.4,
     backVideoSrc: "/videos/livros/verso/os-contos-do-planta-1.mp4",
+    // O render do verso saiu 138px (de 1216) mais baixo que o da frente;
+    // com o scale acima isso cortava o pé do livro ao virar. Medido pela
+    // borda do livro em 8 frames dos dois vídeos.
+    backVideoOffsetY: -11.3,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-1.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
@@ -339,6 +343,8 @@ const RAW_BOOKS = [
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.4,
     backVideoSrc: "/videos/livros/verso/os-contos-do-planta-2.mp4",
+    // Mesmo desencontro de altura entre frente e verso do volume 1.
+    backVideoOffsetY: -11.5,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
@@ -772,6 +778,8 @@ const RAW_BOOKS = [
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.39,
     backVideoSrc: "/videos/livros/verso/necroplanta.mp4",
+    // Mesmo desencontro de altura entre frente e verso do volume 1.
+    backVideoOffsetY: -10.8,
     videoBannerSrc: "/videos/faixas/necroplanta.mp4",
     gallery: [
       { src: "/images/galeria/necroplanta/01.jpg", alt: "Página 10 do miolo de Necroplanta" },

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Pause, Play } from "lucide-react";
 
+import { getBackVideoStyle } from "@/lib/cover-video-frame";
 import { cn } from "@/lib/utils";
 import { Seal } from "./seal";
 
@@ -47,6 +48,10 @@ type BookCoverProps = {
   backVideoSrc?: string;
   /** Mostra o verso em vez da frente. Só tem efeito com `backVideoSrc`. */
   showBack?: boolean;
+  /** Realinha o verso à frente quando as duas passadas do render não saíram
+   *  na mesma altura (ver `backVideoOffsetY` em lib/data/schemas.ts). Vale só
+   *  para o vídeo do verso — a frente é a referência e não se mexe. */
+  backVideoOffsetY?: number;
   /** Descrição da contracapa — substitui `alt` enquanto o verso está à
    *  mostra. Sem ela, o rótulo acessível continua descrevendo a frente. */
   backAlt?: string;
@@ -102,6 +107,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   still,
   backVideoSrc,
   showBack,
+  backVideoOffsetY,
   backAlt,
 }, ref) {
   const isLarge = size === "lg";
@@ -245,7 +251,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
                       "absolute inset-0 size-full transition-opacity duration-500",
                       videoFit === "contain" ? "object-contain" : "object-cover",
                     )}
-                    style={{ opacity: isShowingBack ? 1 : 0 }}
+                    style={getBackVideoStyle(isShowingBack, backVideoOffsetY)}
                     src={backVideoSrc}
                     // Monta já tocando só se a frente também estiver — o verso
                     // só entra na árvore depois do primeiro clique, e nesse

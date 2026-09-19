@@ -69,6 +69,7 @@ export function BookCoverFlip({ book }: { book: Book }) {
         videoFit={book.coverVideoFit}
         backVideoSrc={canFlip && hasFlipped ? book.backVideoSrc : undefined}
         showBack={showBack}
+        backVideoOffsetY={book.backVideoOffsetY}
         backAlt={labels.backAlt(book.title)}
         showPauseControl
         size="lg"
