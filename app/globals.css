@@ -175,6 +175,12 @@
   }
   html {
     @apply font-sans;
+    /* Trava o arrasto lateral no mobile: nenhuma arte decorativa que sangre
+       alguns px além da tela (folha rotacionada, capa com sangria, camada de
+       parallax) pode virar scroll horizontal. `clip` e não `hidden` — este é
+       o elemento de scroll da página, e `hidden` aqui quebraria o
+       `position: sticky` do header. */
+    overflow-x: clip;
   }
 }
 

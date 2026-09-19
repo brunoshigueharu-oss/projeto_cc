@@ -30,7 +30,12 @@ export function UpsellCard({ book }: { book: Book }) {
   const { upsell } = book;
 
   return (
-    <section className="border-t border-border">
+    // `overflow-hidden`: as folhas soltas são rotacionadas, então a caixa
+    // delas passa alguns px além do container — o bastante para criar scroll
+    // horizontal no mobile (a página "puxava" pro lado ao arrastar o dedo). O
+    // corte cai na borda da seção, que é a borda da tela: nada visível se
+    // perde.
+    <section className="overflow-hidden border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
           <div className="flex flex-col items-start gap-5 rounded-[28px] border border-border bg-card p-6 shadow-sm sm:p-10 lg:max-w-md lg:shrink-0">

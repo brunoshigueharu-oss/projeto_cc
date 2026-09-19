@@ -142,13 +142,15 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
 
   return (
     <div className="mt-4">
+      {/* `overscroll-x-contain`: ao chegar na última foto, o arrasto para
+          na tira em vez de escapar para o gesto de "voltar" do navegador. */}
       <ul
         ref={trackRef}
         role="list"
         aria-label={`Outras fotos de ${bookTitle}`}
         onPointerDown={handlePointerDown}
         onClickCapture={handleClickCapture}
-        className="flex cursor-grab snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex cursor-grab snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {images.map((image, index) => (
           <li key={image.src} className="w-[88px] shrink-0 snap-start">
