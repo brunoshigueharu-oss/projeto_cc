@@ -1,8 +1,10 @@
 import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
 import type { Campaign } from "@/lib/data/schemas";
 import { formatDate, formatDateRange, formatPrice } from "@/lib/format";
 import { getFundingProgress } from "@/lib/funding";
+import { cn } from "@/lib/utils";
 import { CampaignCountdown } from "./campaign-countdown";
 
 /**
@@ -116,13 +118,16 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
           )}
 
           {isClosed ? (
-            <p className="w-full rounded-lg border border-border px-6 py-3.5 text-center text-sm font-medium text-foreground/60">
+            <p className="flex h-12 w-full items-center justify-center rounded-full border border-border px-7 text-base font-medium text-foreground/50">
               Campanha encerrada
             </p>
           ) : (
             <Link
               href={campaign.ctaHref}
-              className="w-full rounded-lg border border-border px-6 py-3.5 text-center text-sm font-medium text-foreground transition-colors hover:border-foreground hover:bg-secondary"
+              className={cn(
+                buttonVariants({ variant: "accent", size: "lg" }),
+                "h-12 w-full rounded-full px-7 text-base",
+              )}
             >
               {campaign.ctaLabel}
             </Link>
