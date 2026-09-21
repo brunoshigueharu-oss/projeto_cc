@@ -34,6 +34,11 @@ import { CampaignCountdown } from "./campaign-countdown";
  * isso, os dois em bold com o prazo alinhado à direita (assim como o "%"
  * abaixo da barra) deixava o layout visualmente pesado pro lado direito.
  *
+ * O CTA é a pílula larga do site (`h-12 w-full text-base`, o mesmo formato do
+ * banner de combo), não um retângulo com rótulo em caixa alta: era o único
+ * botão do site com `font-display` maiúsculo, e a mesma ação aparece como
+ * pílula dourada logo abaixo, na vitrine de `campaign-about`.
+ *
  * Fecha a seção o parágrafo de abertura da campanha (`about[0]`), que antes
  * abria "Sobre o projeto": é o convite do projeto, e lido logo abaixo do CTA
  * funciona como argumento da reserva, não como introdução de uma seção que

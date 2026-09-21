@@ -35,7 +35,7 @@ export function CampaignBanner({ campaign }: { campaign: Campaign }) {
         aria-label="Trilha de navegação"
         className="mx-auto max-w-6xl px-4 pt-5 sm:px-6"
       >
-        <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-foreground/50">
           <li>
             <Link href="/" className="hover:text-foreground">
               Home
