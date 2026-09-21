@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
 import { BookSpecs } from "@/components/book-specs";
@@ -9,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { isPurchasable as isBookPurchasable } from "@/lib/data/book-availability";
 import type { Book, Campaign } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
+import { CampaignPagesGallery } from "./campaign-pages-gallery";
 
 /**
  * "Sobre o projeto" (node 211:1425 do Figma, com o miolo revisado a partir de
@@ -24,20 +23,25 @@ import { formatPrice } from "@/lib/format";
  * — era curta demais para acompanhá-la. Juntando os dois, a campanha lê igual
  * a qualquer outra página de livro do site.
  *
- * Ao lado da capa vai só o parágrafo seguinte ao de abertura (o primeiro subiu
- * para `campaign-progress`); do terceiro em diante o texto continua na seção
- * depois do parallax, onde tem largura de leitura. Entre os dois, a faixa de
- * parallax do livro (`book.parallax`) entra como divisor full-width.
+ * Ao lado da capa vai a premissa da história — a sinopse do próprio título,
+ * que é o que decide a compra — seguida do parágrafo de ambientação da
+ * campanha (`about[1]`), emendados num bloco só atrás do mesmo "Leia mais".
+ * O parágrafo de abertura subiu para `campaign-progress`, e de `about[2]` em
+ * diante o texto continua na seção depois do parallax, onde tem largura de
+ * leitura. Entre os dois, a faixa de parallax do livro (`book.parallax`)
+ * entra como divisor full-width.
  *
  * Depois do parallax a campanha adota o mesmo modelo das páginas de livro
  * (`AboutBookSection` do catálogo): duas colunas, "O Livro" à esquerda e
  * "Sobre o Autor" + ficha técnica à direita — o mesmo `BookSpecs` de
  * `components/`, não uma ficha paralela. O que muda é a fonte do texto da
  * coluna esquerda: na página de livro é o `excerpt`, aqui é o convite da
- * campanha (`recommendedIntro` + `recommendedFor`), que é o argumento de
- * venda do financiamento. A galeria de páginas internas fecha o bloco. Sem
- * `primaryBook` não há capa, autor nem ficha: sobra o cabeçalho e o texto
- * corrido.
+ * campanha (`recommendedIntro` + `recommendedFor`, fechado pelo parágrafo
+ * sobre a obra em `recommendedOutro`), que é o argumento de venda do
+ * financiamento. A galeria de páginas internas fecha o bloco, com
+ * `galleryIntro` entre o título e a fileira — a construção de mundo da obra,
+ * que é o que a fileira logo abaixo mostra. Sem `primaryBook` não há capa,
+ * autor nem ficha: sobra o cabeçalho e o texto corrido.
  *
  * A ficha sai do título principal da campanha, não de campos próprios:
  * `books.ts` já é a fonte de verdade de páginas, formato e ISBN, e duplicar
@@ -56,10 +60,20 @@ export function CampaignAbout({
   // `campaign-progress`, logo abaixo do CTA. Esta seção começa no parágrafo
   // seguinte.
   const [, ...restParagraphs] = campaign.about ?? [campaign.description];
-  // A vitrine acompanha só o parágrafo seguinte ao de abertura — o bastante
-  // para apresentar o livro ao lado da capa. O resto do texto continua na
-  // seção depois do parallax, onde tem largura de leitura.
-  const showcaseParagraph = primaryBook ? restParagraphs.at(0) : undefined;
+  // A vitrine abre pela premissa — a sinopse do título principal, lida direto
+  // de `books.ts` em vez de copiada para o registro da campanha — e emenda o
+  // parágrafo seguinte da campanha, que amplia o mundo sem repetir a trama.
+  // Sem sinopse no título, a descrição curta da campanha faz as vezes dela.
+  // Os dois vão juntos numa string só com quebra dupla porque `BookSynopsis` é
+  // um `<p>` com `whitespace-pre-line`: assim o "Leia mais" recolhe os dois de
+  // uma vez, em vez de deixar um segundo bloco solto ao lado da capa. O resto
+  // do texto continua na seção depois do parallax, onde tem largura de leitura.
+  const showcaseParagraphs = primaryBook
+    ? [
+        primaryBook.synopsis ?? campaign.description,
+        ...restParagraphs.slice(0, 1),
+      ]
+    : [];
   const storyParagraphs = primaryBook ? restParagraphs.slice(1) : restParagraphs;
   const gallery = campaign.gallery ?? primaryBook?.gallery ?? [];
   // "Estimada" só faz sentido enquanto o exemplar ainda não foi impresso —
@@ -113,8 +127,11 @@ export function CampaignAbout({
                 Por {primaryBook.author.name}
               </p>
 
-              {showcaseParagraph ? (
-                <BookSynopsis text={showcaseParagraph} locale={primaryBook.locale} />
+              {showcaseParagraphs.length > 0 ? (
+                <BookSynopsis
+                  text={showcaseParagraphs.join("\n\n")}
+                  locale={primaryBook.locale}
+                />
               ) : null}
 
               <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -176,6 +193,12 @@ export function CampaignAbout({
                   ))}
                 </ul>
               ) : null}
+
+              {campaign.recommendedOutro ? (
+                <p className="mt-6 font-serif leading-relaxed text-muted-foreground">
+                  {campaign.recommendedOutro}
+                </p>
+              ) : null}
             </div>
 
             <div className="flex flex-col gap-12">
@@ -208,22 +231,29 @@ export function CampaignAbout({
             <h2 className="font-display text-2xl text-foreground sm:text-3xl">
               Visualização das páginas internas
             </h2>
-            <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {gallery.map((image) => (
-                <li
-                  key={image.src}
-                  className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-muted"
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </li>
-              ))}
-            </ul>
+            {/* Duas colunas a partir do `lg`: numa coluna só o texto virava um
+                bloco alto e apertado com a metade direita da seção vazia,
+                destoando da fileira full-width logo abaixo. Espalhado, cada
+                coluna fica em ~544px — dentro da medida de leitura do guia,
+                e o bloco cai para metade da altura. Abaixo do `lg` volta a ser
+                uma coluna só, presa no `max-w-3xl` do texto corrido da página.
+
+                `mb` no parágrafo em vez de `mt`, e `break-inside-avoid`: com
+                margem no topo o primeiro parágrafo da segunda coluna desceria
+                sozinho, e sem o `break-inside` um parágrafo se partiria no meio
+                ao virar de coluna. */}
+            {campaign.galleryIntro?.length ? (
+              <div className="mt-6 max-w-3xl font-serif leading-relaxed text-foreground/70 lg:max-w-none lg:columns-2 lg:gap-x-16">
+                {campaign.galleryIntro.map((paragraph) => (
+                  <p key={paragraph} className="mb-6 break-inside-avoid last:mb-0">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+            {/* Sem `mt` aqui: o trilho do carrossel já reserva o próprio
+                respiro vertical para a página subir no hover. */}
+            <CampaignPagesGallery images={gallery} />
           </div>
         </section>
       ) : null}

@@ -29,6 +29,7 @@ import { CampaignSpecialEdition } from "./_components/campaign-special-edition";
  *                                  técnica, e as páginas internas
  *   _components/campaign-books     demais títulos citados (fora do Figma)
  *   _components/campaign-special-edition
+ *                                  faixa de vídeo da variante noturna +
  *                                  edição limitada do título, fechando a
  *                                  página (fora do Figma)
  *

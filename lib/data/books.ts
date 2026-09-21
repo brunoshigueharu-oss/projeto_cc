@@ -953,6 +953,11 @@ const RAW_BOOKS = [
     // Mesmo render (992×1216, 200 frames) da edição padrão — reaproveita o
     // enquadramento calibrado lá.
     coverVideoScale: 1.4,
+    // Mesmo arquivo que a edição padrão usa como variante noturna da faixa
+    // dela (`videoBannerNightSrc`, acima): lá é o outro lado de um botão,
+    // aqui é a faixa própria desta edição, que a seção "Edição Noite" de
+    // `/campanhas` mostra antes do exemplar.
+    videoBannerSrc: "/videos/faixas/yanayag-noite.mp4",
     // ATENÇÃO: espelha o preço da edição padrão enquanto a editora não
     // confirma o valor da tiragem limitada. A seção da campanha não exibe
     // preço justamente por isso — substituir antes de abrir a venda.

@@ -380,11 +380,22 @@ export const campaignSchema = z.object({
   /** Opcional: lista curta ("indicada para quem gosta de..."), renderizada
    * com marcadores logo abaixo de `recommendedIntro`, no bloco "O Livro". */
   recommendedFor: z.array(z.string().min(1)).min(1).optional(),
+  /** Opcional: parágrafo que fecha o bloco "O Livro", depois da lista de
+   * `recommendedFor` — o que o leitor leva da obra. Dado de edição (páginas,
+   * tiragem original) não entra aqui: a ficha técnica fica na coluna ao lado,
+   * e dois números diferentes lado a lado confundem quem está comprando. */
+  recommendedOutro: z.string().min(1).optional(),
   /** Opcional: amostras do miolo ("Visualização das páginas internas"). Sem
    * elas, a seção cai na galeria do título principal. */
   gallery: z
     .array(z.object({ src: z.string().min(1), alt: z.string().min(1) }))
     .optional(),
+  /** Opcional: parágrafos que abrem a seção da galeria, entre o título e a
+   * fileira de páginas — o contexto que prepara o olhar antes de ver o miolo.
+   * É array, e não texto corrido, porque a seção diagrama esse bloco em duas
+   * colunas no desktop: cada parágrafo é uma peça que não se parte no meio da
+   * coluna. Sem ele, o carrossel vem logo abaixo do título. */
+  galleryIntro: z.array(z.string().min(1)).min(1).optional(),
   /** Opcional: edição especial do título da campanha (ex. variante de capa em
    * tiragem limitada), destacada numa seção própria no fim da página.
    *
