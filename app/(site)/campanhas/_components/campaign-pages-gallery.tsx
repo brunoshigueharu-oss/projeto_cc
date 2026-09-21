@@ -66,18 +66,18 @@ const LIGHTBOX_BUTTON_CLASSNAME =
  * snap seguinte ao mais próximo, não uma página adiante de onde a fileira
  * parou. Com snap, gesto e seta terminam sempre numa página alinhada.
  *
- * `skipSnaps: true` é o que tira o puxão de volta no fim de cada gesto. Com
- * ele no default (`false`), o embla só aceita ir até o snap vizinho, mas
- * ninguém segura o trilho enquanto o gesto acontece: ele acompanha o dedo
- * até a largura inteira do viewport — é onde o
- * `embla-carousel-wheel-gestures` corta o acúmulo do gesto justamente
- * quando `skipSnaps` está desligado (`createRelativeMouseEvent`) — e ao
- * soltar volta tudo para uma página adiante. Num swipe de trackpad, que
- * acumula delta fácil, isso é quase um viewport de trilho indo e voltando:
- * o tranco ao contrário que se sentia aqui. Com `skipSnaps: true` o destino
- * passa a ser proporcional ao gesto — a fileira para na página mais próxima
- * de onde o gesto a levou, sem nunca voltar — e continua terminando
- * alinhada num snap, que é a única coisa de que as setas precisam.
+ * `skipSnaps: true` é o que tira o puxão de volta no fim de cada gesto. O
+ * embla só atualiza o índice selecionado quando um scroll termina (o
+ * `scrollTo` do core), nunca durante o arrasto. Com `skipSnaps` no default
+ * (`false`), ao soltar um gesto vigoroso ele manda o trilho para uma página
+ * adiante **do índice de onde o gesto começou** (`allowedForce` ->
+ * `scrollTarget.byIndex(index ± 1)`), e não para onde o gesto levou a
+ * fileira — que, num swipe de trackpad, já são duas ou três páginas adiante.
+ * O trilho ia com o dedo e voltava quase tudo: o tranco ao contrário que se
+ * sentia aqui. Com `skipSnaps: true` o destino passa a ser calculado a
+ * partir da posição alcançada, então a fileira só acomoda até a página mais
+ * próxima, sem nunca voltar — e continua terminando alinhada num snap, que é
+ * a única coisa de que as setas precisam.
  *
  * `duration: 30` é o tween do embla — não é milissegundo, é a constante da
  * simulação de atração (25 é o padrão, a faixa útil vai de 20 a 60). Um fio
@@ -132,7 +132,7 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
   return (
     <>
       <Carousel
-        opts={{ align: "start", containScroll: "trimSnaps", skipSnaps: false, duration: 30 }}
+        opts={{ align: "start", containScroll: "trimSnaps", skipSnaps: true, duration: 30 }}
         plugins={[wheelGesturesPlugin]}
         className="w-full"
       >
@@ -175,16 +175,18 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
       {openIndex !== null ? (
         /* Sem visualizador próprio: é a mesma página, só que grande. Clique
            fora ou Esc fecham; ← → e as setas nas laterais passam de página
-           sem fechar a visualização. As setas moram nas bordas do overlay,
-           onde sobra fundo preto: a arte é retrato e o `object-contain`
-           nunca preenche a largura de uma tela larga. */
+           sem fechar a visualização. As setas moram nas bordas do overlay e o
+           `px-14 sm:px-20` é o que reserva a faixa delas: o quadro da arte é
+           `w-full` dentro desse padding, então ela nunca corre por baixo de
+           uma seta — nem numa tela estreita, onde antes (com `w-[92vw]`) a
+           página encostava nas duas bordas. */
         <div
           ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label={images[openIndex].alt}
           tabIndex={-1}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6 outline-none"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-14 py-6 outline-none sm:px-20"
           onClick={close}
         >
           <button
@@ -226,12 +228,12 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
             </>
           ) : null}
 
-          <div className="relative h-[88vh] w-[92vw]" onClick={(event) => event.stopPropagation()}>
+          <div className="relative h-[88vh] w-full" onClick={(event) => event.stopPropagation()}>
             <Image
               src={images[openIndex].src}
               alt={images[openIndex].alt}
               fill
-              sizes="92vw"
+              sizes="(min-width: 640px) 80vw, 88vw"
               className="object-contain"
             />
           </div>

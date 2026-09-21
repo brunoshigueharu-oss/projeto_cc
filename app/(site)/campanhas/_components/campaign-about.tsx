@@ -255,32 +255,56 @@ export function CampaignAbout({
       {gallery.length > 0 ? (
         <section className="border-t border-border">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+            {/* Bloco de abertura centralizado, numa coluna só: o título no
+                eixo do meio e o texto logo abaixo, preso no `max-w-3xl` de
+                medida de leitura — o mesmo eixo em que o CTA fecha a seção,
+                depois da fileira.
+
+                Antes esse texto era um `columns-2` de fluxo: com dois
+                parágrafos de tamanhos muito diferentes (4 linhas contra 8, e
+                `break-inside-avoid` impedindo que se partissem) a coluna da
+                esquerda terminava no meio da altura da direita, e o buraco de
+                quatro linhas no meio da seção era o que lia como torto.
+
+                O texto em si fica alinhado à esquerda, não centralizado: são
+                parágrafos de leitura, e oito linhas com as duas margens soltas
+                custam caro para ler. Quem centraliza é a coluna. */}
+            <h2 className="text-balance text-center font-display text-2xl text-foreground sm:text-3xl">
               Visualização das páginas internas
             </h2>
-            {/* Duas colunas a partir do `lg`: numa coluna só o texto virava um
-                bloco alto e apertado com a metade direita da seção vazia,
-                destoando da fileira full-width logo abaixo. Espalhado, cada
-                coluna fica em ~544px — dentro da medida de leitura do guia,
-                e o bloco cai para metade da altura. Abaixo do `lg` volta a ser
-                uma coluna só, presa no `max-w-3xl` do texto corrido da página.
 
-                `mb` no parágrafo em vez de `mt`, e `break-inside-avoid`: com
-                margem no topo o primeiro parágrafo da segunda coluna desceria
-                sozinho, e sem o `break-inside` um parágrafo se partiria no meio
-                ao virar de coluna. */}
             {campaign.galleryIntro?.length ? (
-              <div className="mt-6 max-w-3xl font-serif leading-relaxed text-foreground/70 lg:max-w-none lg:columns-2 lg:gap-x-16">
+              <div className="mx-auto mt-6 max-w-3xl font-serif leading-relaxed text-foreground/70">
                 {campaign.galleryIntro.map((paragraph) => (
-                  <p key={paragraph} className="mb-6 break-inside-avoid last:mb-0">
+                  <p key={paragraph} className="mt-6 first:mt-0">
                     {paragraph}
                   </p>
                 ))}
               </div>
             ) : null}
+
             {/* Sem `mt` aqui: o trilho do carrossel já reserva o próprio
                 respiro vertical para a página subir no hover. */}
             <CampaignPagesGallery images={gallery} />
+
+            {/* Fecha a seção com a mesma pílula de CTA da vitrine, no eixo do
+                título: quem desceu até aqui já viu o miolo e é onde a decisão
+                de compra acontece — sem isso a única maneira de reservar era
+                voltar ao topo da página. Mesmo rótulo (`ctaLabel`) e mesmo
+                `AddToCartButton` da vitrine, então os dois botões somam no
+                mesmo item do carrinho. Fora da tiragem não aparece nada: o
+                aviso de esgotado já está na vitrine e repeti-lo aqui só
+                encerraria a seção com uma negativa. */}
+            {primaryBook && isBookPurchasable(primaryBook.status) ? (
+              <div className="mt-4 flex justify-center">
+                <AddToCartButton
+                  type="book"
+                  slug={primaryBook.slug}
+                  label={campaign.ctaLabel}
+                  addedLabel="Adicionado!"
+                />
+              </div>
+            ) : null}
           </div>
         </section>
       ) : null}

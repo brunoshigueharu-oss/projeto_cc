@@ -413,9 +413,10 @@ export const campaignSchema = z.object({
     .optional(),
   /** Opcional: parágrafos que abrem a seção da galeria, entre o título e a
    * fileira de páginas — o contexto que prepara o olhar antes de ver o miolo.
-   * É array, e não texto corrido, porque a seção diagrama esse bloco em duas
-   * colunas no desktop: cada parágrafo é uma peça que não se parte no meio da
-   * coluna. Sem ele, o carrossel vem logo abaixo do título. */
+   * É array, e não texto corrido, para a seção poder empilhar um parágrafo por
+   * vez na coluna de leitura, com o respiro certo entre eles, em vez de
+   * depender de quebra de linha no meio da string. Sem ele, o carrossel vem
+   * logo abaixo do título. */
   galleryIntro: z.array(z.string().min(1)).min(1).optional(),
   /** Opcional: edição especial do título da campanha (ex. variante de capa em
    * tiragem limitada), destacada numa seção própria no fim da página.
