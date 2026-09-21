@@ -400,6 +400,9 @@ const RAW_BOOKS = [
         zoom: 0.12,
       },
     ],
+    // No mobile o recorte central corta a colina fora e sobra céu com chuva:
+    // ancorado à esquerda, a igreja iluminada e o poste entram inteiros.
+    parallaxMobileAnchor: "left",
     specs: {
       pages: 88,
       isbn: "978-6500762990",
@@ -595,6 +598,9 @@ const RAW_BOOKS = [
         origin: "bottom",
       },
     ],
+    // No mobile o recorte central cai no vão de água entre as duas criaturas:
+    // ancorado à direita, o rochedo com a criatura entra inteiro em quadro.
+    parallaxMobileAnchor: "right",
     specs: {
       pages: 188,
       isbn: "978-6500212501",
@@ -702,6 +708,9 @@ const RAW_BOOKS = [
         origin: "bottom",
       },
     ],
+    // No mobile o recorte central parte Fausto e o Dr. Mantis, cada um numa
+    // borda; ancorado à direita, o Planta do martelo e o Mantis entram inteiros.
+    parallaxMobileAnchor: "right",
     specs: {
       pages: 88,
       // Mesmo ISBN de `os-contos-do-planta-2`, como veio na ficha da editora:

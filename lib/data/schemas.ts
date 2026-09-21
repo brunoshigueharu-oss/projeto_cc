@@ -185,6 +185,11 @@ export const bookSchema = z.object({
     )
     .min(1)
     .optional(),
+  /** Opcional: borda da arte de parallax a manter em quadro no mobile. A faixa
+   * é larga e baixa (1440x400) e o `object-cover` cobre a altura — no celular
+   * sobra menos da metade da largura, e o recorte central corta os personagens
+   * das duas bordas. Só vale abaixo de `sm`; sem isso, recorte centralizado. */
+  parallaxMobileAnchor: z.enum(["left", "right"]).optional(),
   /** Opcional: ficha técnica completa (ISBN, dimensões etc.) chega depois do cadastro inicial. */
   specs: z
     .object({

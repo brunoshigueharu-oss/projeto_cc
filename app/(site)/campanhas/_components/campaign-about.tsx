@@ -179,7 +179,10 @@ export function CampaignAbout({
         )}
       </section>
 
-      <ParallaxSection layers={primaryBook?.parallax ?? []} />
+      <ParallaxSection
+        layers={primaryBook?.parallax ?? []}
+        mobileAnchor={primaryBook?.parallaxMobileAnchor}
+      />
 
       {primaryBook ? (
         <section className="border-t border-border">

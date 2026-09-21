@@ -114,7 +114,10 @@ export default async function BookPage(props: PageProps<"/catalogo/[slug]">) {
     <>
       <SetHtmlLang locale={book.locale} />
       <BookHero book={book} universe={universe} />
-      <ParallaxSection layers={book.parallax ?? []} />
+      <ParallaxSection
+        layers={book.parallax ?? []}
+        mobileAnchor={book.parallaxMobileAnchor}
+      />
       <AboutBookSection book={book} />
       <BoxContentsSection book={book} />
       <CompareEditionSection book={book} baseBook={compareEditionBaseBook} />

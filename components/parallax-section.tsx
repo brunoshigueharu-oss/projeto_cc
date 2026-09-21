@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
+import { cn } from "@/lib/utils";
+
 type ParallaxLayer = {
   src: string;
   /** Deslocamento vertical acumulado no fim do percurso, em px; negativo
@@ -22,6 +24,9 @@ type ParallaxLayer = {
 type ParallaxSectionProps = {
   /** Ordenado de trás pra frente (fundo → primeiro plano). */
   layers: ParallaxLayer[];
+  /** Borda da arte que fica garantida em quadro enquanto a faixa é estreita
+   * (abaixo de `sm`). Padrão: recorte centralizado. */
+  mobileAnchor?: "left" | "right";
 };
 
 /** Fração da distância até o alvo consumida a cada frame (0–1). Valores baixos
@@ -37,6 +42,14 @@ const SETTLE_THRESHOLD = 0.0005;
  * desktop. Em telas menores a faixa encolhe e os mesmos px pesariam quase o
  * dobro, então o deslocamento acompanha essa proporção. */
 const REFERENCE_HEIGHT = 416;
+
+/** Enquadramento horizontal da arte por borda ancorada, só até `sm` — daí pra
+ * cima a faixa já é larga o bastante para o recorte central. Nomes literais:
+ * o scanner do Tailwind não enxerga classe montada em runtime. */
+const MOBILE_ANCHOR_CLASS = {
+  left: "object-left sm:object-center",
+  right: "object-right sm:object-center",
+} as const;
 
 /**
  * Faixa decorativa entre o hero e "O Livro": camadas de imagem empilhadas
@@ -68,6 +81,12 @@ const REFERENCE_HEIGHT = 416;
  * `inset-0` e preservam o enquadramento original da arte (folga muda a
  * proporção da caixa e o `object-cover` responde ampliando a imagem).
  *
+ * A arte é uma faixa larga (1440x400) e o `object-cover` cobre a altura: numa
+ * tela de celular sobra menos da metade da largura original, e o recorte
+ * central pode deixar os personagens pela metade nas duas bordas. `mobileAnchor`
+ * ancora esse recorte numa das bordas da arte até `sm`, em vez de centralizá-lo
+ * — o lado que interessa entra inteiro e o corte vai todo para o outro lado.
+ *
  * Movimento calculado em JS (scroll + rAF), não CSS `animation-timeline:
  * view()`: Safari não suporta scroll-driven animations, então a versão
  * anterior (100% CSS) simplesmente não animava nesse navegador — o
@@ -75,7 +94,10 @@ const REFERENCE_HEIGHT = 416;
  * Esta é a única seção Client Component da rota; todo o resto continua
  * Server Component (ver nota em `page.tsx`).
  */
-export function ParallaxSection({ layers }: ParallaxSectionProps) {
+export function ParallaxSection({
+  layers,
+  mobileAnchor,
+}: ParallaxSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -192,7 +214,12 @@ export function ParallaxSection({ layers }: ParallaxSectionProps) {
               alt=""
               fill
               sizes="100vw"
-              className="object-cover"
+              className={cn(
+                "object-cover",
+                mobileAnchor
+                  ? MOBILE_ANCHOR_CLASS[mobileAnchor]
+                  : "object-center",
+              )}
             />
           </div>
         );
