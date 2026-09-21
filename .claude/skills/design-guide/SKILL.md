@@ -38,11 +38,11 @@ terceira fonte visual. Use `font-serif` para parágrafos de leitura longa
 
 | Papel | Classe típica | Exemplo |
 |---|---|---|
-| H1 de página | `font-display text-2xl sm:text-3xl` (até `text-4xl` em páginas de destaque) | `checkout-content.tsx`, `not-found.tsx` |
-| H2 de seção | `font-display text-xl` a `text-3xl sm:text-4xl` | `featured-books-shelf.tsx` |
+| H1 de página | `font-display text-2xl sm:text-3xl` nas páginas utilitárias; `font-display text-4xl sm:text-5xl` na abertura de livro/campanha | `checkout-content.tsx`, `book-hero.tsx`, `campaign-about.tsx` |
+| H2 de seção | `font-display text-2xl sm:text-3xl` (o padrão de longe mais usado) | `about-book-section.tsx`, `upsell-card.tsx`, `related-books.tsx` |
 | H3 / título de card | `font-display text-lg` | `featured-book-card.tsx`, `CardTitle` |
-| Número de destaque (contador, progresso) | `font-display text-4xl font-extrabold tabular-nums sm:text-5xl lg:text-[56px]` | `campaign-progress.tsx` |
-| Kicker / legenda acima de título | `font-display text-sm font-bold uppercase tracking-[0.11em]`, cor `text-primary` | `campaign-creator.tsx` |
+| Número de destaque (contador, progresso) | `font-display text-4xl font-bold tabular-nums sm:text-5xl lg:text-[56px]` | `campaign-progress.tsx` |
+| Kicker / legenda acima de título | `text-[11px] font-bold uppercase tracking-[0.2em] text-primary` (variante `font-medium tracking-[0.3em]` em `page-header.tsx`) — Nunito, **não** `font-display` | `upsell-card.tsx`, `related-books.tsx`, `campaign-about.tsx` |
 | Corpo / parágrafo longo | `font-serif leading-relaxed text-foreground/70` | `universe-section.tsx` |
 | Texto de UI padrão | `text-sm` | maioria dos componentes |
 | Metadado / texto pequeno | `text-xs` | badges, legendas |
@@ -50,6 +50,18 @@ terceira fonte visual. Use `font-serif` para parágrafos de leitura longa
 Regra de hierarquia: a diferença entre níveis vem de **tamanho + opacidade**,
 não de uma terceira fonte. Texto de leitura longa nunca é preto puro —
 usa `text-foreground/70`.
+
+Regra de peso: **heading não leva utilitário de peso**. `font-display` sozinho
+já é Poppins 400, e é assim que todo H1/H2/H3 do site é escrito — `font-bold`
+num heading cria um degrau que nenhuma outra seção tem (era o que destoava na
+página de campanhas antes de 2026-09). `font-bold` em Poppins fica reservado a
+rótulos pequenos em caixa alta (kicker, `site-footer.tsx`) e a título sobre
+mídia, onde o peso é contraste, não hierarquia. E nada acima de 700: o
+`next/font` em `app/layout.tsx` carrega só 400/500/600/700, então
+`font-extrabold`/`font-black` viram bold sintético.
+
+Corpo de texto é `text-base` (o default do body) — o site não usa o degrau
+`sm:text-lg` em parágrafo.
 
 ## 2. Paleta de cores
 
@@ -130,6 +142,13 @@ pressiona 1px no `active`, `opacity-50` quando `disabled`.
 Tamanhos: `xs` (`h-6`) · `sm` (`h-7`) · `default` (`h-8`) · `lg` (`h-9`), e os
 equivalentes quadrados `icon-xs`/`icon-sm`/`icon`/`icon-lg`. Ícone dentro do
 botão usa `size-4` por padrão (`size-3.5` no `sm`, `size-3` no `xs`).
+
+CTA de conteúdo (comprar, reservar) não usa o botão cru: é sempre pílula —
+`size="lg"` + `h-11 rounded-full px-7`, como em `add-to-cart-button.tsx`.
+Quando o CTA ocupa a largura de uma coluna (banner de combo, barra de
+arrecadação da campanha) a pílula cresce: `h-12 w-full text-base`. Em nenhum
+dos dois o rótulo vira caixa alta nem `font-display` — texto de botão é sempre
+Nunito, `font-medium`, em caixa de frase.
 
 ## 4. Componentes base
 
