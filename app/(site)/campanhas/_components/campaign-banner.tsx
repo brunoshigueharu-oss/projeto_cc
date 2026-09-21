@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * a cor cheia numa área desse tamanho pesava mais que a própria campanha.
  *
  * `bannerVideo` tem prioridade sobre `banner`: mesmo padrão mudo/loop/
- * autoplay do `videoBannerSrc` do livro (ver `video-banner-section.tsx`).
+ * autoplay do `videoBannerSrc` do livro (ver `video-banner.tsx`).
  * Como o vídeo é o único elemento visual da faixa, o `alt` vira um texto
  * `sr-only` em vez de simplesmente marcar o vídeo `aria-hidden`.
  *

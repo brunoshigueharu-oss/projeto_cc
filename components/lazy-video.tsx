@@ -10,7 +10,7 @@ type LazyVideoProps = Omit<ComponentPropsWithoutRef<"video">, "src" | "preload">
    * ele, sem entrar na disputa de banda do carregamento inicial.
    */
   rootMargin?: string;
-  /** `video-banner-section.tsx` usa a ref pro botão de play/pause. */
+  /** `video-banner.tsx` usa a ref pro botão de play/pause. */
   ref?: Ref<HTMLVideoElement>;
 };
 
@@ -48,8 +48,8 @@ export function LazyVideo({
 
   // Se o vídeo deve (voltar a) tocar quando aparecer na tela. Vira `false`
   // quando ele sai da tela já pausado — que é como o botão de pausa de
-  // `video-banner-section.tsx` sobrevive a um scroll: sem isso, sair e
-  // voltar da tela dava play por cima da escolha de quem pausou.
+  // `video-banner.tsx` sobrevive a um scroll: sem isso, sair e voltar da
+  // tela dava play por cima da escolha de quem pausou.
   const deveRetomar = useRef(true);
 
   // O observer precisa do nó aqui dentro e quem chama pode precisar dele

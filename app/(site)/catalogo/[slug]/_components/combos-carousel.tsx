@@ -100,8 +100,8 @@ function ComboBanner({ item }: { item: CombosCarouselItem }) {
 
 /**
  * Painel da esquerda: faixa de vídeo em loop (mudo, como as demais faixas do
- * site — ver `video-banner-section.tsx`), escurecida por um degradê para o
- * nome do combo em branco ficar legível em qualquer frame.
+ * site — ver `video-banner.tsx`), escurecida por um degradê para o nome do
+ * combo em branco ficar legível em qualquer frame.
  *
  * Sem vídeo, cai na arte dedicada do combo (`combo.image`) e, sem ela, no
  * marrom sólido — o título branco funciona nos três casos.
