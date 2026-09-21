@@ -371,20 +371,41 @@ export const campaignSchema = z.object({
       backers: z.number().int().nonnegative(),
     })
     .optional(),
-  /** Opcional: parágrafos de "Sobre o projeto". Sem eles, a página usa
-   * `description` como parágrafo único. */
-  about: z.array(z.string().min(1)).min(1).optional(),
-  /** Opcional: parágrafo que abre o bloco "O Livro" da campanha e apresenta a
-   * lista de `recommendedFor`. Sem ele, a lista aparece sozinha. */
+  /**
+   * Opcional: os dois parágrafos de abertura da campanha, nesta ordem — `[0]`
+   * fecha a barra de arrecadação, logo abaixo do CTA (`campaign-progress`), e
+   * `[1]` acompanha a capa na vitrine, emendado na sinopse do título
+   * principal (`campaign-about`). Sem eles, a página usa `description` como
+   * parágrafo único.
+   *
+   * O teto de dois é proposital (2026-09): o resto do texto do projeto tem
+   * bloco próprio na página — `bookIntro`, `recommendedFor`, `authorNote`,
+   * `galleryIntro` —, e um terceiro parágrafo aqui viraria de novo aquela
+   * seção de texto corrido solta depois do parallax que a página perdeu.
+   * Travar no schema evita cadastrar texto que não teria onde ser lido.
+   */
+  about: z.array(z.string().min(1)).min(1).max(2).optional(),
+  /** Opcional: parágrafos que abrem o bloco "O Livro", antes da lista de
+   * `recommendedFor` — o que a obra é e de onde ela vem. É aqui que entra o
+   * dado da edição original (páginas, ano): o texto precisa nomear a edição
+   * de origem, porque a ficha técnica da edição brasileira fica na coluna ao
+   * lado e dois números de páginas soltos confundiriam quem está comprando. */
+  bookIntro: z.array(z.string().min(1)).min(1).optional(),
+  /** Opcional: frase que apresenta a lista de `recommendedFor`, depois de
+   * `bookIntro`. Sem ela, a lista aparece sozinha. */
   recommendedIntro: z.string().min(1).optional(),
   /** Opcional: lista curta ("indicada para quem gosta de..."), renderizada
    * com marcadores logo abaixo de `recommendedIntro`, no bloco "O Livro". */
   recommendedFor: z.array(z.string().min(1)).min(1).optional(),
   /** Opcional: parágrafo que fecha o bloco "O Livro", depois da lista de
-   * `recommendedFor` — o que o leitor leva da obra. Dado de edição (páginas,
-   * tiragem original) não entra aqui: a ficha técnica fica na coluna ao lado,
-   * e dois números diferentes lado a lado confundem quem está comprando. */
+   * `recommendedFor` — o que o leitor leva da obra. */
   recommendedOutro: z.string().min(1).optional(),
+  /** Opcional: parágrafo da campanha que fecha "Sobre o Autor", depois da bio
+   * vinda de `books.ts` — a linhagem literária por trás da obra (influências,
+   * referências assumidas). Fica na campanha, e não no `author.bio`, porque é
+   * texto sobre este título: a bio é compartilhada por todos os livros do
+   * mesmo autor. */
+  authorNote: z.string().min(1).optional(),
   /** Opcional: amostras do miolo ("Visualização das páginas internas"). Sem
    * elas, a seção cai na galeria do título principal. */
   gallery: z

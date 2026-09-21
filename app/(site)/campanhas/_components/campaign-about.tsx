@@ -26,22 +26,30 @@ import { CampaignPagesGallery } from "./campaign-pages-gallery";
  * Ao lado da capa vai a premissa da história — a sinopse do próprio título,
  * que é o que decide a compra — seguida do parágrafo de ambientação da
  * campanha (`about[1]`), emendados num bloco só atrás do mesmo "Leia mais".
- * O parágrafo de abertura subiu para `campaign-progress`, e de `about[2]` em
- * diante o texto continua na seção depois do parallax, onde tem largura de
- * leitura. Entre os dois, a faixa de parallax do livro (`book.parallax`)
- * entra como divisor full-width.
+ * O parágrafo de abertura (`about[0]`) subiu para `campaign-progress`. Logo
+ * abaixo, a faixa de parallax do livro (`book.parallax`) entra como divisor
+ * full-width.
  *
  * Depois do parallax a campanha adota o mesmo modelo das páginas de livro
  * (`AboutBookSection` do catálogo): duas colunas, "O Livro" à esquerda e
  * "Sobre o Autor" + ficha técnica à direita — o mesmo `BookSpecs` de
  * `components/`, não uma ficha paralela. O que muda é a fonte do texto da
- * coluna esquerda: na página de livro é o `excerpt`, aqui é o convite da
- * campanha (`recommendedIntro` + `recommendedFor`, fechado pelo parágrafo
- * sobre a obra em `recommendedOutro`), que é o argumento de venda do
- * financiamento. A galeria de páginas internas fecha o bloco, com
- * `galleryIntro` entre o título e a fileira — a construção de mundo da obra,
- * que é o que a fileira logo abaixo mostra. Sem `primaryBook` não há capa,
- * autor nem ficha: sobra o cabeçalho e o texto corrido.
+ * coluna esquerda: na página de livro é o `excerpt`, aqui é o texto da
+ * campanha (`bookIntro`, depois `recommendedIntro` + `recommendedFor`,
+ * fechado por `recommendedOutro`), que é o argumento de venda do
+ * financiamento. À direita, `authorNote` emenda na bio: a linhagem literária
+ * da obra lida logo depois de quem são Alcatena e Mazzitelli. A galeria de
+ * páginas internas fecha o bloco, com `galleryIntro` entre o título e a
+ * fileira — a construção de mundo da obra, que é o que a fileira logo abaixo
+ * mostra. Sem `primaryBook` não há capa, autor nem ficha: sobra o cabeçalho.
+ *
+ * Entre o parallax e esse bloco não existe mais uma seção de texto corrido
+ * (2026-09). Ela recebia `about[2]` em diante — a linhagem literária, o tipo
+ * de fantasia que a obra é e a edição argentina — e era o único trecho da
+ * página sem função de venda: três parágrafos soltos numa coluna de leitura,
+ * logo depois de uma faixa de imagem. Cada um desses textos passou a viver no
+ * bloco de que fala, na ordem do documento da editora, e `about` está travado
+ * em dois parágrafos no schema para não voltar a sobrar texto sem lugar.
  *
  * A ficha sai do título principal da campanha, não de campos próprios:
  * `books.ts` já é a fonte de verdade de páginas, formato e ISBN, e duplicar
@@ -57,8 +65,8 @@ export function CampaignAbout({
   primaryBook: Book | undefined;
 }) {
   // O parágrafo de abertura (`about[0]`) não fica mais aqui: subiu para
-  // `campaign-progress`, logo abaixo do CTA. Esta seção começa no parágrafo
-  // seguinte.
+  // `campaign-progress`, logo abaixo do CTA. Sobra o segundo — ao lado da
+  // capa, ou logo abaixo do cabeçalho quando a campanha não tem livro.
   const [, ...restParagraphs] = campaign.about ?? [campaign.description];
   // A vitrine abre pela premissa — a sinopse do título principal, lida direto
   // de `books.ts` em vez de copiada para o registro da campanha — e emenda o
@@ -66,15 +74,10 @@ export function CampaignAbout({
   // Sem sinopse no título, a descrição curta da campanha faz as vezes dela.
   // Os dois vão juntos numa string só com quebra dupla porque `BookSynopsis` é
   // um `<p>` com `whitespace-pre-line`: assim o "Leia mais" recolhe os dois de
-  // uma vez, em vez de deixar um segundo bloco solto ao lado da capa. O resto
-  // do texto continua na seção depois do parallax, onde tem largura de leitura.
+  // uma vez, em vez de deixar um segundo bloco solto ao lado da capa.
   const showcaseParagraphs = primaryBook
-    ? [
-        primaryBook.synopsis ?? campaign.description,
-        ...restParagraphs.slice(0, 1),
-      ]
+    ? [primaryBook.synopsis ?? campaign.description, ...restParagraphs]
     : [];
-  const storyParagraphs = primaryBook ? restParagraphs.slice(1) : restParagraphs;
   const gallery = campaign.gallery ?? primaryBook?.gallery ?? [];
   // "Estimada" só faz sentido enquanto o exemplar ainda não foi impresso —
   // numa campanha de evento ou assinatura o livro já existe, com ficha fechada.
@@ -158,27 +161,42 @@ export function CampaignAbout({
             </div>
           </div>
         ) : (
-          <div className="max-w-3xl">{heading}</div>
+          /* Sem título principal não há vitrine — e é aqui que `about[1]`
+             precisa ser lido: ele ia na seção de texto corrido depois do
+             parallax, que não existe mais. Fica abaixo do cabeçalho, na mesma
+             medida de leitura, em vez de sumir da página. */
+          <div className="max-w-3xl">
+            {heading}
+            {restParagraphs.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="mt-6 font-serif leading-relaxed text-foreground/70"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
         )}
       </section>
 
       <ParallaxSection layers={primaryBook?.parallax ?? []} />
-
-      {storyParagraphs.length > 0 ? (
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-          <div className="flex max-w-3xl flex-col gap-6 font-serif leading-relaxed text-foreground/70">
-            {storyParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       {primaryBook ? (
         <section className="border-t border-border">
           <div className="mx-auto grid max-w-6xl gap-16 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <div>
               <h2 className="font-display text-2xl text-foreground sm:text-3xl">O Livro</h2>
+
+              {/* Abre a coluna: o que a obra é e de onde ela vem, antes da
+                  ponte que apresenta a lista. */}
+              {campaign.bookIntro?.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="mt-6 font-serif leading-relaxed text-muted-foreground"
+                >
+                  {paragraph}
+                </p>
+              ))}
 
               {campaign.recommendedIntro ? (
                 <p className="mt-6 font-serif leading-relaxed text-muted-foreground">
@@ -212,6 +230,15 @@ export function CampaignAbout({
                      quebra dupla em `books.ts`. */
                   <p className="mt-6 whitespace-pre-line font-serif leading-relaxed text-muted-foreground">
                     {primaryBook.author.bio}
+                  </p>
+                ) : null}
+
+                {/* Emenda na bio, com o mesmo corpo de texto: a bio termina na
+                    dupla voltando à "fantasia pura", e a nota da campanha diz
+                    de que tradição literária essa fantasia vem. */}
+                {campaign.authorNote ? (
+                  <p className="mt-6 font-serif leading-relaxed text-muted-foreground">
+                    {campaign.authorNote}
                   </p>
                 ) : null}
               </div>
