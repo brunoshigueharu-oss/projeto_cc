@@ -30,8 +30,8 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-6xl flex-col gap-16 px-4 py-16 sm:px-6">
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Seal className="size-7" />
-            <Wordmark className="h-5 w-auto text-foreground" />
+            <Seal className="size-8" />
+            <Wordmark className="h-6 w-auto text-foreground" />
           </Link>
           <p className="max-w-xs font-serif text-sm text-muted-foreground">
             Universos foram feitos para serem explorados. Conheça nossas obras
