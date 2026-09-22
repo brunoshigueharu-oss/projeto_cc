@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { BookCoverFlip } from "@/components/book-cover-flip";
 import { BookStatusBadge } from "@/components/book-status-badge";
 import { BookSynopsis } from "@/components/book-synopsis";
 import { LanguageFlag } from "@/components/language-flag";
@@ -8,7 +9,6 @@ import { isInStock, isPurchasable as isBookPurchasable } from "@/lib/data/book-a
 import type { Book, Locale, Universe } from "@/lib/data/schemas";
 import { formatPrice } from "@/lib/format";
 
-import { BookCoverFlip } from "./book-cover-flip";
 import { BookGallery } from "./book-gallery";
 
 type BookHeroProps = {

@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { RotateCw } from "lucide-react";
 
-import { BookCover } from "@/components/book-cover";
 import type { Book, Locale } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
+import { BookCover } from "./book-cover";
 
 const LABELS: Record<
   Locale,
@@ -28,12 +28,14 @@ const LABELS: Record<
 };
 
 /**
- * Capa do hero com o botão de virar o exemplar.
+ * Capa em destaque com o botão de virar o exemplar.
  *
- * Existe só nesta página: o giro da contracapa é conteúdo de detalhe do
- * título, não da vitrine — no card do catálogo a capa segue sendo só a frente
- * (ver `backVideoSrc` em lib/data/schemas.ts). Sem esse asset no título, o
- * componente renderiza a mesma capa de sempre, sem botão.
+ * Vive onde o livro é o objeto em destaque da página: o hero do catálogo e as
+ * duas vitrines de `/campanhas` (o título da campanha e a edição especial). No
+ * card do catálogo a capa segue sendo só a frente — ali ela é miniatura de uma
+ * grade, e o giro é conteúdo de detalhe do título (ver `backVideoSrc` em
+ * lib/data/schemas.ts). Sem esse asset no título, o componente renderiza a
+ * mesma capa de sempre, sem botão.
  *
  * O botão flutua no canto inferior direito do próprio quadro, em vidro: como
  * bloco abaixo da capa ele separava o vídeo da fileira de páginas internas e

@@ -1,5 +1,5 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { BookCover } from "@/components/book-cover";
+import { BookCoverFlip } from "@/components/book-cover-flip";
 import { BookSpecs } from "@/components/book-specs";
 import { BookSynopsis } from "@/components/book-synopsis";
 import { ParallaxSection } from "@/components/parallax-section";
@@ -13,9 +13,12 @@ import { CampaignPagesGallery } from "./campaign-pages-gallery";
  * "Sobre o projeto" (node 211:1425 do Figma, com o miolo revisado a partir de
  * referência visual do usuário): a abertura do livro da campanha usa a mesma
  * diagramação do topo das páginas de livro (`BookHero`, no catálogo) — grade
- * `0.8fr_1.2fr` com a capa à esquerda e, à direita, a ficha de leitura na
+ * `0.8fr_1.2fr` com a capa à esquerda — o mesmo `BookCoverFlip`, com o botão
+ * de ver a contracapa no canto do quadro — e, à direita, a ficha de leitura na
  * mesma ordem: kicker no lugar do breadcrumb, título, subtítulo, autoria,
- * sinopse com "Leia mais", preço + selo e CTA.
+ * sinopse com "Leia mais", preço + selo e CTA. O botão de virar só aparece
+ * quando o título tem `backVideoSrc` em `books.ts`; sem o asset, a campanha
+ * mostra a capa de sempre.
  *
  * Antes o cabeçalho (kicker + título + autoria) vivia numa seção própria
  * acima da vitrine: o título ficava solto no topo da página e sobrava um vazio
@@ -105,16 +108,7 @@ export function CampaignAbout({
         {primaryBook ? (
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
             <div className="mx-auto w-full max-w-xs lg:mx-0">
-              <BookCover
-                title={primaryBook.title}
-                alt={primaryBook.coverAlt}
-                videoSrc={primaryBook.coverVideoSrc}
-                videoScale={primaryBook.coverVideoScale}
-                videoFit={primaryBook.coverVideoFit}
-                showPauseControl
-                size="lg"
-                className="w-full"
-              />
+              <BookCoverFlip book={primaryBook} />
             </div>
 
             <div>
