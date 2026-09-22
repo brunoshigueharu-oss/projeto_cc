@@ -1,19 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+} from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { HomeBanner } from "@/lib/data/schemas";
 import { getSwipeStep } from "../_lib/get-swipe-step";
+import { HeroBannerVideo } from "./hero-banner-video";
 
 const CAROUSEL_ARROW_CLASSNAME =
   "absolute top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16 lg:size-11";
 
-/** Breakpoint do vídeo quadrado — o mesmo `sm:` em que o container do
- * banner deixa de ser quadrado e vira a faixa 1785/650. */
-const MOBILE_BANNER_MEDIA = "(max-width: 639px)";
+/** Tempo de cada banner na tela antes de o carrossel avançar sozinho. */
+const AUTOPLAY_DELAY_MS = 3000;
+
+/** Quanto dura o deslize de um banner para o outro. É o mesmo
+ * `duration-[600ms]` do slide em `hero-banner-video.tsx`; aqui serve só para
+ * saber quando o banner que saiu já pode ser desmontado. */
+const SLIDE_TRANSITION_MS = 600;
+
+/** Sentido do deslize: `1` traz o próximo pela direita (o mesmo movimento do
+ * avanço automático), `-1` traz o anterior pela esquerda. */
+type Direction = -1 | 1;
 
 type HeroProps = {
   banners: readonly HomeBanner[];
@@ -22,56 +38,106 @@ type HeroProps = {
 /**
  * Hero da Home = carrossel de vídeos em faixa cheia (mudo/loop/autoplay),
  * sem texto sobreposto. Cada vídeo é um link para o destino do banner
- * (página do livro ou `/campanhas`). Troca de banner por setas, bolinhas ou
- * swipe (toque).
+ * (página do livro ou `/campanhas`). Anda sozinho a cada 3s e também por
+ * setas, bolinhas ou swipe (toque) — em todos os casos o banner novo entra
+ * deslizando pela borda.
  */
 export function Hero({ banners }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [entering, setEntering] = useState<{ index: number; direction: Direction } | null>(null);
+  const [leaving, setLeaving] = useState<{ index: number; direction: Direction } | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
   const swipeOrigin = useRef<{ x: number; y: number } | null>(null);
   const hasSwiped = useRef(false);
-  const banner = banners[activeIndex];
+  const total = banners.length;
 
-  // O <video> escolhe a fonte UMA vez, quando entra no documento, e nunca
-  // reavalia o `media` dos <source>. No Safari do iPhone o primeiro slide (o
-  // único que vem pronto no HTML do servidor) caía no vídeo widescreen mesmo
-  // com o CSS já em modo mobile — provavelmente porque a media query é testada
-  // antes de o `meta viewport` valer, contra os 980px iniciais. Chrome,
-  // Firefox e Safari do macOS acertam. Aqui a escolha é refeita no cliente com
-  // `matchMedia`, sem depender do `media`, e repetida quando o breakpoint muda
-  // (girar o aparelho).
+  const goTo = useCallback(
+    (index: number, direction: Direction) => {
+      const target = (index + total) % total;
+      if (target === activeIndex) return;
+
+      // O banner vizinho já está montado encostado na borda: trocar quem é o
+      // ativo basta, porque os dois mudam de posição e o CSS faz o deslize.
+      const isNeighbor =
+        target === (activeIndex + 1) % total || target === (activeIndex - 1 + total) % total;
+      if (isNeighbor && hasStarted) {
+        setActiveIndex(target);
+        return;
+      }
+
+      // Pulo de bolinha (ou antes de o primeiro vídeo rodar, quando ainda não
+      // há vizinhos montados): o destino nasce parado na borda e só vira o
+      // ativo no frame seguinte — senão apareceria direto no lugar, sem
+      // deslize nenhum, porque não existiria posição anterior para animar.
+      setEntering({ index: target, direction });
+    },
+    [activeIndex, hasStarted, total]
+  );
+
   useEffect(() => {
-    if (!banner) return;
+    if (!entering) return;
 
-    const query = window.matchMedia(MOBILE_BANNER_MEDIA);
+    // Dois frames: o primeiro pinta o banner novo na borda, o segundo o põe
+    // em cena. Um só não bastaria — o navegador ainda não teria desenhado a
+    // posição de partida.
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => {
+        setLeaving({ index: activeIndex, direction: entering.direction });
+        setActiveIndex(entering.index);
+        setEntering(null);
+      });
+    });
 
-    function syncVideoSource() {
-      const video = videoRef.current;
-      if (!video || !banner) return;
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, [activeIndex, entering]);
 
-      const wanted =
-        query.matches && banner.videoSrcMobile ? banner.videoSrcMobile : banner.videoSrc;
-      const current = video.currentSrc ? new URL(video.currentSrc).pathname : "";
-      if (current === wanted) return;
+  // Quem saiu num pulo de bolinha não é vizinho de ninguém, então só continua
+  // montado enquanto desliza para fora.
+  useEffect(() => {
+    if (!leaving) return;
 
-      // `src` no elemento tem precedência sobre os <source> filhos, então não
-      // depende mais do `media` ter sido avaliado na viewport certa.
-      video.src = wanted;
-      video.load();
-    }
+    const timer = window.setTimeout(() => setLeaving(null), SLIDE_TRANSITION_MS);
+    return () => window.clearTimeout(timer);
+  }, [leaving]);
 
-    syncVideoSource();
-    query.addEventListener("change", syncVideoSource);
-    return () => query.removeEventListener("change", syncVideoSource);
-  }, [banner]);
+  // Avanço automático. O efeito roda de novo a cada troca de banner, então
+  // navegar na mão (setas, bolinhas ou swipe) reinicia a contagem em vez de
+  // deixar o slide recém-escolhido sair no meio do tempo do anterior.
+  useEffect(() => {
+    if (total < 2) return;
+    // Mesma regra do resto do site (ver `lazy-video.tsx`): quem pediu menos
+    // movimento no sistema troca de banner só pelas setas e bolinhas. O
+    // deslize em si já morre no `prefers-reduced-motion` de `globals.css`.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  if (banners.length === 0) return null;
+    const timer = window.setTimeout(() => goTo(activeIndex + 1, 1), AUTOPLAY_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, goTo, total]);
 
-  const hasMultipleBanners = banners.length > 1;
+  if (total === 0) return null;
 
-  function goTo(index: number) {
-    setActiveIndex((index + banners.length) % banners.length);
+  const banner = banners[activeIndex];
+  const hasMultipleBanners = total > 1;
+
+  // Janela de slides montados: o da vez em cena e os dois vizinhos, parados
+  // nas bordas e já carregados, para o deslize nunca começar num quadro
+  // preto. Map por índice para um banner não entrar duas vezes num carrossel
+  // curto, e ordenado por índice para os <video> não trocarem de lugar no
+  // DOM entre renders — mover um vídeo no DOM o faz pausar em alguns
+  // navegadores.
+  const slideOffsets = new Map<number, number>();
+  if (hasMultipleBanners && hasStarted) {
+    slideOffsets.set((activeIndex - 1 + total) % total, -1);
+    slideOffsets.set((activeIndex + 1) % total, 1);
   }
+  if (leaving) slideOffsets.set(leaving.index, -leaving.direction);
+  slideOffsets.set(activeIndex, 0);
+  if (entering) slideOffsets.set(entering.index, entering.direction);
+  const slides = [...slideOffsets].sort(([a], [b]) => a - b);
 
   // Swipe só para toque/caneta — mouse já tem as setas. Sem
   // `setPointerCapture` de propósito: capturar o ponteiro desvia o "click"
@@ -94,7 +160,7 @@ export function Hero({ banners }: HeroProps) {
     if (step === 0) return;
 
     hasSwiped.current = true;
-    goTo(activeIndex + step);
+    goTo(activeIndex + step, step);
   }
 
   function handlePointerCancel() {
@@ -122,23 +188,17 @@ export function Hero({ banners }: HeroProps) {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         onClickCapture={handleClickCapture}
-        className="block aspect-square w-full touch-pan-y touch-pinch-zoom sm:aspect-[1785/650]"
+        className="relative block aspect-square w-full touch-pan-y touch-pinch-zoom sm:aspect-[1785/650]"
       >
-        <video
-          key={banner.slug}
-          ref={videoRef}
-          aria-hidden="true"
-          className="size-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          {banner.videoSrcMobile && (
-            <source src={banner.videoSrcMobile} media={MOBILE_BANNER_MEDIA} />
-          )}
-          <source src={banner.videoSrc} />
-        </video>
+        {slides.map(([index, offset]) => (
+          <HeroBannerVideo
+            key={banners[index].slug}
+            banner={banners[index]}
+            offset={offset}
+            isActive={index === activeIndex}
+            onPlaying={() => setHasStarted(true)}
+          />
+        ))}
       </Link>
 
       {hasMultipleBanners && (
@@ -146,7 +206,7 @@ export function Hero({ banners }: HeroProps) {
           <button
             type="button"
             aria-label="Slide anterior"
-            onClick={() => goTo(activeIndex - 1)}
+            onClick={() => goTo(activeIndex - 1, -1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "left-3 lg:left-10")}
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
@@ -154,7 +214,7 @@ export function Hero({ banners }: HeroProps) {
           <button
             type="button"
             aria-label="Próximo slide"
-            onClick={() => goTo(activeIndex + 1)}
+            onClick={() => goTo(activeIndex + 1, 1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "right-3 lg:right-10")}
           >
             <ChevronRight className="size-4" aria-hidden="true" />
@@ -171,7 +231,7 @@ export function Hero({ banners }: HeroProps) {
                 type="button"
                 aria-label={`Ir para banner ${index + 1}`}
                 aria-current={index === activeIndex}
-                onClick={() => goTo(index)}
+                onClick={() => goTo(index, index > activeIndex ? 1 : -1)}
                 className="group flex h-6 items-center px-1"
               >
                 <span
