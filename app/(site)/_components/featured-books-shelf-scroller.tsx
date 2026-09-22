@@ -1,7 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useState } from "react";
 
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import type { Book } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
 import { FeaturedBookCard } from "./featured-book-card";
@@ -10,148 +20,118 @@ type FeaturedBooksShelfScrollerProps = {
   books: readonly Book[];
 };
 
+/** Mesma pílula de vidro das setas do resto do site (`box-contents-section.tsx`,
+ * `campaign-pages-gallery.tsx`): sobre fundo claro o vidro é `background/80`
+ * com blur, não o `white/8` que o Hero usa sobre vídeo. Aqui ela corre por
+ * cima da arte dos cards, que é escura — daí o chevron `foreground` sobre o
+ * disco claro, e não o contrário. */
+const NAV_BUTTON_CLASSNAME =
+  "hidden size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
+
 /**
- * Prateleira horizontal com arrasto do mouse em telas grandes —
- * espelha o comportamento definido no Figma. Em telas menores vira grade
- * 2 colunas estática (sem necessidade de scroll/dots).
+ * Prateleira de livros da Home, em carrossel infinito (embla) — o mesmo
+ * sistema dos itens da caixa e da galeria de páginas da campanha, no lugar do
+ * scroller de arrasto próprio que existia aqui.
+ *
+ * `loop` faz a fileira dar a volta: depois do último livro vem o primeiro, e a
+ * seta anterior já nasce ativa. Só é ligado com mais de um livro porque o
+ * embla desliga o loop sozinho (e avisa no console) quando os slides não
+ * enchem o viewport.
+ *
+ * Sem `dragFree`, com `skipSnaps: true`: o card é médio e as bolinhas embaixo
+ * precisam de um índice estável, então todo gesto termina alinhado num livro.
+ * O `skipSnaps` é o que tira o puxão de volta no fim do gesto — sem ele o
+ * embla volta o trilho para um snap adiante de **onde o gesto começou**, não
+ * de onde ele parou, e um swipe de trackpad ia e voltava. Mesmo motivo (e
+ * mesma explicação longa) de `campaign-pages-gallery.tsx`. `duration: 30` é a
+ * constante do tween do embla, não milissegundos — um fio mais lenta que o
+ * padrão (25) para o encaixe não ficar seco.
+ *
+ * `basis` cresce em degraus para o ritmo não mudar: ~1,6 cards no telefone,
+ * ~2,4 no tablet e ~3,5 no desktop — sempre com um card cortado na borda,
+ * que é o que conta que a fileira continua. O `WheelGesturesPlugin` dá o
+ * scroll horizontal de trackpad, que o embla não traz de fábrica.
  */
 export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScrollerProps) {
-  const trackRef = useRef<HTMLUListElement>(null);
-  const dragOrigin = useRef({ x: 0, scrollLeft: 0 });
-  const dragDistance = useRef(0);
-  const isDragging = useRef(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const updateActiveIndex = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const cards = Array.from(track.children) as HTMLElement[];
-    if (cards.length === 0) return;
-
-    // No fim do scroll, o último card nunca "alcança" seu offsetLeft (o
-    // container não rola além do próprio limite) — sem isso a última
-    // bolinha nunca acende.
-    const maxScrollLeft = track.scrollWidth - track.clientWidth;
-    if (maxScrollLeft <= 0) {
-      setActiveIndex(0);
-      return;
-    }
-    if (track.scrollLeft >= maxScrollLeft - 1) {
-      setActiveIndex(cards.length - 1);
-      return;
-    }
-
-    const closest = cards.reduce(
-      (closestIndex, card, index) =>
-        Math.abs(card.offsetLeft - track.scrollLeft) <
-        Math.abs(cards[closestIndex].offsetLeft - track.scrollLeft)
-          ? index
-          : closestIndex,
-      0,
-    );
-    setActiveIndex(closest);
-  }, []);
+  const [api, setApi] = useState<CarouselApi>();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [wheelGesturesPlugin] = useState(() => WheelGesturesPlugin());
 
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
+    if (!api) return;
 
-    track.addEventListener("scroll", updateActiveIndex, { passive: true });
-    return () => track.removeEventListener("scroll", updateActiveIndex);
-  }, [updateActiveIndex]);
+    const handleSelect = () => setSelectedIndex(api.selectedScrollSnap());
 
-  // Arrasto só para mouse — toque já ganha scroll nativo com inércia. NÃO
-  // usar `setPointerCapture`: capturar o ponteiro no <ul> redireciona o
-  // "click" para o próprio <ul> em vez do Link do card, e clicar no card
-  // deixa de abrir o livro. Mesmo padrão (e mesmo motivo) de
-  // `catalogo/[slug]/_components/book-gallery.tsx`.
-  function handlePointerDown(event: ReactPointerEvent<HTMLUListElement>) {
-    // Zera para qualquer ponteiro: num aparelho híbrido, um toque no card
-    // depois de um arrasto com mouse não pode herdar o bloqueio do clique.
-    dragDistance.current = 0;
-    if (event.pointerType !== "mouse") return;
-    const track = trackRef.current;
-    if (!track) return;
+    // Sincroniza já na montagem: o embla não emite "select" ao inicializar, e
+    // sem isso a primeira bolinha só acenderia no primeiro gesto. Mesmo
+    // padrão (e mesmo motivo) do `onSelect` em `components/ui/carousel.tsx`.
+    handleSelect();
+    api.on("select", handleSelect);
+    api.on("reInit", handleSelect);
 
-    isDragging.current = true;
-    dragOrigin.current = { x: event.clientX, scrollLeft: track.scrollLeft };
-
-    window.addEventListener("pointermove", handleWindowPointerMove);
-    window.addEventListener("pointerup", handleWindowPointerUp);
-  }
-
-  function handleWindowPointerMove(event: globalThis.PointerEvent) {
-    const track = trackRef.current;
-    if (!track || !isDragging.current) return;
-
-    const delta = event.clientX - dragOrigin.current.x;
-    dragDistance.current = Math.abs(delta);
-    track.scrollLeft = dragOrigin.current.scrollLeft - delta;
-  }
-
-  function handleWindowPointerUp() {
-    isDragging.current = false;
-    window.removeEventListener("pointermove", handleWindowPointerMove);
-    window.removeEventListener("pointerup", handleWindowPointerUp);
-  }
-
-  function handleDragStart(event: React.DragEvent) {
-    // O card é um <a> (com <img> dentro): sem isso o navegador inicia o
-    // drag nativo do link no primeiro movimento, dispara `pointercancel` e o
-    // arrasto da prateleira para depois de poucos pixels.
-    event.preventDefault();
-  }
-
-  function handleClickCapture(event: React.MouseEvent) {
-    // Arrasto de verdade não deve disparar a navegação do card (Link).
-    if (dragDistance.current > 5) {
-      event.preventDefault();
-    }
-  }
-
-  function scrollToIndex(index: number) {
-    const track = trackRef.current;
-    const card = track?.children[index] as HTMLElement | undefined;
-    if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
-  }
+    return () => {
+      api.off("select", handleSelect);
+      api.off("reInit", handleSelect);
+    };
+  }, [api]);
 
   return (
     <div className="mt-10">
-      <ul
-        ref={trackRef}
-        onPointerDown={handlePointerDown}
-        onDragStart={handleDragStart}
-        onClickCapture={handleClickCapture}
-        className="grid grid-cols-2 gap-5 lg:relative lg:flex lg:cursor-grab lg:gap-6 lg:overflow-x-auto lg:scroll-smooth lg:pb-1 lg:active:cursor-grabbing lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
+      <Carousel
+        setApi={setApi}
+        opts={{ loop: books.length > 1, align: "start", skipSnaps: true, duration: 30 }}
+        plugins={[wheelGesturesPlugin]}
+        className="w-full"
       >
-        {books.map((book) => (
-          <li key={book.slug} className="lg:w-[293px] lg:shrink-0">
-            <FeaturedBookCard book={book} className="select-none" />
-          </li>
-        ))}
-      </ul>
+        <CarouselContent className="-ml-5 cursor-grab active:cursor-grabbing sm:-ml-6">
+          {books.map((book) => (
+            <CarouselItem
+              key={book.slug}
+              className="basis-[62%] pl-5 sm:basis-[42%] sm:pl-6 lg:basis-[28%]"
+            >
+              <FeaturedBookCard book={book} className="select-none" />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
 
-      {books.length > 1 && (
-        <div className="mt-6 hidden items-center justify-center gap-2 lg:flex">
+        {books.length > 1 ? (
+          <>
+            {/* `aria-label` em português: o `sr-only` dentro do primitivo
+                shadcn é fixo em inglês e não dá para substituir por children,
+                e o aria-label tem precedência sobre ele. O Hero, que monta os
+                próprios botões, já rotula as setas assim. */}
+            <CarouselPrevious
+              aria-label="Livro anterior"
+              className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")}
+            />
+            <CarouselNext
+              aria-label="Próximo livro"
+              className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")}
+            />
+          </>
+        ) : null}
+      </Carousel>
+
+      {/* As bolinhas moram fora do `<Carousel>` de propósito: as setas se
+          centram na altura do elemento do carrossel (`inset-y-0 my-auto`), e
+          com elas dentro o eixo desceria meia fileira de bolinhas. */}
+      {books.length > 1 ? (
+        <div className="mt-6 flex items-center justify-center gap-2">
           {books.map((book, index) => (
             <button
               key={book.slug}
               type="button"
               aria-label={`Ir para ${book.title}`}
-              aria-current={index === activeIndex}
-              onClick={() => scrollToIndex(index)}
+              aria-current={index === selectedIndex}
+              onClick={() => api?.scrollTo(index)}
               className={cn(
                 "h-1.5 rounded-full bg-foreground/15 transition-all",
-                index === activeIndex
-                  ? "w-6 bg-primary"
-                  : "w-1.5 hover:bg-foreground/30",
+                index === selectedIndex ? "w-6 bg-primary" : "w-1.5 hover:bg-foreground/30",
               )}
             />
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -30,7 +30,8 @@ export function FeaturedBookCard({ book, className }: FeaturedBookCardProps) {
         src={book.featuredCardImage.src}
         alt={book.featuredCardImage.alt}
         fill
-        sizes="(min-width: 1024px) 25vw, 50vw"
+        draggable={false}
+        sizes="(min-width: 1024px) 285px, (min-width: 640px) 42vw, 62vw"
         className="object-cover transition-transform duration-500 ease-out group-hover:scale-110 group-focus-within:scale-110"
       />
       <div
