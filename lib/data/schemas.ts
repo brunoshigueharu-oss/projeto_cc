@@ -93,8 +93,9 @@ export const bookSchema = z.object({
    *  botão abaixo da capa que vira o exemplar. Sai do mesmo render de 200
    *  frames que a frente (ver a skill `preparar-video-capa`), então reaproveita
    *  o `coverVideoScale`/`coverVideoFit` do título sem ajuste próprio — salvo
-   *  o `backVideoOffsetY` abaixo, quando as duas passadas do render não
-   *  saíram na mesma altura. */
+   *  o `backVideoOffsetY`, o `backVideoScale` e o `backVideoPhase` abaixo,
+   *  quando as duas passadas do render não saíram na mesma altura, no mesmo
+   *  tamanho ou girando para o mesmo lado. */
   backVideoSrc: z.string().optional(),
   /** Opcional: sobe (negativo) ou desce (positivo) o vídeo do verso dentro do
    *  quadro, em % da altura do vídeo — só o verso, a frente não se mexe.
@@ -108,6 +109,41 @@ export const bookSchema = z.object({
    *  Medir em vez de chutar: extraia frames dos dois vídeos e compare a altura
    *  do livro no quadro (ver nota nos títulos que usam o campo). */
   backVideoOffsetY: z.number().min(-50).max(50).optional(),
+  /** Opcional: amplia (>1) ou reduz (<1) o vídeo do verso dentro do quadro —
+   *  só o verso, a frente é a referência e não se mexe.
+   *
+   *  Mesma origem do `backVideoOffsetY` acima, mas no eixo do zoom: quando a
+   *  passada do verso foi rendida com a câmera em outra distância, o livro
+   *  muda de tamanho no meio da troca e o giro deixa de parecer o mesmo
+   *  exemplar virando. É o caso do par do Yanayag, em que o livro sai 4,4%
+   *  menor no verso.
+   *
+   *  O valor é a razão que devolve o verso ao tamanho da frente — inverso do
+   *  que se mede: livro 4,4% menor (0,956 do tamanho da frente) pede
+   *  `1 / 0,956 = 1,045`. Medir em vez de chutar: compare a caixa do livro
+   *  no mesmo frame dos dois vídeos (os dois renders estão em fase, frame a
+   *  frame) e tire a mediana ao longo do loop — a silhueta muda de tamanho
+   *  durante o giro, então um frame só engana.
+   *
+   *  Com fundo branco nos dois lados, reduzir não abre emenda: o que aparece
+   *  na borda é o branco do quadro contra o branco do render. */
+  backVideoScale: z.number().positive().max(2).optional(),
+  /** Opcional: desloca o verso dentro do loop, em fração do próprio loop
+   *  (0,5 = meia volta). Só o verso se move no tempo; a frente é a
+   *  referência.
+   *
+   *  Existe para o par cujo verso não é contracapa e sim segunda capa: ali o
+   *  fornecedor espelhou a cena para render, e o livro do verso gira para o
+   *  lado contrário ao da frente. Casados no mesmo instante do loop, virar a
+   *  capa inverte o sentido do giro e a peça parece ir e voltar em vez de
+   *  seguir girando.
+   *
+   *  Funciona porque a animação de capa é um balanço simétrico, não uma volta
+   *  completa: o livro sai de um extremo, alcança o outro na metade do loop e
+   *  retorna. Meia volta de defasagem devolve o mesmo ângulo andando para o
+   *  mesmo lado — medido pela altura da silhueta em cada borda do livro, que
+   *  dá o ângulo com sinal (ver a nota nos títulos que usam o campo). */
+  backVideoPhase: z.number().min(-1).max(1).optional(),
   /** Opcional: vídeo em faixa cheia (mudo, loop), entre a seção de exemplar e a do universo. */
   videoBannerSrc: z.string().optional(),
   /** Opcional: variante noturna de `videoBannerSrc` — quando presente, a faixa

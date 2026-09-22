@@ -881,6 +881,37 @@ const RAW_BOOKS = [
     coverVideoSrc: "/videos/livros/yanayag.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.4,
+    // Capa dupla: "SOLAR e ECLIPSE", como anuncia a faixa da home. O verso
+    // não é contracapa de praxe (sem código de barras, sem texto de orelha) —
+    // é a segunda capa, a mesma cena com a lua em eclipse. Por isso o render
+    // do verso vem sem espelhar o livro, ao contrário dos outros títulos:
+    // as duas faces são frente.
+    //
+    // O fornecedor rendeu as frentes e os versos em passadas separadas
+    // (`Hocus Pocus Arquivos/Videos Render` e `BACK livros`), cada uma com
+    // sua câmera — então os dois campos abaixo existem para devolver o verso
+    // ao enquadramento da frente. Medido na caixa do livro nos 200 frames dos
+    // dois vídeos, não em um frame só (a silhueta muda de tamanho durante o
+    // giro):
+    //
+    // - tamanho: o verso sai com 0,956 da altura e 0,957 da largura da
+    //   frente, uniforme ao longo de todo o giro. O `backVideoScale` é o
+    //   inverso disso (1 / 0,956).
+    // - altura: o livro fica 0,58% da altura do quadro mais baixo no verso.
+    //   Sozinho seria invisível, mas o `coverVideoScale: 1.4` acima amplia
+    //   também esse desencontro, e na tela viram ~4 px de salto no meio da
+    //   troca.
+    // - sentido do giro: como as duas faces são capa, o fornecedor espelhou a
+    //   cena para render o verso, e lá o livro balança para o lado contrário
+    //   ao da frente. Casadas no mesmo instante do loop, as duas faces
+    //   giravam uma contra a outra e virar a capa parecia um vai e vem. Meia
+    //   volta de defasagem (`backVideoPhase: 0.5`) resolve porque o balanço é
+    //   simétrico: medido pelo ângulo com sinal em cada frame, o casamento
+    //   sai de -0,997 (exatamente oposto) para +0,977.
+    backVideoSrc: "/videos/livros/verso/yanayag.mp4",
+    backVideoScale: 1.046,
+    backVideoOffsetY: -0.58,
+    backVideoPhase: 0.5,
     videoBannerSrc: "/videos/faixas/yanayag.mp4",
     videoBannerNightSrc: "/videos/faixas/yanayag-noite.mp4",
     gallery: [
@@ -962,6 +993,28 @@ const RAW_BOOKS = [
     // Mesmo render (992×1216, 200 frames) da edição padrão — reaproveita o
     // enquadramento calibrado lá.
     coverVideoScale: 1.4,
+    // Capa dupla, como na edição padrão: a lua vermelha de um lado, a lua
+    // branca do outro — é a "CAPA DUPLA DA LUA" que a faixa da home anuncia.
+    // O render do verso não espelha o livro, porque as duas faces são capa.
+    //
+    // O fornecedor arquiva ao contrário do que está aqui: a lua branca vem de
+    // `Hocus Pocus Arquivos/Videos Render` (a pasta das frentes) e a vermelha
+    // de `BACK livros`. Quem decide a frente neste título é a campanha, que
+    // descreve a lua vermelha como a capa desta tiragem — inverter as duas
+    // obrigaria a reescrever `coverAlt` aqui e o texto de `specialEdition`
+    // em lib/data/campaigns.ts.
+    //
+    // Mesma diferença de passada da edição padrão (ver a nota lá), só que
+    // invertida em ambos os eixos — aqui é a frente que saiu da passada dos
+    // versos. O livro fica *maior* no verso (1,046 da altura e 1,045 da
+    // largura da frente) e 0,58% da altura do quadro mais *alto*, então os
+    // dois ajustes entram com o sinal trocado em relação à edição padrão. O
+    // `backVideoPhase` não: o giro espelhado é o mesmo caso da edição padrão
+    // (ver a nota lá) e meia volta é meia volta para qualquer lado.
+    backVideoSrc: "/videos/livros/verso/yanayag-noite.mp4",
+    backVideoScale: 0.957,
+    backVideoOffsetY: 0.58,
+    backVideoPhase: 0.5,
     // Mesmo arquivo que a edição padrão usa como variante noturna da faixa
     // dela (`videoBannerNightSrc`, acima): lá é o outro lado de um botão,
     // aqui é a faixa própria desta edição, que a seção "Edição Noite" de

@@ -10,7 +10,11 @@ import {
 } from "react";
 import { Pause, Play } from "lucide-react";
 
-import { getBackVideoStyle } from "@/lib/cover-video-frame";
+import {
+  getBackVideoStyle,
+  getBackVideoSyncTime,
+  getLoopDistance,
+} from "@/lib/cover-video-frame";
 import { cn } from "@/lib/utils";
 import { Seal } from "./seal";
 
@@ -52,6 +56,14 @@ type BookCoverProps = {
    *  na mesma altura (ver `backVideoOffsetY` em lib/data/schemas.ts). Vale só
    *  para o vídeo do verso — a frente é a referência e não se mexe. */
   backVideoOffsetY?: number;
+  /** Devolve o verso ao tamanho da frente quando as duas passadas do render
+   *  não saíram com a câmera à mesma distância (ver `backVideoScale` em
+   *  lib/data/schemas.ts). Também só para o vídeo do verso. */
+  backVideoScale?: number;
+  /** Desloca o verso dentro do loop quando o render dele gira para o lado
+   *  contrário ao da frente (ver `backVideoPhase` em lib/data/schemas.ts).
+   *  Em fração do loop: 0,5 é meia volta. */
+  backVideoPhase?: number;
   /** Descrição da contracapa — substitui `alt` enquanto o verso está à
    *  mostra. Sem ela, o rótulo acessível continua descrevendo a frente. */
   backAlt?: string;
@@ -83,6 +95,15 @@ const REST_FRAME_TIME = 0.01;
 // poucos frames depois de 2 s.
 const FRONT_FRAME_TIME = 2.22;
 
+// Um quadro dos renders de capa (24 fps): a folga abaixo da qual frente e
+// verso já estão na mesma pose e não vale seek nenhum.
+const FRAME_DURATION = 1 / 24;
+
+// Teto de espera pelo seek que alinha as duas faces. Os arquivos têm keyframe
+// a cada 0,5 s, então o seek normal resolve em bem menos que isso — o limite
+// é só para a troca nunca ficar pendurada.
+const SYNC_TIMEOUT_MS = 300;
+
 /**
  * Capa do livro: vídeo de preview quando disponível, senão placeholder em CSS.
  *
@@ -108,6 +129,8 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   backVideoSrc,
   showBack,
   backVideoOffsetY,
+  backVideoScale,
+  backVideoPhase,
   backAlt,
 }, ref) {
   const isLarge = size === "lg";
@@ -121,7 +144,9 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
   // primeiro clique (o arquivo do verso só começa a baixar aí — ver
   // book-cover-flip.tsx).
   const [isBackReady, setIsBackReady] = useState(false);
-  const isShowingBack = Boolean(backVideoSrc) && Boolean(showBack) && isBackReady;
+  // Quem manda na opacidade não é o `showBack` cru, e sim o efeito de sincronia
+  // abaixo: a face nova só entra depois de alinhada com a que sai.
+  const [isShowingBack, setIsShowingBack] = useState(false);
 
   // Miniaturas (catálogo, relacionados, estante) só tocam o vídeo no
   // hover/foco — dezenas delas com autoplay simultâneo é o que deixava essas
@@ -182,6 +207,57 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
       video.currentTime = restFrameTime;
     }
   }, [hasRestFrame, restFrameTime]);
+
+  // Frente e verso saem do mesmo render de 200 frames: no mesmo `currentTime`
+  // o livro está na mesma pose do giro — ou meia volta adiante, nos títulos
+  // que declaram `backVideoPhase` porque o verso foi rendido girando para o
+  // outro lado. Só que cada
+  // <video> toca por conta própria — e o do verso só é montado no primeiro
+  // clique, começando do zero enquanto a frente já está em qualquer ponto do
+  // loop de 8 s. Cruzar a opacidade assim trocava duas poses sem relação: o
+  // livro saltava de ângulo no meio da virada em vez de trocar de face.
+  //
+  // Então, a cada troca, o vídeo que entra é levado ao tempo do que sai e a
+  // opacidade só cruza depois do `seeked` — com o frame certo já decodificado,
+  // não o keyframe anterior. O alinhamento que importa é o do primeiro
+  // clique; depois dele os dois loops seguem juntos sozinhos (medido: 0,4 ms
+  // de deriva em 3 s). Realinhar nos dois sentidos é garantia barata, já que
+  // nada obriga dois <video> independentes a continuarem assim.
+  useEffect(() => {
+    const front = videoRef.current;
+    const back = backVideoRef.current;
+    if (!backVideoSrc || !front || !back || !isBackReady) return;
+
+    const entering = showBack ? back : front;
+    const leaving = showBack ? front : back;
+    const reveal = () => setIsShowingBack(Boolean(showBack));
+    const target = getBackVideoSyncTime(
+      leaving.currentTime,
+      entering.duration,
+      backVideoPhase,
+      Boolean(showBack),
+    );
+
+    // Menos de um quadro (1/24 s) de diferença já é a mesma pose na tela, e
+    // seek nenhum: navegador não dispara `seeked` para um tempo que já é o
+    // atual, e a troca ficaria esperando um evento que não vem.
+    if (getLoopDistance(entering.currentTime, target, entering.duration) < FRAME_DURATION) {
+      reveal();
+      return;
+    }
+
+    entering.addEventListener("seeked", reveal, { once: true });
+    // Rede de segurança para o seek que não completa (vídeo ainda enchendo o
+    // buffer): virar com a pose desalinhada incomoda menos que um botão que
+    // parece não fazer nada.
+    const fallback = window.setTimeout(reveal, SYNC_TIMEOUT_MS);
+    entering.currentTime = target;
+
+    return () => {
+      entering.removeEventListener("seeked", reveal);
+      window.clearTimeout(fallback);
+    };
+  }, [backVideoPhase, backVideoSrc, isBackReady, showBack]);
 
   useImperativeHandle(ref, () => ({
     play: handleHoverStart,
@@ -251,7 +327,11 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
                       "absolute inset-0 size-full transition-opacity duration-500",
                       videoFit === "contain" ? "object-contain" : "object-cover",
                     )}
-                    style={getBackVideoStyle(isShowingBack, backVideoOffsetY)}
+                    style={getBackVideoStyle(
+                      isShowingBack,
+                      backVideoOffsetY,
+                      backVideoScale,
+                    )}
                     src={backVideoSrc}
                     // Monta já tocando só se a frente também estiver — o verso
                     // só entra na árvore depois do primeiro clique, e nesse

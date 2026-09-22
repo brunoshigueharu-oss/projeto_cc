@@ -45,6 +45,10 @@ const LABELS: Record<
  * arquivo do mesmo peso do vídeo de capa (~5 MB), e quem não virar o livro não
  * deve pagar o download dele ao abrir a página. Depois disso a tag fica
  * montada, então virar de novo é instantâneo e não reinicia o loop.
+ *
+ * Quem cuida de as duas faces chegarem na mesma pose e no mesmo tamanho é o
+ * BookCover (sincronia de `currentTime`) junto com o `backVideoScale` do
+ * título — aqui só se decide quando virar.
  */
 export function BookCoverFlip({ book }: { book: Book }) {
   const [showBack, setShowBack] = useState(false);
@@ -72,6 +76,8 @@ export function BookCoverFlip({ book }: { book: Book }) {
         backVideoSrc={canFlip && hasFlipped ? book.backVideoSrc : undefined}
         showBack={showBack}
         backVideoOffsetY={book.backVideoOffsetY}
+        backVideoScale={book.backVideoScale}
+        backVideoPhase={book.backVideoPhase}
         backAlt={labels.backAlt(book.title)}
         showPauseControl
         size="lg"
