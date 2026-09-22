@@ -58,6 +58,15 @@ const LIGHTBOX_BUTTON_CLASSNAME =
  * viewport do embla é `overflow-hidden` e cortaria as duas. Sendo simétrico,
  * ele também mantém as setas centradas na altura das páginas.
  *
+ * `loop` faz a fileira dar a volta: depois da última página vem a primeira, e
+ * as duas setas já nascem ativas — o mesmo carrossel infinito da prateleira
+ * da Home (`featured-books-shelf-scroller.tsx`) e dos itens da caixa
+ * (`box-contents-section.tsx`). Só é ligado com mais de uma página porque o
+ * embla volta sozinho para `false` (e avisa no console) quando os slides não
+ * enchem o viewport. Com o loop ligado não existe mais ponta de trilho para
+ * aparar, e é por isso que o `containScroll: "trimSnaps"` que estava aqui
+ * saiu: ele só tem efeito no carrossel finito.
+ *
  * Com snap (sem `dragFree`, ao contrário do carrossel dos itens da caixa):
  * aqui a página é grande e a fileira é curta, e o momentum do `dragFree`
  * multiplicava o gesto — 120px de trackpad viravam ~440px de trilho — e
@@ -132,7 +141,7 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
   return (
     <>
       <Carousel
-        opts={{ align: "start", containScroll: "trimSnaps", skipSnaps: true, duration: 30 }}
+        opts={{ loop: images.length > 1, align: "start", skipSnaps: true, duration: 30 }}
         plugins={[wheelGesturesPlugin]}
         className="w-full"
       >
