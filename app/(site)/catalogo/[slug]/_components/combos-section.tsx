@@ -1,12 +1,9 @@
 import { formatPrice } from "@/lib/format";
-import type { Book } from "@/lib/data/schemas";
 
 import type { ResolvedCombo } from "../_data-access/get-book";
 import { CombosCarousel, type CombosCarouselItem } from "./combos-carousel";
 
 type CombosSectionProps = {
-  /** Livro da página — dele sai a faixa de vídeo do banner. */
-  book: Book;
   combos: readonly ResolvedCombo[];
 };
 
@@ -20,7 +17,7 @@ type CombosSectionProps = {
  * carousel — `formatPrice` é `server-only`, não pode rodar no Client
  * Component que precisa do embla pro autoplay/setas.
  */
-export function CombosSection({ book, combos }: CombosSectionProps) {
+export function CombosSection({ combos }: CombosSectionProps) {
   if (combos.length === 0) {
     return null;
   }
@@ -32,15 +29,18 @@ export function CombosSection({ book, combos }: CombosSectionProps) {
     formattedOriginalPrice: combo.originalPrice
       ? formatPrice(combo.originalPrice.amount)
       : null,
-    // Faixa do livro que o visitante está vendo, não a do kit: o combo pode
-    // ser divulgado na página de um título que não faz parte dele (ver
-    // `showOnBookSlugs` em lib/data/combos.ts), e mesmo aí o banner fala com
-    // quem já está olhando aquele livro. Só quando esse título não tem faixa
-    // é que cai na do primeiro livro do kit que tenha.
-    videoSrc:
-      book.videoBannerSrc ??
-      books.find((kitBook) => kitBook.videoBannerSrc)?.videoBannerSrc ??
-      null,
+    // Só as faixas dos livros DO KIT, na ordem de `combo.bookSlugs`: o combo
+    // é divulgado também na página de títulos que não fazem parte dele (ver
+    // `showOnBookSlugs` em lib/data/combos.ts), e usar a faixa da página
+    // colocava no banner o close-up de um livro que não está na oferta.
+    // `Set` porque duas edições do kit podem apontar para o mesmo arquivo.
+    videoSrcs: [
+      ...new Set(
+        books
+          .map((kitBook) => kitBook.videoBannerSrc)
+          .filter((src): src is string => src !== undefined),
+      ),
+    ],
   }));
 
   return (

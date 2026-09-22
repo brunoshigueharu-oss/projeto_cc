@@ -8,7 +8,6 @@ import { Star, Truck } from "lucide-react";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { BookCover } from "@/components/book-cover";
-import { LazyVideo } from "@/components/lazy-video";
 import {
   Carousel,
   CarouselContent,
@@ -29,9 +28,10 @@ export type CombosCarouselItem = {
   formattedPrice: string;
   /** `null` quando o combo não tem preço "de" (sem `originalPrice`). */
   formattedOriginalPrice: string | null;
-  /** Faixa de vídeo que roda atrás do título, escolhida em
-   *  `combos-section.tsx`. `null` quando nenhum livro envolvido tem faixa. */
-  videoSrc: string | null;
+  /** Faixas dos livros do kit, na ordem de `combo.bookSlugs` e sem repetidas
+   *  (ver `combos-section.tsx`). O palco roda entre elas; vazio quando
+   *  nenhum livro do kit tem faixa. */
+  videoSrcs: readonly string[];
 };
 
 type CombosCarouselProps = {
@@ -79,7 +79,7 @@ export function CombosCarousel({ combos }: CombosCarouselProps) {
  * direita — empilha no mobile, vídeo primeiro.
  */
 function ComboBanner({ item }: { item: CombosCarouselItem }) {
-  const { combo, books, formattedPrice, formattedOriginalPrice, videoSrc } = item;
+  const { combo, books, formattedPrice, formattedOriginalPrice, videoSrcs } = item;
 
   return (
     // Fundo da seção e painel da oferta são os dois brancos, então quem
@@ -87,7 +87,7 @@ function ComboBanner({ item }: { item: CombosCarouselItem }) {
     // padrão de Card é escuro demais pra ficar rente ao vídeo e claro demais
     // pra segurar o painel, e some contra o branco da seção.
     <div className="grid overflow-hidden rounded-[28px] border border-border shadow-lg shadow-foreground/10 lg:grid-cols-[3fr_2fr]">
-      <ComboStage combo={combo} videoSrc={videoSrc} />
+      <ComboStage combo={combo} videoSrcs={videoSrcs} />
       <ComboOffer
         combo={combo}
         books={books}
@@ -99,32 +99,28 @@ function ComboBanner({ item }: { item: CombosCarouselItem }) {
 }
 
 /**
- * Painel da esquerda: faixa de vídeo em loop (mudo, como as demais faixas do
- * site — ver `video-banner.tsx`), escurecida por um degradê para o nome do
- * combo em branco ficar legível em qualquer frame.
+ * Painel da esquerda: as faixas de vídeo dos livros DO KIT em loop (mudas,
+ * como as demais faixas do site — ver `video-banner.tsx`), uma de cada vez,
+ * escurecidas por um degradê para o nome do combo em branco ficar legível em
+ * qualquer frame.
  *
- * Sem vídeo, cai na arte dedicada do combo (`combo.image`) e, sem ela, no
- * marrom sólido — o título branco funciona nos três casos.
+ * Sem nenhuma faixa no kit, cai na arte dedicada do combo (`combo.image`) e,
+ * sem ela, no marrom sólido — o título branco funciona nos três casos.
  */
-function ComboStage({ combo, videoSrc }: { combo: Combo; videoSrc: string | null }) {
+function ComboStage({
+  combo,
+  videoSrcs,
+}: {
+  combo: Combo;
+  videoSrcs: readonly string[];
+}) {
   return (
     // No mobile a altura é só dessa faixa (o painel vem embaixo), e o título
     // de combo mais longo ocupa três linhas — daí o piso mais alto que o
     // `min-h-64` que bastaria para o vídeo sozinho.
     <div className="relative min-h-72 overflow-hidden bg-primary sm:min-h-80 lg:min-h-[26rem]">
-      {videoSrc ? (
-        // `LazyVideo` porque o embla monta TODOS os slides do carrossel de
-        // uma vez: com `<video src>` cru, os combos fora de tela baixavam a
-        // faixa inteira cada um, em paralelo com o resto da página.
-        <LazyVideo
-          aria-hidden="true"
-          className="absolute inset-0 size-full object-cover"
-          src={videoSrc}
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+      {videoSrcs.length > 0 ? (
+        <ComboVideoRotator srcs={videoSrcs} />
       ) : combo.image ? (
         <Image
           src={combo.image.src}
@@ -143,6 +139,165 @@ function ComboStage({ combo, videoSrc }: { combo: Combo; videoSrc: string | null
       <h3 className="absolute inset-x-0 bottom-0 p-6 font-display text-2xl leading-tight font-bold text-balance text-white sm:p-8 sm:text-3xl lg:text-4xl">
         {combo.title}
       </h3>
+    </div>
+  );
+}
+
+/** Quanto tempo o close-up de cada livro do kit fica em cena antes de entrar
+ *  o do próximo. */
+const COMBO_VIDEO_INTERVAL_MS = 2000;
+
+/** De quanto em quanto tempo cada faixa seguinte começa mais adiante na
+ *  própria duração (a 1ª abre no 0, a 2ª no 4s, a 3ª no 8s...).
+ *
+ *  As faixas são todas o mesmo tipo de plano — o livro girando em fundo
+ *  claro — e duram uns 23s. Começando todas do zero, o rodízio parecia um
+ *  vídeo só cortado em pedaços, porque os quatro abriam no mesmo momento da
+ *  animação. Escalonando a entrada, cada uma aparece num ponto diferente do
+ *  giro e a troca fica legível como "outro livro". */
+const COMBO_VIDEO_START_STAGGER_S = 4;
+
+/**
+ * Faixas do kit em rodízio: mostra uma por vez e passa para a próxima a cada
+ * `COMBO_VIDEO_INTERVAL_MS`, com crossfade, de modo que o banner apresente
+ * todos os livros da oferta e não só um.
+ *
+ * Não usa `LazyVideo` porque aqui há vários `<video>` na mesma posição: o
+ * observer daquele componente veria todos como visíveis e mandaria tocar
+ * todos juntos — exatamente a decodificação em paralelo que ele existe para
+ * evitar. A mesma ideia continua valendo, só que coordenada por um observer
+ * só: o `src` de um vídeo só entra no DOM na vez dele (e na do anterior, pra
+ * dar tempo de bufferizar), e fora da tela tudo pausa. São 4,5 MB por faixa,
+ * então baixar as quatro de um combo de uma vez custaria caro.
+ */
+function ComboVideoRotator({ srcs }: { srcs: readonly string[] }) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [isInView, setIsInView] = useState(false);
+  // Fica `true` na primeira vez que o banner aparece e não volta atrás:
+  // tirar o `src` de um vídeo que saiu da tela descartaria o buffer de uma
+  // faixa que vai reaparecer na próxima volta do rodízio.
+  const [hasAppeared, setHasAppeared] = useState(false);
+  // Quantas trocas já aconteceram, não o índice: é o contador que diz quais
+  // faixas já foram (ou estão prestes a ser) pedidas — ver `isLoaded`.
+  const [step, setStep] = useState(0);
+
+  const activeIndex = step % srcs.length;
+
+  // A faixa da vez e a seguinte: o `src` do próximo entra com um ciclo de
+  // antecedência para ele já estar bufferizado na hora da troca. Depois de
+  // uma volta completa, `step` já passou de todos os índices e nenhum vídeo
+  // volta a ser descarregado.
+  const isLoaded = (index: number) => hasAppeared && index <= step + 1;
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // Sem suporte a IntersectionObserver, o comportamento certo é o antigo
+    // (carrega e toca), nunca um banner parado no fundo marrom.
+    if (typeof IntersectionObserver === "undefined") {
+      const frame = requestAnimationFrame(() => {
+        setIsInView(true);
+        setHasAppeared(true);
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+
+    // Os slides parados do embla ficam fora do `overflow-hidden` do
+    // carousel, então o observer já devolve `false` pra eles — é isso que
+    // impede o combo fora de cena de baixar as faixas dele. A margem dá só a
+    // antecedência de um quarto de tela para a faixa do slide ativo.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+        if (entry.isIntersecting) setHasAppeared(true);
+      },
+      { rootMargin: "25%" },
+    );
+    observer.observe(stage);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Mesmo tratamento de `lazy-video.tsx` e `paper-tilt-effect.tsx`: quem
+  // pediu menos movimento no sistema não recebe nem loop nem rodízio — fica
+  // a primeira faixa, parada.
+  const prefersReducedMotion = useRef(false);
+  useEffect(() => {
+    prefersReducedMotion.current = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+  }, []);
+
+  useEffect(() => {
+    if (!isInView || srcs.length < 2 || prefersReducedMotion.current) return;
+
+    const timer = setInterval(() => {
+      setStep((current) => {
+        // Segurar a faixa atual mais um ciclo é melhor do que entrar com um
+        // quadro vazio: numa conexão lenta a próxima ainda pode estar
+        // baixando quando dá a hora. `readyState < HAVE_CURRENT_DATA` (2) é
+        // "não tem nem o frame atual".
+        const video = videoRefs.current[(current + 1) % srcs.length];
+        return video && video.readyState >= 2 ? current + 1 : current;
+      });
+    }, COMBO_VIDEO_INTERVAL_MS);
+
+    return () => clearInterval(timer);
+  }, [isInView, srcs.length]);
+
+  // Só a faixa em cena toca; as outras ficam pausadas no ponto em que
+  // pararam e voltam de lá na próxima vez que entrarem — assim cada volta do
+  // rodízio mostra um trecho novo em vez de repetir os mesmos dois segundos
+  // iniciais.
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (!video) return;
+
+      if (index === activeIndex && isInView && !prefersReducedMotion.current) {
+        // `play()` rejeita com a aba em background ou autoplay bloqueado.
+        // Nada a fazer: o vídeo é decorativo.
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  }, [activeIndex, isInView, hasAppeared]);
+
+  return (
+    <div ref={stageRef} className="absolute inset-0">
+      {srcs.map((src, index) => (
+        <video
+          key={src}
+          ref={(node) => {
+            videoRefs.current[index] = node;
+          }}
+          aria-hidden="true"
+          className={cn(
+            "absolute inset-0 size-full object-cover transition-opacity duration-700",
+            index === activeIndex ? "opacity-100" : "opacity-0",
+          )}
+          // `preload="none"` enquanto não é a vez: impede o navegador de
+          // gastar conexão com um vídeo que talvez nem chegue a aparecer.
+          preload={isLoaded(index) ? "auto" : "none"}
+          src={isLoaded(index) ? src : undefined}
+          // Roda uma vez por faixa, quando o `src` dela entra no DOM — é o
+          // primeiro momento em que a duração é conhecida. O `%` é pro caso
+          // de uma faixa curta: em vez de um seek além do fim (que o
+          // navegador prende no último frame), o ponto de partida dá a volta.
+          onLoadedMetadata={(event) => {
+            const video = event.currentTarget;
+            if (!Number.isFinite(video.duration) || video.duration === 0) return;
+
+            video.currentTime =
+              (index * COMBO_VIDEO_START_STAGGER_S) % video.duration;
+          }}
+          loop
+          muted
+          playsInline
+        />
+      ))}
     </div>
   );
 }
