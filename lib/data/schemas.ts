@@ -153,16 +153,17 @@ export const bookSchema = z.object({
   videoBannerNightSrc: z.string().optional(),
   /** Opcional: comparação com a edição-base da qual este título deriva (ex.:
    * Necroplanta é uma variante de "Os Contos do Planta — Vol. 2"). Renderiza
-   * duas folhas de sulfite lado a lado com um "X" entre elas — a mesma arte
-   * de `paper.png` do upsell, sem capa real —, cada uma com o título embaixo,
-   * seguidas de um texto de destaque sobre a tiragem/edição. Preencher só
-   * quando o livro for uma variante/edição especial de outro título já
-   * cadastrado em `books.ts`.
+   * duas pranchas do miolo lado a lado com um "X" entre elas — só a
+   * ilustração, com sombra leve, sem capa real —, cada uma com o título
+   * embaixo, seguidas de um texto de destaque
+   * sobre a tiragem/edição. Preencher só quando o livro for uma
+   * variante/edição especial de outro título já cadastrado em `books.ts`.
    *
    * `basePageSrc`/`pageSrc` (opcionais, em `public/images/comparacao/`): a
-   * mesma página do miolo nas duas edições, "impressa" em cada folha para
-   * comparar a cor. Já em retrato (~0.7) — página em paisagem vai girada no
-   * arquivo. Sem elas, a folha fica em branco. */
+   * mesma prancha do miolo nas duas edições, exibida sozinha em cada lado
+   * para comparar a cor. Já em paisagem (1400×989) — a prancha comparada
+   * aqui é sempre uma página larga de miolo. Sem elas, fica uma caixa neutra
+   * no lugar. */
   compareEdition: z
     .object({
       baseBookSlug: slug,

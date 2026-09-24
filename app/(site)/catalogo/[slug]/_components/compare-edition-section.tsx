@@ -7,17 +7,18 @@ type CompareEditionSectionProps = {
 };
 
 /**
- * "Contos do Planta 2 × Necroplanta": duas folhas de sulfite lado a lado
- * (mesma arte do `PaperTiltEffect` do upsell), cada uma com a mesma página do
- * miolo na cor da sua edição (`basePageSrc`/`pageSrc`, quando houver), com um
- * "X" entre elas, inclinando levemente ao sabor do mouse, seguidas do
- * destaque de tiragem — mesma composição do site anterior (Wix). Só
- * renderiza quando `book.compareEdition` existe e o `baseBookSlug` resolve
- * para um livro real do catálogo.
+ * "Contos do Planta 2 × Necroplanta": a mesma prancha do miolo na cor de
+ * cada edição (`basePageSrc`/`pageSrc`, quando houver) — só a ilustração,
+ * com sombra leve, ver `TiltingPaper` —, lado a lado com um "X" entre elas, inclinando levemente ao sabor do mouse, seguidas do destaque
+ * de tiragem. Só renderiza quando `book.compareEdition` existe e o
+ * `baseBookSlug` resolve para um livro real do catálogo.
  *
- * As folhas só vão lado a lado a partir de `md`: as duas de 18rem mais o "X"
- * e os vãos pedem ~712px, então em `sm` (640px) elas estouravam a tela e
- * davam scroll lateral no celular deitado. Abaixo disso, empilhadas.
+ * Lado a lado a partir do `sm`, não empilhadas: a prancha de miolo é sempre
+ * uma página em paisagem, então a prancha é mais larga que alta — duas delas
+ * de peito ao peito no tamanho usado antes (empilhado) estourariam o
+ * `max-w-4xl` da seção, por isso encolhem (`sm:w-56` até `lg:w-80`) para
+ * caber junto com o "X" e os vãos. Abaixo do `sm` continuam empilhadas, já
+ * que não há largura de tela para as duas em pé.
  */
 export function CompareEditionSection({ book, baseBook }: CompareEditionSectionProps) {
   const { compareEdition } = book;
@@ -29,10 +30,10 @@ export function CompareEditionSection({ book, baseBook }: CompareEditionSectionP
   return (
     <section className="border-t border-border">
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-        <div className="flex flex-col items-center justify-center gap-8 md:flex-row md:items-end md:gap-12">
+        <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
           <figure className="flex flex-col items-center gap-4">
             <TiltingPaper
-              className="w-56 md:w-72"
+              className="w-72 sm:w-56 md:w-64 lg:w-80"
               page={
                 compareEdition.basePageSrc
                   ? { src: compareEdition.basePageSrc, alt: `Página do miolo de ${baseBook.title}` }
@@ -54,7 +55,7 @@ export function CompareEditionSection({ book, baseBook }: CompareEditionSectionP
 
           <figure className="flex flex-col items-center gap-4">
             <TiltingPaper
-              className="w-56 md:w-72"
+              className="w-72 sm:w-56 md:w-64 lg:w-80"
               page={
                 compareEdition.pageSrc
                   ? { src: compareEdition.pageSrc, alt: `Página do miolo de ${book.title}` }

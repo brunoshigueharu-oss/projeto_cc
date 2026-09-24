@@ -2,34 +2,33 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { SHEET_AREA_CLASS } from "./paper-sheet-area";
 
 const MAX_TILT_DEG = 8;
 
 type TiltingPaperProps = {
   className?: string;
-  /** Opcional: página "impressa" na folha, recortada à área opaca de
-   * `paper.png`. Deve vir já em retrato (proporção ~0.7) — página de miolo
-   * em paisagem precisa ser girada no arquivo, não via CSS. Sem blend mode:
-   * a folha serve para comparar cor entre edições, e `multiply` alteraria
-   * a cor da arte. */
+  /** Opcional: prancha do miolo exibida sozinha, sem folha de papel por
+   * trás. Deve vir já em paisagem (1400×989) — a caixa usa essa proporção.
+   * Sem blend mode nem filtro: a prancha serve para comparar cor entre
+   * edições, e qualquer efeito alteraria a cor da arte. Sem ela, a caixa
+   * fica com um fundo neutro no lugar. */
   page?: { src: string; alt: string };
 };
 
 /**
- * Folha de sulfite (`paper.png`, mesma arte do `PaperTiltEffect` do upsell)
- * que inclina levemente seguindo o mouse — `rotateX`/`rotateY` via
- * `perspective`, aplicado direto em `ref.style.transform` para não
- * re-renderizar a cada pixel de movimento. Rastreio em `window`, não no
- * elemento: a folha reage ao mouse na página inteira, não só quando o
- * cursor está sobre ela. Desabilitado sem mouse fino ou com
- * `prefers-reduced-motion`.
+ * Prancha do miolo (a ilustração sozinha, sem mockup de papel) que inclina
+ * levemente seguindo o mouse — `rotateX`/`rotateY` via `perspective`,
+ * aplicado direto em `ref.style.transform` para não re-renderizar a cada
+ * pixel de movimento. Uma sombra leve embaixo dá o ar de folha solta sobre
+ * a página. Rastreio em `window`, não no elemento: a prancha reage ao mouse
+ * na página inteira, não só quando o cursor está sobre ela. Desabilitado sem
+ * mouse fino ou com `prefers-reduced-motion`.
  *
  * Junto com o tilt, uma luz difusa segue o cursor. É uma luz só para todas
- * as folhas da tela: o centro do gradiente fica na posição do cursor
- * relativa a cada folha, com raio fixo em px (não relativo ao tamanho da
- * folha), então duas folhas lado a lado mostram pedaços do mesmo feixe em vez
- * de cada uma ter o seu. Posição via CSS vars (`--glare-x`/`--glare-y`) no
+ * as pranchas da tela: o centro do gradiente fica na posição do cursor
+ * relativa a cada prancha, com raio fixo em px (não relativo ao tamanho
+ * dela), então duas pranchas na mesma tela mostram pedaços do mesmo feixe em
+ * vez de cada uma ter o seu. Posição via CSS vars (`--glare-x`/`--glare-y`) no
  * próprio elemento, sem re-render; aparece no primeiro movimento e some
  * quando o mouse sai da janela.
  */
@@ -116,31 +115,20 @@ export function TiltingPaper({ className, page }: TiltingPaperProps) {
         transitionTimingFunction: "ease-out",
       }}
     >
-      <div className="relative">
-        <Image
-          src="/images/upsell/paper.png"
-          alt=""
-          aria-hidden="true"
-          width={656}
-          height={900}
-          sizes="(min-width: 640px) 288px, 224px"
-          className="h-auto w-full drop-shadow-xl"
-        />
+      <div className="relative aspect-[1400/989] overflow-hidden bg-muted shadow-[0_12px_28px_-10px_rgb(0_0_0/0.35)]">
         {page && (
-          <div className={`${SHEET_AREA_CLASS} overflow-hidden`}>
-            <Image
-              src={page.src}
-              alt={page.alt}
-              fill
-              sizes="(min-width: 640px) 262px, 204px"
-              className="object-cover"
-            />
-          </div>
+          <Image
+            src={page.src}
+            alt={page.alt}
+            fill
+            sizes="(min-width: 1024px) 320px, (min-width: 768px) 256px, (min-width: 640px) 224px, 288px"
+            className="object-cover"
+          />
         )}
         <div
           ref={glareRef}
           aria-hidden="true"
-          className={`${SHEET_AREA_CLASS} pointer-events-none bg-radial-[circle_600px_at_var(--glare-x)_var(--glare-y)] from-white/40 via-white/15 via-45% to-white/0 opacity-0 transition-opacity`}
+          className="pointer-events-none absolute inset-0 bg-radial-[circle_600px_at_var(--glare-x)_var(--glare-y)] from-white/9 via-white/3 via-45% to-white/0 opacity-0 transition-opacity"
         />
       </div>
     </div>
