@@ -50,7 +50,10 @@ const RAW_HOME_BANNERS = [
   },
   {
     slug: "necroplanta",
-    videoSrc: "/videos/home/necroplanta.mp4",
+    // `-v2`: master refeito em 2× (3570×1300), 2560px para o site. Nome novo
+    // porque `/videos/*` vai com cache `immutable` (ver `next.config.ts`).
+    videoSrc: "/videos/home/necroplanta-v2.mp4",
+    videoSrcHevc: "/videos/home/necroplanta-v2.hevc.mp4",
     videoSrcMobile: "/videos/home/necroplanta-square.mp4",
     href: "/catalogo/necroplanta",
   },

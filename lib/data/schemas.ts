@@ -487,6 +487,10 @@ export const homeBannerSchema = z.object({
    * `videoSrc` em telas mobile (abaixo do breakpoint `sm`). Sem ele, o hero
    * cai no vídeo widescreen também no mobile. */
   videoSrcMobile: z.string().min(1).optional(),
+  /** Opcional: o mesmo `videoSrc` em HEVC (tag `hvc1`), mais nítido no mesmo
+   * peso. Só é usado onde o navegador decodifica HEVC (`canPlayType`) —
+   * nos demais, e no mobile, fica o `videoSrc` H.264 de sempre. */
+  videoSrcHevc: z.string().min(1).optional(),
   /** Para onde o banner leva ao ser clicado (página do livro ou `/campanhas`). */
   href: z.string().min(1),
   /** Rótulo acessível do link no hero ("Ver <label>") — o título do livro,

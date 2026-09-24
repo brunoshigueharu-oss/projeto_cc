@@ -8,6 +8,10 @@ import type { HomeBanner } from "@/lib/data/schemas";
  * banner deixa de ser quadrado e vira a faixa 1785/650. */
 const MOBILE_BANNER_MEDIA = "(max-width: 639px)";
 
+/** Tipo do `videoSrcHevc`: HEVC Main, nível 5.0 (o 2560×932 gerado pelo
+ * `hevc_videotoolbox`). A tag `hvc1` é a que o Safari exige. */
+const HEVC_VIDEO_TYPE = 'video/mp4; codecs="hvc1.1.6.L150.B0"';
+
 type HeroBannerVideoProps = {
   banner: HomeBanner;
   /** Posição do slide, em telas: `0` está em cena, `-1` espera encostado fora
@@ -41,8 +45,16 @@ export function HeroBannerVideo({ banner, offset, isActive, onPlaying }: HeroBan
       const video = videoRef.current;
       if (!video) return;
 
+      // No desktop, a versão HEVC entra só onde o navegador diz que toca —
+      // `canPlayType` devolve "" quando não (ex.: Chrome sem decodificação
+      // HEVC por hardware); aí fica o H.264. É a mesma escolha que o `type`
+      // do <source> faz sozinho, então não força um segundo `load()`.
+      const desktopSrc =
+        banner.videoSrcHevc && video.canPlayType(HEVC_VIDEO_TYPE) !== ""
+          ? banner.videoSrcHevc
+          : banner.videoSrc;
       const wanted =
-        query.matches && banner.videoSrcMobile ? banner.videoSrcMobile : banner.videoSrc;
+        query.matches && banner.videoSrcMobile ? banner.videoSrcMobile : desktopSrc;
       const current = video.currentSrc ? new URL(video.currentSrc).pathname : "";
       if (current === wanted) return;
 
@@ -91,6 +103,7 @@ export function HeroBannerVideo({ banner, offset, isActive, onPlaying }: HeroBan
       onPlaying={onPlaying}
     >
       {banner.videoSrcMobile && <source src={banner.videoSrcMobile} media={MOBILE_BANNER_MEDIA} />}
+      {banner.videoSrcHevc && <source src={banner.videoSrcHevc} type={HEVC_VIDEO_TYPE} />}
       <source src={banner.videoSrc} />
     </video>
   );
