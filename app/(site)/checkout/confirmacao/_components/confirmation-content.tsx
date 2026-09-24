@@ -38,7 +38,7 @@ export function ConfirmationContent({ orderId }: ConfirmationContentProps) {
         <Link
           href="/carrinho"
           className={cn(
-            buttonVariants({ variant: "accent", size: "lg" }),
+            buttonVariants({ variant: "brand", size: "lg" }),
             "mt-8 h-11 rounded-full px-7",
           )}
         >
@@ -63,7 +63,7 @@ export function ConfirmationContent({ orderId }: ConfirmationContentProps) {
       <Link
         href="/catalogo"
         className={cn(
-          buttonVariants({ variant: "accent", size: "lg" }),
+          buttonVariants({ variant: "brand", size: "lg" }),
           "mt-8 h-11 rounded-full px-7",
         )}
       >

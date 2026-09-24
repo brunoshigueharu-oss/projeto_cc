@@ -37,7 +37,7 @@ import { CampaignCountdown } from "./campaign-countdown";
  * O CTA é a pílula larga do site (`h-12 w-full text-base`, o mesmo formato do
  * banner de combo), não um retângulo com rótulo em caixa alta: era o único
  * botão do site com `font-display` maiúsculo, e a mesma ação aparece como
- * pílula dourada logo abaixo, na vitrine de `campaign-about`.
+ * pílula amarela logo abaixo, na vitrine de `campaign-about`.
  *
  * Fecha a seção o parágrafo de abertura da campanha (`about[0]`), que antes
  * abria "Sobre o projeto": é o convite do projeto, e lido logo abaixo do CTA
@@ -130,7 +130,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
             <Link
               href={campaign.ctaHref}
               className={cn(
-                buttonVariants({ variant: "accent", size: "lg" }),
+                buttonVariants({ variant: "brand", size: "lg" }),
                 "h-12 w-full rounded-full px-7 text-base",
               )}
             >

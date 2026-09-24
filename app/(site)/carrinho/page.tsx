@@ -25,7 +25,7 @@ export default function CarrinhoPage() {
         <Link
           href="/catalogo"
           className={cn(
-            buttonVariants({ variant: "accent", size: "lg" }),
+            buttonVariants({ variant: "brand", size: "lg" }),
             "mt-8 h-11 rounded-full px-7",
           )}
         >
@@ -104,7 +104,7 @@ export default function CarrinhoPage() {
         <span
           aria-disabled="true"
           className={cn(
-            buttonVariants({ variant: "accent", size: "lg" }),
+            buttonVariants({ variant: "brand", size: "lg" }),
             "mt-6 h-11 w-full cursor-not-allowed justify-center rounded-full px-7 opacity-50",
           )}
         >
@@ -114,7 +114,7 @@ export default function CarrinhoPage() {
         <Link
           href="/checkout"
           className={cn(
-            buttonVariants({ variant: "accent", size: "lg" }),
+            buttonVariants({ variant: "brand", size: "lg" }),
             "mt-6 h-11 w-full justify-center rounded-full px-7",
           )}
         >

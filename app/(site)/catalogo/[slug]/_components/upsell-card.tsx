@@ -18,9 +18,8 @@ const LABELS: Record<Locale, { exclusive: string }> = {
  *
  * Layout simples: card de texto (borda + fundo branco, igual ao resto do
  * site) ao lado das folhas soltas, sem nenhum painel colorido por trás delas
- * — nada muda no fundo da seção. CTA usa `variant="accent"` (dourado): agora
- * é o único CTA de compra do site que usa cor forte, então precisa ser
- * consistente com os demais mesmo sobre fundo claro.
+ * — nada muda no fundo da seção. CTA usa `variant="brand"` (amarelo da
+ * marca), o mesmo padrão de todo CTA de compra do site.
  */
 export function UpsellCard({ book }: { book: Book }) {
   if (!book.upsell) {
@@ -60,7 +59,7 @@ export function UpsellCard({ book }: { book: Book }) {
               </span>
               <span
                 className={cn(
-                  buttonVariants({ variant: "accent", size: "lg" }),
+                  buttonVariants({ variant: "brand", size: "lg" }),
                   "h-11 rounded-full px-7",
                 )}
               >
