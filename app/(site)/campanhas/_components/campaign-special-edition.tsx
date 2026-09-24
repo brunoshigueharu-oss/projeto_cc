@@ -24,9 +24,10 @@ import type { Book, Campaign } from "@/lib/data/schemas";
  * edição padrão prometeria um número que pode mudar.
  *
  * Antes do bloco vem a faixa de vídeo da edição (`book.videoBannerSrc`), na
- * mesma altura das faixas das páginas de livro — é a arte da variante noturna
- * que anuncia a seção, do jeito que a faixa do catálogo anuncia o destaque do
- * universo. Some junto com o resto quando o título não tem o asset.
+ * mesma altura da faixa de abertura da campanha (`size="hero"` do
+ * `VideoBanner`) — é a arte da variante noturna anunciando a seção, com o
+ * mesmo peso visual do hero que abre a página. Some junto com o resto quando
+ * o título não tem o asset.
  */
 export function CampaignSpecialEdition({
   campaign,
@@ -43,7 +44,9 @@ export function CampaignSpecialEdition({
 
   return (
     <>
-      {book.videoBannerSrc ? <VideoBanner src={book.videoBannerSrc} /> : null}
+      {book.videoBannerSrc ? (
+        <VideoBanner src={book.videoBannerSrc} size="hero" />
+      ) : null}
 
       <section className="border-t border-border">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">

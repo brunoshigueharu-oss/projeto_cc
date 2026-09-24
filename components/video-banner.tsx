@@ -4,18 +4,19 @@ import { useRef, useState } from "react";
 import { Moon, Pause, Play, Sun } from "lucide-react";
 
 import { LazyVideo } from "@/components/lazy-video";
+import { cn } from "@/lib/utils";
 
 /**
- * Faixa de vídeo em largura cheia, com a altura que separa duas seções sem
- * virar um segundo hero (`h-40` → `lg:h-72`). Mesmo padrão mudo/loop/autoplay
- * do vídeo de capa (ver `components/book-cover.tsx`).
+ * Faixa de vídeo em largura cheia. No tamanho `"default"` a altura separa
+ * duas seções sem virar um segundo hero (`h-56` → `lg:h-96`) — é o que o
+ * catálogo usa, entre o card de exemplar avulso e o destaque do universo
+ * (`video-banner-section.tsx`). Mesmo padrão mudo/loop/autoplay do vídeo de
+ * capa (ver `components/book-cover.tsx`).
  *
- * Mora em `components/` porque as duas páginas que mostram livro usam a mesma
- * faixa: o catálogo, entre o card de exemplar avulso e o destaque do universo
- * (`video-banner-section.tsx`, que resolve os campos do livro), e a campanha,
- * anunciando a Edição Noite (`campaign-special-edition.tsx`). A altura é a
- * mesma nas duas de propósito — é o que faz a faixa ler como divisor do site,
- * e não como abertura da seção seguinte.
+ * `size="hero"` troca a altura fixa pelo mesmo `aspect-[16/9] sm:aspect-
+ * [1440/540]` da faixa de abertura da campanha (`campaign-banner.tsx`): é o
+ * usado por `campaign-special-edition.tsx`, onde a faixa da Edição Noite
+ * precisa ler como um segundo hero (a arte da variante), não como divisor.
  *
  * Com `nightSrc`, os dois vídeos ficam empilhados e sempre tocando (ambos
  * mudos, custo de decode desprezível numa faixa desse tamanho) — alternar só
@@ -24,9 +25,11 @@ import { LazyVideo } from "@/components/lazy-video";
 export function VideoBanner({
   src,
   nightSrc,
+  size = "default",
 }: {
   src: string;
   nightSrc?: string;
+  size?: "default" | "hero";
 }) {
   const dayRef = useRef<HTMLVideoElement>(null);
   const nightRef = useRef<HTMLVideoElement>(null);
@@ -45,13 +48,23 @@ export function VideoBanner({
     }
   }
 
+  const dimensionClassName =
+    size === "hero"
+      ? "absolute inset-0 size-full"
+      : "h-56 w-full sm:h-72 md:h-80 lg:h-96";
+
   return (
-    <section className="group/video relative border-t border-border bg-background">
+    <section
+      className={cn(
+        "group/video relative border-t border-border bg-background",
+        size === "hero" && "aspect-[16/9] sm:aspect-[1440/540]",
+      )}
+    >
       {/* Faixa fica no meio da página: só baixa quando o usuário chega nela. */}
       <LazyVideo
         ref={dayRef}
         aria-hidden="true"
-        className="h-40 w-full object-cover transition-opacity duration-500 sm:h-56 md:h-64 lg:h-72"
+        className={cn(dimensionClassName, "object-cover transition-opacity duration-500")}
         style={nightSrc ? { opacity: isNight ? 0 : 1 } : undefined}
         src={src}
         autoPlay
@@ -65,7 +78,11 @@ export function VideoBanner({
         <LazyVideo
           ref={nightRef}
           aria-hidden="true"
-          className="absolute inset-0 h-40 w-full object-cover transition-opacity duration-500 sm:h-56 md:h-64 lg:h-72"
+          className={cn(
+            "absolute inset-0",
+            size === "hero" ? "size-full" : "h-56 w-full sm:h-72 md:h-80 lg:h-96",
+            "object-cover transition-opacity duration-500",
+          )}
           style={{ opacity: isNight ? 1 : 0 }}
           src={nightSrc}
           autoPlay
@@ -74,11 +91,14 @@ export function VideoBanner({
           playsInline
         />
       ) : null}
+      {/* Canto superior esquerdo — aqui não tem livro pra cobrir, então
+       pode ficar sobre a faixa mesmo; o canto direito fica livre para o
+       toggle dia/noite logo abaixo. */}
       <button
         type="button"
         onClick={handleTogglePlay}
         aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
-        className="absolute left-1/2 top-1/2 z-10 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/video:opacity-80"
+        className="absolute left-3 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/video:opacity-80"
       >
         {isPlaying ? (
           <Pause className="size-3.5 fill-current" />

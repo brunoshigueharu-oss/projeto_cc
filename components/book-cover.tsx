@@ -381,11 +381,16 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
       </div>
 
       {hasPauseControl ? (
+        // Canto superior direito, não o centro do quadro: no centro o botão
+        // caía em cima da ilustração da capa (o "P" de PLANT, no giro de
+        // Mr. Plant) — no canto ele fica sobre a margem em volta do livro, sem
+        // disputar espaço com o próprio objeto que está exibindo. O botão de
+        // virar (book-cover-flip.tsx) mora no canto oposto, embaixo.
         <button
           type="button"
           onClick={handleToggle}
           aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
-          className="absolute left-1/2 top-1/2 z-10 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
+          className="absolute right-1 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
         >
           {isPlaying ? (
             <Pause className="size-3.5 fill-current" />
