@@ -484,7 +484,7 @@ export type Campaign = z.infer<typeof campaignSchema>;
 export const homeBannerSchema = z.object({
   slug,
   videoSrc: z.string().min(1),
-  /** Opcional: recorte quadrado (700x700) do mesmo plano, usado no lugar de
+  /** Opcional: recorte quadrado (1080x1080) do mesmo plano, usado no lugar de
    * `videoSrc` em telas mobile (abaixo do breakpoint `sm`). Sem ele, o hero
    * cai no vídeo widescreen também no mobile. */
   videoSrcMobile: z.string().min(1).optional(),
