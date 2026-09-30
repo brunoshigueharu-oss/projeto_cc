@@ -65,11 +65,14 @@ perfil_de() {
            "-color_range pc -color_primaries bt709 -color_trc bt709 -colorspace bt709" \
            "-b:v 2000k"
       ;;
-    # Faixas em largura cheia (1920x1080, ~30s). Arte cinematográfica com
-    # fundo próprio — aceita compressão agressiva, e o `-maxrate` aqui segura
-    # o pico nas cenas de mais movimento.
+    # Faixas em largura cheia (1920x1080, ~30s). NÃO aceitam compressão
+    # agressiva: o `object-cover` recorta só uma tira do 16:9 e a amplia em
+    # tela larga/retina, e a 1600k o videotoolbox virava a textura do couro
+    # e o granulado das capas em blocos (SSIM 0,94). A 5000k fica em
+    # 0,97-0,99. Se o master já vier abaixo disso, não re-encode — só
+    # `-c copy -movflags +faststart` (foi o caso da caixa de relíquias).
     */videos/faixas/*)
-      echo "-b:v 1600k -maxrate 2400k -bufsize 4800k"
+      echo "-b:v 5000k -maxrate 7500k -bufsize 15000k"
       ;;
     # Banners do hero da home (1784x650 e as variantes -square).
     */videos/home/*)

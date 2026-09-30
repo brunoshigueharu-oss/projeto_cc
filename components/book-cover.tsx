@@ -385,7 +385,8 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
         // caía em cima da ilustração da capa (o "P" de PLANT, no giro de
         // Mr. Plant) — no canto ele fica sobre a margem em volta do livro, sem
         // disputar espaço com o próprio objeto que está exibindo. O botão de
-        // virar (book-cover-flip.tsx) mora no canto oposto, embaixo.
+        // virar (book-cover-flip.tsx) fica colado à esquerda deste, no mesmo
+        // vidro — mudar tamanho ou posição aqui pede ajustar lá também.
         <button
           type="button"
           onClick={handleToggle}

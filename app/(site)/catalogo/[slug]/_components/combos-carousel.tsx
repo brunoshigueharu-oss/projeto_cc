@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Truck } from "lucide-react";
@@ -14,6 +13,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import type { Book, Combo } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
@@ -38,27 +38,64 @@ type CombosCarouselProps = {
   combos: readonly CombosCarouselItem[];
 };
 
+/** Quanto tempo um combo sem faixa (ou com reduced-motion) fica em cena
+ *  antes de o carousel passar para o próximo. */
+const COMBO_STATIC_SLIDE_MS = 5000;
+
 /**
  * Único ponto com JS de cliente da seção de combos — precisa do embla
- * (`components/ui/carousel.tsx`) pra rodar o autoplay e as setas. O resto da
- * página de livro renderiza no servidor, mesma exceção já documentada em
- * `parallax-section.tsx`.
+ * (`components/ui/carousel.tsx`) pra rodar o avanço automático e as setas. O
+ * resto da página de livro renderiza no servidor, mesma exceção já
+ * documentada em `parallax-section.tsx`.
+ *
+ * Sem o plugin de autoplay do embla: com delay fixo ele trocava de combo no
+ * meio de uma faixa. Quem pede o próximo slide é o próprio banner, quando a
+ * última faixa do kit termina (ver `ComboVideoRotator`).
  */
 export function CombosCarousel({ combos }: CombosCarouselProps) {
-  const [autoplayPlugin] = useState(() =>
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
-  );
+  const [api, setApi] = useState<CarouselApi>();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const handleSelect = () => setSelectedIndex(api.selectedScrollSnap());
+    api.on("select", handleSelect);
+    return () => {
+      api.off("select", handleSelect);
+    };
+  }, [api]);
+
+  // Combo sem nenhuma faixa no kit não tem `ended` pra esperar: fica em cena
+  // o tempo de um slide comum.
+  const hasSelectedVideos = (combos[selectedIndex]?.videoSrcs.length ?? 0) > 0;
+  useEffect(() => {
+    if (!api || hasSelectedVideos || combos.length < 2) return;
+
+    const timer = setTimeout(() => api.scrollNext(), COMBO_STATIC_SLIDE_MS);
+    return () => clearTimeout(timer);
+  }, [api, selectedIndex, hasSelectedVideos, combos.length]);
+
+  // Só o slide em cena avança o carousel: um banner que ainda estivesse
+  // terminando uma faixa fora de vista não pode arrastar o slide atual.
+  const handleBannerFinished = (index: number) => {
+    if (!api || api.selectedScrollSnap() !== index) return;
+    api.scrollNext();
+  };
 
   return (
     <Carousel
       opts={{ loop: combos.length > 1 }}
-      plugins={[autoplayPlugin]}
+      setApi={setApi}
       className="w-full"
     >
       <CarouselContent>
-        {combos.map((item) => (
+        {combos.map((item, index) => (
           <CarouselItem key={item.combo.slug}>
-            <ComboBanner item={item} />
+            <ComboBanner
+              item={item}
+              onFinished={() => handleBannerFinished(index)}
+            />
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -78,7 +115,13 @@ export function CombosCarousel({ combos }: CombosCarouselProps) {
  * esquerda e o painel branco da oferta (o que vem no kit, preço e CTA) à
  * direita — empilha no mobile, vídeo primeiro.
  */
-function ComboBanner({ item }: { item: CombosCarouselItem }) {
+function ComboBanner({
+  item,
+  onFinished,
+}: {
+  item: CombosCarouselItem;
+  onFinished: () => void;
+}) {
   const { combo, books, formattedPrice, formattedOriginalPrice, videoSrcs } = item;
 
   return (
@@ -87,7 +130,7 @@ function ComboBanner({ item }: { item: CombosCarouselItem }) {
     // padrão de Card é escuro demais pra ficar rente ao vídeo e claro demais
     // pra segurar o painel, e some contra o branco da seção.
     <div className="grid overflow-hidden rounded-[28px] border border-border shadow-lg shadow-foreground/10 lg:grid-cols-[3fr_2fr]">
-      <ComboStage combo={combo} videoSrcs={videoSrcs} />
+      <ComboStage combo={combo} videoSrcs={videoSrcs} onFinished={onFinished} />
       <ComboOffer
         combo={combo}
         books={books}
@@ -110,9 +153,11 @@ function ComboBanner({ item }: { item: CombosCarouselItem }) {
 function ComboStage({
   combo,
   videoSrcs,
+  onFinished,
 }: {
   combo: Combo;
   videoSrcs: readonly string[];
+  onFinished: () => void;
 }) {
   return (
     // No mobile a altura é só dessa faixa (o painel vem embaixo), e o título
@@ -120,7 +165,7 @@ function ComboStage({
     // `min-h-64` que bastaria para o vídeo sozinho.
     <div className="relative min-h-72 overflow-hidden bg-primary sm:min-h-80 lg:min-h-[26rem]">
       {videoSrcs.length > 0 ? (
-        <ComboVideoRotator srcs={videoSrcs} />
+        <ComboVideoRotator srcs={videoSrcs} onFinished={onFinished} />
       ) : combo.image ? (
         <Image
           src={combo.image.src}
@@ -143,24 +188,14 @@ function ComboStage({
   );
 }
 
-/** Quanto tempo o close-up de cada livro do kit fica em cena antes de entrar
- *  o do próximo. */
-const COMBO_VIDEO_INTERVAL_MS = 2000;
-
-/** De quanto em quanto tempo cada faixa seguinte começa mais adiante na
- *  própria duração (a 1ª abre no 0, a 2ª no 4s, a 3ª no 8s...).
- *
- *  As faixas são todas o mesmo tipo de plano — o livro girando em fundo
- *  claro — e duram uns 23s. Começando todas do zero, o rodízio parecia um
- *  vídeo só cortado em pedaços, porque os quatro abriam no mesmo momento da
- *  animação. Escalonando a entrada, cada uma aparece num ponto diferente do
- *  giro e a troca fica legível como "outro livro". */
-const COMBO_VIDEO_START_STAGGER_S = 4;
-
 /**
- * Faixas do kit em rodízio: mostra uma por vez e passa para a próxima a cada
- * `COMBO_VIDEO_INTERVAL_MS`, com crossfade, de modo que o banner apresente
- * todos os livros da oferta e não só um.
+ * Faixas do kit em sequência: cada uma toca inteira, do começo ao fim, e só
+ * então entra a próxima com crossfade — o banner apresenta todos os livros da
+ * oferta sem cortar nenhum close-up no meio. Ao fim da última, avisa
+ * `onFinished` (o carousel passa para o próximo combo) e recomeça da primeira.
+ *
+ * Sem faixas para tocar (reduced-motion), o banner fica parado na primeira e
+ * avisa `onFinished` depois de `COMBO_STATIC_SLIDE_MS`, como um slide comum.
  *
  * Não usa `LazyVideo` porque aqui há vários `<video>` na mesma posição: o
  * observer daquele componente veria todos como visíveis e mandaria tocar
@@ -170,7 +205,13 @@ const COMBO_VIDEO_START_STAGGER_S = 4;
  * dar tempo de bufferizar), e fora da tela tudo pausa. São 4,5 MB por faixa,
  * então baixar as quatro de um combo de uma vez custaria caro.
  */
-function ComboVideoRotator({ srcs }: { srcs: readonly string[] }) {
+function ComboVideoRotator({
+  srcs,
+  onFinished,
+}: {
+  srcs: readonly string[];
+  onFinished: () => void;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [isInView, setIsInView] = useState(false);
@@ -230,27 +271,37 @@ function ComboVideoRotator({ srcs }: { srcs: readonly string[] }) {
     ).matches;
   }, []);
 
+  // `onFinished` muda a cada render do carousel; a ref evita reiniciar o
+  // timer do modo parado por causa disso.
+  const onFinishedRef = useRef(onFinished);
   useEffect(() => {
-    if (!isInView || srcs.length < 2 || prefersReducedMotion.current) return;
+    onFinishedRef.current = onFinished;
+  }, [onFinished]);
 
-    const timer = setInterval(() => {
-      setStep((current) => {
-        // Segurar a faixa atual mais um ciclo é melhor do que entrar com um
-        // quadro vazio: numa conexão lenta a próxima ainda pode estar
-        // baixando quando dá a hora. `readyState < HAVE_CURRENT_DATA` (2) é
-        // "não tem nem o frame atual".
-        const video = videoRefs.current[(current + 1) % srcs.length];
-        return video && video.readyState >= 2 ? current + 1 : current;
-      });
-    }, COMBO_VIDEO_INTERVAL_MS);
+  useEffect(() => {
+    if (!isInView || !prefersReducedMotion.current) return;
 
-    return () => clearInterval(timer);
-  }, [isInView, srcs.length]);
+    const timer = setTimeout(
+      () => onFinishedRef.current(),
+      COMBO_STATIC_SLIDE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [isInView]);
 
-  // Só a faixa em cena toca; as outras ficam pausadas no ponto em que
-  // pararam e voltam de lá na próxima vez que entrarem — assim cada volta do
-  // rodízio mostra um trecho novo em vez de repetir os mesmos dois segundos
-  // iniciais.
+  // Chamado no `ended` da faixa em cena. Ela volta pro zero já aqui, pausada
+  // e invisível, para abrir inteira na próxima volta do rodízio.
+  const handleVideoEnded = (index: number) => {
+    if (index !== activeIndex) return;
+
+    const video = videoRefs.current[index];
+    if (video) video.currentTime = 0;
+
+    if (index === srcs.length - 1) onFinished();
+    setStep((current) => current + 1);
+  };
+
+  // Só a faixa em cena toca; as outras ficam pausadas. Uma faixa que saiu de
+  // cena no meio (o banner rolou pra fora da tela) retoma de onde parou.
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
@@ -263,7 +314,9 @@ function ComboVideoRotator({ srcs }: { srcs: readonly string[] }) {
         video.pause();
       }
     });
-  }, [activeIndex, isInView, hasAppeared]);
+    // `step` (e não só `activeIndex`) porque, com uma faixa só, o índice
+    // nunca muda e o vídeo precisa voltar a tocar depois do `ended`.
+  }, [activeIndex, step, isInView, hasAppeared]);
 
   return (
     <div ref={stageRef} className="absolute inset-0">
@@ -282,18 +335,8 @@ function ComboVideoRotator({ srcs }: { srcs: readonly string[] }) {
           // gastar conexão com um vídeo que talvez nem chegue a aparecer.
           preload={isLoaded(index) ? "auto" : "none"}
           src={isLoaded(index) ? src : undefined}
-          // Roda uma vez por faixa, quando o `src` dela entra no DOM — é o
-          // primeiro momento em que a duração é conhecida. O `%` é pro caso
-          // de uma faixa curta: em vez de um seek além do fim (que o
-          // navegador prende no último frame), o ponto de partida dá a volta.
-          onLoadedMetadata={(event) => {
-            const video = event.currentTarget;
-            if (!Number.isFinite(video.duration) || video.duration === 0) return;
-
-            video.currentTime =
-              (index * COMBO_VIDEO_START_STAGGER_S) % video.duration;
-          }}
-          loop
+          // Sem `loop`: é o `ended` que passa a vez para a próxima faixa.
+          onEnded={() => handleVideoEnded(index)}
           muted
           playsInline
         />

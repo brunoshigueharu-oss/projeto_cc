@@ -150,7 +150,7 @@ const RAW_BOOKS = [
     backVideoSrc: "/videos/livros/verso/mr-plant-a-biped-among-plants.mp4",
     // Sem faixa própria enviada para a edição em inglês — reaproveita a faixa
     // já existente da edição em português (cena genérica, sem texto).
-    videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
+    videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas-v2.mp4",
     // Mesmas fotos de "outras visões" da edição em português — o miolo
     // fotografado é o mesmo, só a capa impressa muda (inglês x português).
     gallery: [
@@ -260,7 +260,7 @@ const RAW_BOOKS = [
     // com o scale acima isso cortava o pé do livro ao virar. Medido pela
     // borda do livro em 8 frames dos dois vídeos.
     backVideoOffsetY: -11.3,
-    videoBannerSrc: "/videos/faixas/os-contos-do-planta-1.mp4",
+    videoBannerSrc: "/videos/faixas/os-contos-do-planta-1-v2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
       { src: "/images/galeria/os-contos-do-planta-1/02.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 1" },
@@ -343,9 +343,16 @@ const RAW_BOOKS = [
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.4,
     backVideoSrc: "/videos/livros/verso/os-contos-do-planta-2.mp4",
-    // Mesmo desencontro de altura entre frente e verso do volume 1.
-    backVideoOffsetY: -11.5,
-    videoBannerSrc: "/videos/faixas/os-contos-do-planta-2.mp4",
+    // O render do verso veio com a arte de ponta-cabeça; o vídeo foi girado
+    // 180° no ffmpeg (hflip,vflip). O giro leva junto dois efeitos:
+    // - o livro, que no render saía mais baixo que a frente (como no volume
+    //   1), passou a sair mais alto — 155px de 1216 pelo centro do livro em
+    //   8 frames, daí o offset positivo;
+    // - o hflip espelha o balanço, e a meia volta de defasagem o recasa com
+    //   a frente (mesmo caso do Yanayag, ver nota lá).
+    backVideoOffsetY: 12.8,
+    backVideoPhase: 0.5,
+    videoBannerSrc: "/videos/faixas/os-contos-do-planta-2-v2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
       { src: "/images/galeria/os-contos-do-planta-2/02.jpg", alt: "Página 7 do miolo de Os Contos do Planta — Vol. 2" },
@@ -446,7 +453,7 @@ const RAW_BOOKS = [
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.39,
     backVideoSrc: "/videos/livros/verso/robo-de-madeira-atlas-cianus.mp4",
-    videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus.mp4",
+    videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-v2.mp4",
     gallery: [
       { src: "/images/galeria/robo-de-madeira-atlas-cianus/01.jpg", alt: "Detalhe da capa do Robô de Madeira, com o autômato entalhado em relevo dourado" },
       { src: "/images/galeria/robo-de-madeira-atlas-cianus/02.jpg", alt: "Capa do Robô de Madeira aberta em ângulo, mostrando o acabamento dourado e a contracapa" },
@@ -537,7 +544,7 @@ const RAW_BOOKS = [
     // reduz um pouco o zoom pra equilibrar o tamanho aparente na vitrine.
     coverVideoScale: 0.92,
     backVideoSrc: "/videos/livros/verso/robo-de-madeira-atlas-cianus-art-edition.mp4",
-    videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition.mp4",
+    videoBannerSrc: "/videos/faixas/robo-de-madeira-atlas-cianus-art-edition-v2.mp4",
     // Mesmas fotos de "outras visões" da edição padrão — o exemplar
     // fotografado é o mesmo miolo/capa, a caixa e a luva da Art Edition ainda
     // não foram fotografadas separadamente.
@@ -645,7 +652,7 @@ const RAW_BOOKS = [
     // Mesmo ajuste de enquadramento dos outros livros — ver nota em
     // `os-contos-do-planta-1`.
     coverVideoScale: 0.98,
-    videoBannerSrc: "/videos/faixas/os-contos-do-planta-caixa-de-reliquias.mp4",
+    videoBannerSrc: "/videos/faixas/os-contos-do-planta-caixa-de-reliquias-v2.mp4",
     gallery: [
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/01.jpg", alt: "Caixa de Relíquias aberta, com o jornal O Noticiarista Oculto e o tabuleiro" },
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/02.jpg", alt: "Verso do tabuleiro da Caixa de Relíquias, com o mapa de Curytiba em 1930" },
@@ -786,10 +793,8 @@ const RAW_BOOKS = [
     coverVideoSrc: "/videos/livros/necroplanta.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
     coverVideoScale: 1.39,
-    backVideoSrc: "/videos/livros/verso/necroplanta.mp4",
-    // Mesmo desencontro de altura entre frente e verso do volume 1.
-    backVideoOffsetY: -10.8,
-    videoBannerSrc: "/videos/faixas/necroplanta.mp4",
+    backVideoSrc: "/videos/livros/verso/necroplanta-v2.mp4",
+    videoBannerSrc: "/videos/faixas/necroplanta-v3.mp4",
     gallery: [
       { src: "/images/galeria/necroplanta/01.jpg", alt: "Página 10 do miolo de Necroplanta" },
       { src: "/images/galeria/necroplanta/02.jpg", alt: "Página 17 do miolo de Necroplanta" },
@@ -912,8 +917,8 @@ const RAW_BOOKS = [
     backVideoScale: 1.046,
     backVideoOffsetY: -0.58,
     backVideoPhase: 0.5,
-    videoBannerSrc: "/videos/faixas/yanayag.mp4",
-    videoBannerNightSrc: "/videos/faixas/yanayag-noite.mp4",
+    videoBannerSrc: "/videos/faixas/yanayag-v2.mp4",
+    videoBannerNightSrc: "/videos/faixas/yanayag-noite-v2.mp4",
     gallery: [
       { src: "/images/galeria/yanayag/01.jpg", alt: "Página de abertura do Capítulo 2 de Yanayag" },
       { src: "/images/galeria/yanayag/02.jpg", alt: "Página do Capítulo 12 de Yanayag" },
@@ -1019,7 +1024,7 @@ const RAW_BOOKS = [
     // dela (`videoBannerNightSrc`, acima): lá é o outro lado de um botão,
     // aqui é a faixa própria desta edição, que a seção "Edição Noite" de
     // `/campanhas` mostra antes do exemplar.
-    videoBannerSrc: "/videos/faixas/yanayag-noite.mp4",
+    videoBannerSrc: "/videos/faixas/yanayag-noite-v2.mp4",
     // ATENÇÃO: espelha o preço da edição padrão enquanto a editora não
     // confirma o valor da tiragem limitada. A seção da campanha não exibe
     // preço justamente por isso — substituir antes de abrir a venda.
@@ -1046,7 +1051,7 @@ const RAW_BOOKS = [
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/um-bipede-entre-plantas.mp4",
     backVideoSrc: "/videos/livros/verso/um-bipede-entre-plantas.mp4",
-    videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas.mp4",
+    videoBannerSrc: "/videos/faixas/um-bipede-entre-plantas-v2.mp4",
     gallery: [
       {
         src: "/images/galeria/um-bipede-entre-plantas/01.jpg",

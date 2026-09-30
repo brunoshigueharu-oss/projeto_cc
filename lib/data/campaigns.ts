@@ -29,7 +29,7 @@ const RAW_CAMPAIGN = {
   ctaHref: "/catalogo/yanayag",
   relatedBookSlugs: ["yanayag"],
   bannerVideo: {
-    src: "/videos/faixas/yanayag.mp4",
+    src: "/videos/faixas/yanayag-v2.mp4",
     alt: "Faixa animada do universo de Yanayag",
   },
   funding: {

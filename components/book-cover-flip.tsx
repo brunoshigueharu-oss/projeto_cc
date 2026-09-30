@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 import type { Book, Locale } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
@@ -37,9 +37,10 @@ const LABELS: Record<
  * lib/data/schemas.ts). Sem esse asset no título, o componente renderiza a
  * mesma capa de sempre, sem botão.
  *
- * O botão flutua no canto inferior direito do próprio quadro, em vidro: como
- * bloco abaixo da capa ele separava o vídeo da fileira de páginas internas e
- * pesava mais que a mídia que comanda.
+ * O botão é só ícone, no mesmo vidro do botão de pausar e colado nele, no
+ * canto superior direito do quadro: os dois controles da mídia ficam juntos e
+ * fora da ilustração. A pílula com texto no canto de baixo pesava mais que a
+ * mídia que comanda — o texto segue no `aria-label` e no tooltip.
  *
  * O `backVideoSrc` só desce para o BookCover depois do primeiro clique: é um
  * arquivo do mesmo peso do vídeo de capa (~5 MB), e quem não virar o livro não
@@ -66,7 +67,7 @@ export function BookCoverFlip({ book }: { book: Book }) {
   }
 
   return (
-    <div className="relative">
+    <div className="group/flip relative">
       <BookCover
         title={book.title}
         alt={book.coverAlt}
@@ -85,20 +86,25 @@ export function BookCoverFlip({ book }: { book: Book }) {
       />
 
       {canFlip ? (
+        // `right-10` põe o botão logo à esquerda do de pausar (right-1, size-8
+        // em book-cover.tsx), com 4px de respiro entre os dois.
         <button
           type="button"
           onClick={handleFlip}
-          aria-pressed={showBack}
-          className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full border border-border bg-background/80 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur-[10px] transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          aria-label={showBack ? labels.showFront : labels.showBack}
+          title={showBack ? labels.showFront : labels.showBack}
+          className="absolute right-10 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/flip:opacity-80"
         >
-          <RotateCw
+          {/* Mesmo tamanho do ícone de pausar; o traço mais grosso compensa
+              o Pause ser preenchido e este só contorno. */}
+          <RotateCcw
             aria-hidden="true"
+            strokeWidth={3}
             className={cn(
               "size-3.5 transition-transform duration-500",
               showBack && "-scale-x-100",
             )}
           />
-          {showBack ? labels.showFront : labels.showBack}
         </button>
       ) : null}
     </div>

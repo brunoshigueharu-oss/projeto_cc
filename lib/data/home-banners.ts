@@ -16,9 +16,9 @@ const RAW_HOME_BANNERS = [
     // Chamada de campanha: não pertence a um livro, então não passa pelo
     // filtro de publicação abaixo e leva para `/campanhas`.
     slug: "chamada-novos-quadrinhos",
-    videoSrc: "/videos/home/chamada-novos-quadrinhos-v2.mp4",
-    videoSrcHevc: "/videos/home/chamada-novos-quadrinhos-v2.hevc.mp4",
-    videoSrcMobile: "/videos/home/chamada-novos-quadrinhos-v2-square.mp4",
+    videoSrc: "/videos/home/chamada-novos-quadrinhos-v3.mp4",
+    videoSrcHevc: "/videos/home/chamada-novos-quadrinhos-v3.hevc.mp4",
+    videoSrcMobile: "/videos/home/chamada-novos-quadrinhos-v3-square.mp4",
     href: "/campanhas",
     label: "campanhas de novos quadrinhos",
   },
