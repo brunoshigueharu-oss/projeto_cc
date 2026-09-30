@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { GalleryLightbox, prefersReducedMotion } from "@/components/gallery/gallery-lightbox";
 
 import type { Book } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
@@ -50,8 +50,8 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
 
     const closest = cards.reduce(
       (closestIndex, card, index) =>
-        Math.abs(card.offsetLeft - track.scrollLeft) <
-        Math.abs(cards[closestIndex].offsetLeft - track.scrollLeft)
+        Math.abs(card.offsetLeft - cards[0].offsetLeft - track.scrollLeft) <
+        Math.abs(cards[closestIndex].offsetLeft - cards[0].offsetLeft - track.scrollLeft)
           ? index
           : closestIndex,
       0,
@@ -107,6 +107,7 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
     // Arrasto de verdade não deve abrir o lightbox da foto.
     if (dragDistance.current > 5) {
       event.preventDefault();
+      event.stopPropagation();
     }
   }
 
@@ -114,31 +115,8 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
     const track = trackRef.current;
     const card = track?.children[index] as HTMLElement | undefined;
     if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+    track.scrollTo({ left: card.offsetLeft - (track.firstElementChild as HTMLElement).offsetLeft, behavior: prefersReducedMotion() ? "instant" : "smooth" });
   }
-
-  const close = useCallback(() => setOpenIndex(null), []);
-  const showPrevious = useCallback(
-    () => setOpenIndex((current) => (current === null ? current : (current - 1 + images.length) % images.length)),
-    [images.length],
-  );
-  const showNext = useCallback(
-    () => setOpenIndex((current) => (current === null ? current : (current + 1) % images.length)),
-    [images.length],
-  );
-
-  useEffect(() => {
-    if (openIndex === null) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") showPrevious();
-      if (event.key === "ArrowRight") showNext();
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [openIndex, close, showPrevious, showNext]);
 
   return (
     <div className="mt-4">
@@ -150,7 +128,7 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
         aria-label={`Outras fotos de ${bookTitle}`}
         onPointerDown={handlePointerDown}
         onClickCapture={handleClickCapture}
-        className="flex cursor-grab snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex cursor-grab snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain motion-safe:scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {images.map((image, index) => (
           <li key={image.src} className="w-[88px] shrink-0 snap-start">
@@ -174,7 +152,7 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
       </ul>
 
       {images.length > 1 ? (
-        <div className="mt-3 flex items-center justify-center gap-2">
+        <div className="mt-1 flex flex-wrap items-center justify-center">
           {images.map((image, index) => (
             <button
               key={image.src}
@@ -182,72 +160,24 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
               aria-label={`Ir para foto ${index + 1}`}
               aria-current={index === activeIndex}
               onClick={() => scrollToIndex(index)}
-              className={cn(
-                "h-1.5 rounded-full bg-foreground/15 transition-all",
-                index === activeIndex ? "w-6 bg-primary" : "w-1.5 hover:bg-foreground/30",
-              )}
-            />
+              className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <span aria-hidden="true" className={cn("h-1.5 rounded-full motion-safe:transition-all", index === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/15")} />
+            </button>
           ))}
         </div>
       ) : null}
 
       {openIndex !== null ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={images[openIndex].alt}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6"
-          onClick={close}
-        >
-          <button
-            type="button"
-            onClick={close}
-            aria-label="Fechar"
-            className="absolute right-6 top-6 text-white/80 transition hover:text-white"
-          >
-            <X className="size-8" aria-hidden="true" />
-          </button>
-
-          {images.length > 1 ? (
-            <>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  showPrevious();
-                }}
-                aria-label="Foto anterior"
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white sm:left-6"
-              >
-                <ChevronLeft className="size-10" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  showNext();
-                }}
-                aria-label="Próxima foto"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white sm:right-6"
-              >
-                <ChevronRight className="size-10" aria-hidden="true" />
-              </button>
-            </>
-          ) : null}
-
-          <div
-            className="relative h-[85vh] w-[90vw]"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <Image
-              src={images[openIndex].src}
-              alt={images[openIndex].alt}
-              fill
-              sizes="90vw"
-              className="object-contain"
-            />
-          </div>
-        </div>
+        <GalleryLightbox
+          images={images}
+          initialIndex={openIndex}
+          getThumbnail={(index) => trackRef.current?.children[index]?.querySelector("button") ?? null}
+          revealThumbnail={(index) => {
+            trackRef.current?.children[index]?.scrollIntoView({ behavior: "instant", block: "nearest", inline: "nearest" });
+          }}
+          onClose={() => setOpenIndex(null)}
+        />
       ) : null}
     </div>
   );

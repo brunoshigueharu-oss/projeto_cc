@@ -58,6 +58,14 @@ export function BookHero({ book, universe }: BookHeroProps) {
   const isAvailable = isInStock(book.status);
   const isPurchasable = isBookPurchasable(book.status);
   const labels = LABELS[book.locale];
+  const universeLink = (
+    <Link
+      href={`/catalogo?universo=${universe.slug}`}
+      className="text-sm font-medium text-foreground/70 underline-offset-4 hover:text-foreground hover:underline"
+    >
+      {labels.seeUniverse(universe.name)}
+    </Link>
+  );
 
   return (
     <section className="relative overflow-hidden bg-background text-foreground">
@@ -128,6 +136,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
                 slug={book.slug}
                 label={isAvailable ? labels.buy : labels.reserve}
                 addedLabel={labels.added}
+                secondaryAction={universeLink}
               />
             ) : (
               <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
@@ -135,12 +144,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
               </span>
             )}
 
-            <Link
-              href={`/catalogo?universo=${universe.slug}`}
-              className="text-sm font-medium text-foreground/70 underline-offset-4 hover:text-foreground hover:underline"
-            >
-              {labels.seeUniverse(universe.name)}
-            </Link>
+            {!isPurchasable ? universeLink : null}
           </div>
         </div>
       </div>

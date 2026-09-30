@@ -79,7 +79,13 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
     <div className="mt-10">
       <Carousel
         setApi={setApi}
-        opts={{ loop: books.length > 1, align: "start", skipSnaps: true, duration: 30 }}
+        opts={{
+          loop: books.length > 1,
+          align: "start",
+          skipSnaps: true,
+          duration: 30,
+          breakpoints: { "(prefers-reduced-motion: reduce)": { duration: 0 } },
+        }}
         plugins={[wheelGesturesPlugin]}
         className="w-full"
       >
@@ -116,19 +122,28 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
           centram na altura do elemento do carrossel (`inset-y-0 my-auto`), e
           com elas dentro o eixo desceria meia fileira de bolinhas. */}
       {books.length > 1 ? (
-        <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
           {books.map((book, index) => (
             <button
               key={book.slug}
               type="button"
               aria-label={`Ir para ${book.title}`}
               aria-current={index === selectedIndex}
-              onClick={() => api?.scrollTo(index)}
-              className={cn(
-                "h-1.5 rounded-full bg-foreground/15 transition-all",
-                index === selectedIndex ? "w-6 bg-primary" : "w-1.5 hover:bg-foreground/30",
-              )}
-            />
+              onClick={() =>
+                api?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+              }
+              className="group flex size-11 shrink-0 touch-manipulation items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "h-1.5 rounded-full transition-[width,background-color] motion-reduce:transition-none",
+                  index === selectedIndex
+                    ? "w-6 bg-primary"
+                    : "w-1.5 bg-foreground/15 group-hover:bg-foreground/30",
+                )}
+              />
+            </button>
           ))}
         </div>
       ) : null}

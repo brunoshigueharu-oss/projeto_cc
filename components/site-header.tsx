@@ -32,7 +32,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6">
+      <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2 justify-self-start">
           <Seal className="size-9" />
           <Wordmark className="h-7 w-auto text-foreground" />
@@ -58,7 +58,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center justify-end gap-1 justify-self-end">
-          <CartLink className={ICON_LINK_CLASS} />
+          <CartLink className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none md:size-9" />
 
           {!loading && loggedIn ? (
             <>

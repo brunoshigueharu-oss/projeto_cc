@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { GalleryLightbox, prefersReducedMotion } from "@/components/gallery/gallery-lightbox";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 
 import {
+  type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -21,14 +22,7 @@ type GalleryImages = NonNullable<Campaign["gallery"]>;
  * (`box-contents-section.tsx`): sobre fundo claro o vidro é `background/80`
  * com blur, não o `white/8` que o Hero usa sobre vídeo. */
 const NAV_BUTTON_CLASSNAME =
-  "hidden size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
-
-/** Controles da página aberta. Aqui o fundo é a própria arte sobre preto, e
- * é o caso em que o guia manda usar vidro: o `white/8` + `white/24` do Hero,
- * que é o que mantém a seta legível quando ela cai sobre uma área branca da
- * ilustração — um chevron branco solto desapareceria. */
-const LIGHTBOX_BUTTON_CLASSNAME =
-  "absolute top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition hover:bg-white/16 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "flex size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
 
 /**
  * Fileira horizontal com as páginas do miolo, em carrossel embla — a grade
@@ -94,53 +88,41 @@ const LIGHTBOX_BUTTON_CLASSNAME =
  */
 export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const thumbnails = useRef<(HTMLButtonElement | null)[]>([]);
+  const [api, setApi] = useState<CarouselApi>();
+  const [activeIndex, setActiveIndex] = useState(0);
   const [wheelGesturesPlugin] = useState(() => WheelGesturesPlugin());
-  const isOpen = openIndex !== null;
-
-  const close = useCallback(() => setOpenIndex(null), []);
-  const showPrevious = useCallback(
-    () =>
-      setOpenIndex((current) =>
-        current === null ? current : (current - 1 + images.length) % images.length,
-      ),
-    [images.length],
-  );
-  const showNext = useCallback(
-    () =>
-      setOpenIndex((current) =>
-        current === null ? current : (current + 1) % images.length,
-      ),
-    [images.length],
-  );
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") showPrevious();
-      if (event.key === "ArrowRight") showNext();
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, close, showPrevious, showNext]);
+    if (!api) return;
+    const update = () => setActiveIndex(api.selectedScrollSnap());
+    api.on("select", update);
+    api.on("reInit", update);
+    return () => { api.off("select", update); api.off("reInit", update); };
+  }, [api]);
 
   useEffect(() => {
-    // Tira o foco do carrossel — o embla também escuta as setas do teclado no
-    // elemento focado, e sem isso navegar na página aberta arrastaria a
-    // fileira de fundo. Só na abertura (`isOpen`, não `openIndex`): a cada
-    // página o foco voltaria para cá e roubaria o botão que acabou de ser
-    // clicado, quebrando o clique seguinte no teclado.
-    if (isOpen) dialogRef.current?.focus();
-  }, [isOpen]);
+    if (!api) return;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => api.reInit({ duration: media.matches ? 0 : 30 });
+    updateMotion();
+    media.addEventListener("change", updateMotion);
+    return () => media.removeEventListener("change", updateMotion);
+  }, [api]);
 
   if (images.length === 0) return null;
 
   return (
     <>
       <Carousel
+        setApi={setApi}
+        onKeyDownCapture={(event) => {
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            if (event.key === "ArrowLeft") api?.scrollPrev(prefersReducedMotion());
+            else api?.scrollNext(prefersReducedMotion());
+          }
+        }}
         opts={{ loop: images.length > 1, align: "start", skipSnaps: true, duration: 30 }}
         plugins={[wheelGesturesPlugin]}
         className="w-full"
@@ -149,6 +131,7 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
           {images.map((image, index) => (
             <CarouselItem key={image.src} className="basis-auto pl-5 sm:pl-6">
               <button
+                ref={(node) => { thumbnails.current[index] = node; }}
                 type="button"
                 onClick={() => setOpenIndex(index)}
                 aria-label={`Ver página maior: ${image.alt}`}
@@ -166,7 +149,7 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
                   height={520}
                   draggable={false}
                   sizes="(min-width: 1024px) 390px, (min-width: 640px) 330px, 255px"
-                  className="size-full select-none object-contain drop-shadow-xl transition-[transform,filter] duration-300 ease-in-out group-hover:-translate-y-4 group-hover:drop-shadow-2xl"
+                  className="size-full select-none object-contain drop-shadow-xl transition-[transform,filter] duration-300 ease-in-out motion-safe:group-hover:-translate-y-4 motion-safe:group-hover:drop-shadow-2xl motion-reduce:transition-none"
                 />
               </button>
             </CarouselItem>
@@ -175,78 +158,32 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
 
         {images.length > 1 ? (
           <>
-            <CarouselPrevious className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
-            <CarouselNext className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
+            <CarouselPrevious aria-label="Página anterior" onClick={() => api?.scrollPrev(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
+            <CarouselNext aria-label="Próxima página" onClick={() => api?.scrollNext(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
           </>
         ) : null}
       </Carousel>
 
-      {openIndex !== null ? (
-        /* Sem visualizador próprio: é a mesma página, só que grande. Clique
-           fora ou Esc fecham; ← → e as setas nas laterais passam de página
-           sem fechar a visualização. As setas moram nas bordas do overlay e o
-           `px-14 sm:px-20` é o que reserva a faixa delas: o quadro da arte é
-           `w-full` dentro desse padding, então ela nunca corre por baixo de
-           uma seta — nem numa tela estreita, onde antes (com `w-[92vw]`) a
-           página encostava nas duas bordas. */
-        <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={images[openIndex].alt}
-          tabIndex={-1}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-14 py-6 outline-none sm:px-20"
-          onClick={close}
-        >
-          <button
-            type="button"
-            onClick={close}
-            aria-label="Fechar"
-            className="absolute right-6 top-6 z-10 text-white/80 transition hover:text-white"
-          >
-            <X className="size-8" aria-hidden="true" />
-          </button>
-
-          {images.length > 1 ? (
-            <>
-              {/* `stopPropagation`: o clique no botão sobe até o overlay, que
-                  fecha a visualização — sem isso a seta trocaria de página e
-                  fecharia tudo no mesmo clique. */}
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  showPrevious();
-                }}
-                aria-label="Página anterior"
-                className={cn(LIGHTBOX_BUTTON_CLASSNAME, "left-2 sm:left-6")}
-              >
-                <ChevronLeft className="size-6" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  showNext();
-                }}
-                aria-label="Próxima página"
-                className={cn(LIGHTBOX_BUTTON_CLASSNAME, "right-2 sm:right-6")}
-              >
-                <ChevronRight className="size-6" aria-hidden="true" />
-              </button>
-            </>
-          ) : null}
-
-          <div className="relative h-[88vh] w-full" onClick={(event) => event.stopPropagation()}>
-            <Image
-              src={images[openIndex].src}
-              alt={images[openIndex].alt}
-              fill
-              sizes="(min-width: 640px) 80vw, 88vw"
-              className="object-contain"
-            />
-          </div>
+      {images.length > 1 ? (
+        <div className="flex flex-wrap justify-center">
+          {images.map((image, index) => (
+            <button key={image.src} type="button" aria-label={`Ir para página ${index + 1}`} aria-current={activeIndex === index} onClick={() => api?.scrollTo(index, prefersReducedMotion())} className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <span aria-hidden="true" className={cn("h-1.5 rounded-full motion-safe:transition-all", activeIndex === index ? "w-6 bg-primary" : "w-1.5 bg-foreground/15")} />
+            </button>
+          ))}
         </div>
+      ) : null}
+      {openIndex !== null ? (
+        <GalleryLightbox
+          images={images}
+          initialIndex={openIndex}
+          getThumbnail={(index) => thumbnails.current[index]}
+          revealThumbnail={(index) => {
+            thumbnails.current[index]?.closest("[data-slot=carousel]")?.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
+            api?.scrollTo(index, true);
+          }}
+          onClose={() => setOpenIndex(null)}
+        />
       ) : null}
     </>
   );
