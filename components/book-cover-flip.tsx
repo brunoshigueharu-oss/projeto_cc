@@ -37,7 +37,7 @@ const LABELS: Record<
  * lib/data/schemas.ts). Sem esse asset no título, o componente renderiza a
  * mesma capa de sempre, sem botão.
  *
- * O botão é só ícone, no mesmo vidro do botão de pausar e colado nele, no
+ * O botão é só ícone, no mesmo disco translúcido do botão de pausar e colado nele, no
  * canto superior direito do quadro: os dois controles da mídia ficam juntos e
  * fora da ilustração. A pílula com texto no canto de baixo pesava mais que a
  * mídia que comanda — o texto segue no `aria-label` e no tooltip.
@@ -93,7 +93,7 @@ export function BookCoverFlip({ book }: { book: Book }) {
           onClick={handleFlip}
           aria-label={showBack ? labels.showFront : labels.showBack}
           title={showBack ? labels.showFront : labels.showBack}
-          className="absolute right-10 top-3 z-10 flex size-8 items-center justify-center rounded-full glass glass-lens border border-white/25 bg-black/20 text-white opacity-50 [--glass-blur:4px] transition-all duration-200 hover:opacity-100 hover:bg-black/30 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/flip:opacity-80"
+          className="absolute right-10 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/25 bg-black/20 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/30 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/flip:opacity-80"
         >
           {/* Mesmo tamanho do ícone de pausar; o traço mais grosso compensa
               o Pause ser preenchido e este só contorno. */}

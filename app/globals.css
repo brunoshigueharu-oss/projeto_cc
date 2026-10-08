@@ -184,39 +184,6 @@
   }
 }
 
-/* Vidro "liquid glass" das superfícies flutuantes (header, setas de
-   carrossel, controles sobre vídeo e do lightbox). O utilitário só cuida do
-   que é do vidro — brilho de cima, fio especular, sombra e o desfoque do que
-   está atrás; a cor do vidro (`bg-white/10`, `bg-black/20`,
-   `bg-background/75`) e a borda continuam em classes Tailwind no elemento,
-   porque mudam conforme o fundo. `--glass-blur` ajusta o desfoque por uso e
-   `--glass-shadow` troca a sombra projetada (o header a zera: quem separa
-   seções no site é a `border`, não sombra).
-   Vidro só existe com algo atrás: não usar em CTA sólido sobre seção branca. */
-@utility glass {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in oklch, var(--background) 10%, transparent),
-    transparent 60%
-  );
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklch, var(--background) 30%, transparent),
-    inset 0 -1px 0 color-mix(in oklch, var(--background) 10%, transparent),
-    0 8px 24px -12px var(--glass-shadow, color-mix(in oklch, var(--foreground) 35%, transparent));
-  -webkit-backdrop-filter: blur(var(--glass-blur, 10px)) saturate(1.25);
-  backdrop-filter: blur(var(--glass-blur, 10px)) saturate(1.25);
-}
-
-/* Refração nas bordas, por cima do `glass`, só nos controles redondos — numa
-   barra larga como o header as bordas ficam fora da tela e a lente só
-   entorta o conteúdo. Fora de `@layer` de propósito, pra vencer o
-   `backdrop-filter` do utilitário. O atributo vem de
-   `components/glass-lens-filter.tsx` (só Chromium), que também soma a luz de
-   aro dentro do filtro. */
-:root[data-glass-lens] .glass-lens {
-  backdrop-filter: url(#glass-lens) blur(var(--glass-lens-blur, 2px)) saturate(1.25);
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

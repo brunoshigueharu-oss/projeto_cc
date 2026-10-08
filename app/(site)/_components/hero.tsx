@@ -19,7 +19,7 @@ import { getSwipeStep } from "../_lib/get-swipe-step";
 import { HeroBannerVideo } from "./hero-banner-video";
 
 const CAROUSEL_ARROW_CLASSNAME =
-  "absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full glass glass-lens border border-white/20 bg-white/8 text-white transition-colors hover:bg-white/16 lg:size-12";
+  "absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16 lg:size-12";
 
 /** Tempo de cada banner na tela antes de o carrossel avançar sozinho. */
 const AUTOPLAY_DELAY_MS = 5000;

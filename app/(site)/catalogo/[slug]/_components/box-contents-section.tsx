@@ -139,8 +139,8 @@ export function BoxContentsSection({ book }: { book: Book }) {
 
           {items.length > 1 ? (
             <>
-              <CarouselPrevious variant="glass" className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
-              <CarouselNext variant="glass" className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
+              <CarouselPrevious variant="overlay" className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
+              <CarouselNext variant="overlay" className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
             </>
           ) : null}
         </Carousel>

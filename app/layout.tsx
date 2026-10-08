@@ -3,7 +3,6 @@ import { Nunito_Sans, Poppins } from "next/font/google";
 
 import { CartProvider } from "@/lib/cart/cart-context";
 import { MemberProvider } from "@/lib/wix/member-context";
-import { GlassLensFilter } from "@/components/glass-lens-filter";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Pular para o conteúdo
         </a>
-        <GlassLensFilter />
         <MemberProvider>
           <CartProvider>{children}</CartProvider>
         </MemberProvider>

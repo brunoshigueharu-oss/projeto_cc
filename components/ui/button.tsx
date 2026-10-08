@@ -13,8 +13,8 @@ const buttonVariants = cva(
           "bg-[color-mix(in_oklch,var(--accent),var(--foreground)_25%)] text-primary-foreground shadow-sm hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_12%)]",
         brand:
           "bg-brand-yellow text-foreground shadow-sm hover:bg-[color-mix(in_oklch,var(--color-brand-yellow),var(--foreground)_10%)]",
-        glass:
-          "glass glass-lens border-border bg-background/70 text-foreground hover:bg-background/90",
+        overlay:
+          "border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

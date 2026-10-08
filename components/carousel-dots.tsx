@@ -40,7 +40,7 @@ type CarouselDotsProps = {
 
 /**
  * Indicador de posição de todo carrossel/galeria do site: bolinhas de 6px
- * soltas, sem cápsula nem vidro, a atual esticada em pílula de 24px.
+ * soltas, sem cápsula nem fundo, a atual esticada em pílula de 24px.
  *
  * Cada bolinha é um botão mais alto que o desenho, com a pílula de 6px
  * centralizada: a pílula continua pequena, mas o alvo de toque não.

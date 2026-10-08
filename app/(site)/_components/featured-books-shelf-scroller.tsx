@@ -21,13 +21,13 @@ type FeaturedBooksShelfScrollerProps = {
   books: readonly Book[];
 };
 
-/** As setas correm por cima da arte dos cards, que é escura: por isso o vidro
- * aqui é o claro do Hero (`white/8`, chevron branco) por cima do
- * `variant="glass"`, e não o fosco de `background` que as outras setas de
- * carrossel usam sobre página clara — nesse fundo o fosco vira um disco
- * branco opaco e deixa de parecer vidro. */
+/** As setas correm por cima da arte dos cards, que é escura: por isso o disco
+ * aqui é o translúcido claro do Hero (`white/8`, chevron branco) por cima do
+ * `variant="overlay"`, e não o `background/80` que as outras setas de
+ * carrossel usam sobre página clara — nesse fundo ele vira um disco branco
+ * quase opaco. */
 const NAV_BUTTON_CLASSNAME =
-  "hidden size-11 border-white/20 bg-white/8 text-white hover:bg-white/16 disabled:opacity-40 sm:flex";
+  "hidden size-11 border-white/20 bg-white/8 text-white shadow-none hover:bg-white/16 disabled:opacity-40 sm:flex";
 
 /**
  * Prateleira de livros da Home, em carrossel infinito (embla) — o mesmo
@@ -107,11 +107,11 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
                 shadcn é fixo em inglês e não dá para substituir por children,
                 e o aria-label tem precedência sobre ele. O Hero, que monta os
                 próprios botões, já rotula as setas assim. */}
-            <CarouselPrevious variant="glass"
+            <CarouselPrevious variant="overlay"
               aria-label="Livro anterior"
               className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")}
             />
-            <CarouselNext variant="glass"
+            <CarouselNext variant="overlay"
               aria-label="Próximo livro"
               className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")}
             />

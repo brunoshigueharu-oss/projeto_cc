@@ -19,9 +19,9 @@ import { CarouselDots } from "@/components/carousel-dots";
 
 type GalleryImages = NonNullable<Campaign["gallery"]>;
 
-/** Mesma pílula de vidro das setas de carrossel do resto do site
- * (`box-contents-section.tsx`): sobre fundo claro o vidro é o `variant="glass"` do
- * Button (`background/70`), não o `white/10` que o Hero usa sobre vídeo. */
+/** Mesmo disco translúcido das setas de carrossel do resto do site
+ * (`box-contents-section.tsx`): sobre fundo claro é o `variant="overlay"` do
+ * Button (`background/80`), não o `white/8` que o Hero usa sobre vídeo. */
 const NAV_BUTTON_CLASSNAME =
   "flex size-11 disabled:opacity-40 sm:flex";
 
@@ -159,8 +159,8 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
 
         {images.length > 1 ? (
           <>
-            <CarouselPrevious variant="glass" aria-label="Página anterior" onClick={() => api?.scrollPrev(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
-            <CarouselNext variant="glass" aria-label="Próxima página" onClick={() => api?.scrollNext(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
+            <CarouselPrevious variant="overlay" aria-label="Página anterior" onClick={() => api?.scrollPrev(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
+            <CarouselNext variant="overlay" aria-label="Próxima página" onClick={() => api?.scrollNext(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
           </>
         ) : null}
       </Carousel>

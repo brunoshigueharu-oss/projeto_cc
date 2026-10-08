@@ -8,7 +8,7 @@ export function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-const control = "absolute z-10 flex size-11 items-center justify-center rounded-full glass glass-lens border border-white/24 bg-white/8 text-white hover:bg-white/16 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+const control = "absolute z-10 flex size-11 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] hover:bg-white/16 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
 type Props = {
   images: { src: string; alt: string }[];

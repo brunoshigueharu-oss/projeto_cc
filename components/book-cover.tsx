@@ -37,7 +37,7 @@ type BookCoverProps = {
    *  borda do próprio vídeo em algum ponto do loop (ver `coverVideoFit` em
    *  lib/data/schemas.ts). */
   videoFit?: "cover" | "contain";
-  /** Mostra um botão glass de pausar/reproduzir sobre o vídeo. Só faz sentido
+  /** Mostra um botão translúcido de pausar/reproduzir sobre o vídeo. Só faz sentido
    *  no destaque grande do hero — nas miniaturas do catálogo/relacionados
    *  fica desligado por padrão. */
   showPauseControl?: boolean;
@@ -386,12 +386,12 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
         // Mr. Plant) — no canto ele fica sobre a margem em volta do livro, sem
         // disputar espaço com o próprio objeto que está exibindo. O botão de
         // virar (book-cover-flip.tsx) fica colado à esquerda deste, no mesmo
-        // vidro — mudar tamanho ou posição aqui pede ajustar lá também.
+        // disco translúcido — mudar tamanho ou posição aqui pede ajustar lá também.
         <button
           type="button"
           onClick={handleToggle}
           aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
-          className="absolute right-1 top-3 z-10 flex size-8 items-center justify-center rounded-full glass glass-lens border border-white/25 bg-black/20 text-white opacity-50 [--glass-blur:4px] transition-all duration-200 hover:opacity-100 hover:bg-black/30 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
+          className="absolute right-1 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/25 bg-black/20 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/30 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
         >
           {isPlaying ? (
             <Pause className="size-3.5 fill-current" />

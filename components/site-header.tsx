@@ -31,7 +31,7 @@ export function SiteHeader() {
     member?.profile?.nickname || member?.loginEmail || "";
 
   return (
-    <header className="sticky top-0 z-40 glass border-b border-border bg-background/95 [--glass-blur:16px] [--glass-shadow:transparent] supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2 justify-self-start">
           <Seal className="size-9" />
