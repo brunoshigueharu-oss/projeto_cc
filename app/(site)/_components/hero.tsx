@@ -22,7 +22,7 @@ const CAROUSEL_ARROW_CLASSNAME =
   "absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16 lg:size-12";
 
 /** Tempo de cada banner na tela antes de o carrossel avançar sozinho. */
-const AUTOPLAY_DELAY_MS = 5000;
+const AUTOPLAY_DELAY_MS = 4000;
 
 /** Quanto dura o deslize de um banner para o outro. É o mesmo
  * `duration-[600ms]` do slide em `hero-banner-video.tsx`; aqui serve só para
@@ -40,13 +40,13 @@ type HeroProps = {
 /**
  * Hero da Home = carrossel de vídeos em faixa cheia (mudo/loop/autoplay),
  * sem texto sobreposto. Cada vídeo é um link para o destino do banner
- * (página do livro ou `/campanhas`). Anda sozinho a cada 5s e também por
+ * (página do livro ou `/campanhas`). Anda sozinho a cada 4s e também por
  * setas, bolinhas ou swipe (toque) — em todos os casos o banner novo entra
  * deslizando pela borda.
  *
- * O banner não troca sozinho enquanto o mouse está sobre ele ou o foco do
- * teclado está dentro — o destino do link não pode mudar debaixo de quem está
- * prestes a acioná-lo. `prefers-reduced-motion` não para o carrossel: os
+ * O banner não troca sozinho enquanto o foco do teclado está dentro — o
+ * destino do link não pode mudar debaixo de quem está prestes a acioná-lo. O
+ * mouse em cima não segura a troca. `prefers-reduced-motion` não para o carrossel: os
  * vídeos do site tocam sempre (ver `components/lazy-video.tsx`).
  */
 export function Hero({ banners }: HeroProps) {
@@ -54,7 +54,6 @@ export function Hero({ banners }: HeroProps) {
   const [entering, setEntering] = useState<{ index: number; direction: Direction } | null>(null);
   const [leaving, setLeaving] = useState<{ index: number; direction: Direction } | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const swipeOrigin = useRef<{ x: number; y: number } | null>(null);
   const hasSwiped = useRef(false);
@@ -117,11 +116,11 @@ export function Hero({ banners }: HeroProps) {
   // navegar na mão (setas, bolinhas ou swipe) reinicia a contagem em vez de
   // deixar o slide recém-escolhido sair no meio do tempo do anterior.
   useEffect(() => {
-    if (total < 2 || isHovered || hasKeyboardFocus) return;
+    if (total < 2 || hasKeyboardFocus) return;
 
     const timer = window.setTimeout(() => goTo(activeIndex + 1, 1), AUTOPLAY_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, goTo, hasKeyboardFocus, isHovered, total]);
+  }, [activeIndex, goTo, hasKeyboardFocus, total]);
 
   if (total === 0) return null;
 
@@ -185,8 +184,10 @@ export function Hero({ banners }: HeroProps) {
   function handleFocus(event: FocusEvent<HTMLElement>) {
     // Só foco de teclado segura o carrossel: no clique de mouse o botão
     // também recebe foco (Chrome), e aí a troca ficaria parada até a pessoa
-    // clicar fora da faixa.
-    if (event.target.matches(":focus-visible")) setHasKeyboardFocus(true);
+    // clicar fora da faixa. Pelo mesmo motivo o foco de mouse solta o que o
+    // teclado segurou: clicar numa seta depois de chegar por Tab não tira o
+    // foco da faixa, e o `handleBlur` não teria como soltar.
+    setHasKeyboardFocus(event.target.matches(":focus-visible"));
   }
 
   function handleBlur(event: FocusEvent<HTMLElement>) {
@@ -199,12 +200,6 @@ export function Hero({ banners }: HeroProps) {
       aria-label="Destaques"
       onFocus={handleFocus}
       onBlur={handleBlur}
-      // Só mouse: no toque não existe "sair de cima", e o carrossel ficaria
-      // parado para sempre depois do primeiro toque.
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setIsHovered(true);
-      }}
-      onPointerLeave={() => setIsHovered(false)}
       className="group/hero relative overflow-hidden bg-background"
     >
       {/* `touch-pan-y`: o navegador só assume o arrasto vertical (scroll da

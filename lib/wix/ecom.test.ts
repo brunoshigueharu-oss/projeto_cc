@@ -144,6 +144,14 @@ describe("lib/wix/ecom", () => {
 
       await expect(getPlacedOrder("order-1")).rejects.toThrow();
     });
+
+    it("propaga o 402, que o wixApiRequest devolve sem corpo e sem lançar", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "payment required" }, 402)));
+
+      await expect(getPlacedOrder("order-1")).rejects.toThrow();
+      warn.mockRestore();
+    });
   });
 
   describe("startWixCheckout", () => {

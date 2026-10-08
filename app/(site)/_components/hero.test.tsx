@@ -12,7 +12,7 @@ const BANNERS: HomeBanner[] = ["um", "dois", "tres"].map((slug) => ({
   label: slug,
 }));
 
-const AUTOPLAY_MS = 5000;
+const AUTOPLAY_MS = 4000;
 /** Folga para os dois `requestAnimationFrame` que põem o banner novo em cena. */
 const FRAMES_MS = 100;
 
@@ -92,7 +92,29 @@ describe("Hero", () => {
     expect(activeBanner()).toBe("Ver dois");
   });
 
-  it("não troca o destino enquanto o mouse está sobre o banner", async () => {
+  it("volta a trocar quando um clique de mouse leva o foco para outro controle do carrossel", async () => {
+    await mount();
+    const link = container.querySelector("a")!;
+    const button = container.querySelector("button")!;
+    let isKeyboardFocus = true;
+    const matches = Element.prototype.matches;
+    vi.spyOn(Element.prototype, "matches").mockImplementation(function (this: Element, selector: string) {
+      return selector === ":focus-visible"
+        ? isKeyboardFocus && this === document.activeElement
+        : matches.call(this, selector);
+    });
+    await act(async () => link.focus());
+    await tick(AUTOPLAY_MS * 2);
+    expect(activeBanner()).toBe("Ver um");
+
+    // O foco passa do link para o botão sem sair da faixa.
+    isKeyboardFocus = false;
+    await act(async () => button.focus());
+    await tick(AUTOPLAY_MS);
+    expect(activeBanner()).toBe("Ver dois");
+  });
+
+  it("continua trocando com o mouse sobre o banner", async () => {
     await mount();
     const section = container.querySelector("section")!;
     // React deriva `onPointerEnter`/`Leave` de `pointerover`/`pointerout`.
@@ -100,10 +122,6 @@ describe("Hero", () => {
       Object.assign(new MouseEvent(type, { bubbles: true, relatedTarget }), { pointerType: "mouse" });
     await act(async () => section.dispatchEvent(pointer("pointerover", document.body)));
 
-    await tick(AUTOPLAY_MS * 4);
-    expect(activeBanner()).toBe("Ver um");
-
-    await act(async () => section.dispatchEvent(pointer("pointerout", document.body)));
     await tick(AUTOPLAY_MS);
     expect(activeBanner()).toBe("Ver dois");
   });

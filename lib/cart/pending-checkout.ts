@@ -26,13 +26,21 @@ function readPendingCheckout(): PendingCheckout | null {
  * É o que permite, na volta, tirar do carrinho só o que foi comprado — e só
  * quando o pedido confirmado é mesmo deste checkout. Um checkout novo
  * substitui o anterior: só o último pode voltar confirmado.
+ *
+ * Storage desabilitado ou cheio é ignorado: isto roda com o checkout da Wix
+ * já criado, logo antes do redirecionamento, e não pode impedir o pagamento.
+ * Sem o registro, a volta só deixa de descontar o carrinho.
  */
 export function savePendingCheckout(checkoutId: string, lines: readonly CartLine[]) {
   const pending: PendingCheckout = {
     checkoutId,
     lines: lines.map(({ type, slug, quantity }) => ({ type, slug, quantity })),
   };
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
+  } catch {
+    // ignora storage desabilitado/cheio
+  }
 }
 
 /**

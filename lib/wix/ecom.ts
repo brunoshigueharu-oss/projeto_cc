@@ -90,7 +90,9 @@ const ORDER_NOT_ACCESSIBLE_STATUSES = [400, 403, 404];
  * Busca um pedido com a identidade do visitante/membro atual. A Wix só
  * devolve o pedido a quem o fez — por isso um `orderId` copiado, inventado ou
  * de outra pessoa resulta em `null`, e não em confirmação. Outros erros
- * (rede, 5xx) são propagados: não saber não é o mesmo que "não existe".
+ * (rede, 5xx) são propagados: não saber não é o mesmo que "não existe". O
+ * mesmo vale para resposta sem corpo — é o que `wixApiRequest` devolve num
+ * 402, em vez de lançar.
  */
 export async function getPlacedOrder(orderId: string): Promise<WixPlacedOrder | null> {
   let res;
@@ -101,7 +103,8 @@ export async function getPlacedOrder(orderId: string): Promise<WixPlacedOrder | 
     if (status !== undefined && ORDER_NOT_ACCESSIBLE_STATUSES.includes(status)) return null;
     throw e;
   }
-  const order = res?.order;
+  if (res === undefined) throw new Error("Wix não devolveu o pedido.");
+  const order = res.order;
   if (!order) return null;
   return {
     checkoutId: order.checkoutId,

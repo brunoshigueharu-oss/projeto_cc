@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { reconcilePendingCheckout, savePendingCheckout } from "./pending-checkout";
 
@@ -56,5 +56,16 @@ describe("reconcilePendingCheckout", () => {
     localStorage.setItem("hocus-pocus:pending-checkout", "{not json");
     expect(reconcilePendingCheckout("checkout-1")).toBe(false);
     expect(cart()).toEqual([bookA]);
+  });
+});
+
+describe("savePendingCheckout", () => {
+  it("não lança quando o storage recusa a gravação", () => {
+    const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("quota", "QuotaExceededError");
+    });
+
+    expect(() => savePendingCheckout("checkout-1", [bookA])).not.toThrow();
+    setItem.mockRestore();
   });
 });
