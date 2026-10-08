@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
 import { formatPriceClient } from "@/lib/cart/format-price";
 import { useCart, type ResolvedCartLine } from "@/lib/cart/cart-context";
 import { cn } from "@/lib/utils";
+import { QuantityInput } from "./_components/quantity-input";
 
 export default function CarrinhoPage() {
   const { resolvedLines, subtotalCents, setQuantity, removeItem, addItem } = useCart();
@@ -136,8 +136,8 @@ export default function CarrinhoPage() {
               {!line.available ? (
                 <p className="mt-1 text-xs text-destructive">
                   {line.unavailableReason === "esgotado"
-                    ? "Esgotado — remova para continuar."
-                    : "Ainda não disponível para compra online — remova para continuar."}
+                    ? "Esgotado. Remova para continuar."
+                    : "Ainda não disponível para compra online. Remova para continuar."}
                 </p>
               ) : null}
               <p className="mt-1 font-mono text-sm text-muted-foreground tabular-nums">
@@ -148,17 +148,10 @@ export default function CarrinhoPage() {
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
                 Qtd.
-                <Input
-                  type="number"
-                  min={1}
-                  value={line.quantity}
-                  onChange={(event) => {
-                    const quantity = Number(event.target.value);
-                    if (Number.isInteger(quantity) && quantity >= 1) {
-                      setQuantity(line.type, line.slug, quantity);
-                    }
-                  }}
-                  className="h-9 w-16 text-center"
+                <QuantityInput
+                  title={line.title}
+                  quantity={line.quantity}
+                  onCommit={(quantity) => setQuantity(line.type, line.slug, quantity)}
                 />
               </label>
               <button

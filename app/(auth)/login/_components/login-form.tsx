@@ -18,10 +18,15 @@ import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
 import { useMember } from "@/lib/wix/member-context";
 import { login, MemberAuthError } from "@/lib/wix/members-auth";
+import { VerifyEmailForm } from "../../_components/verify-email-form";
 import { loginSchema, type LoginInput } from "../_lib/login-schema";
+
+type Phase = "form" | "verify" | "pending";
 
 export function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const [result, setResult] = useState<FormResult | null>(null);
+  const [phase, setPhase] = useState<Phase>("form");
+  const [stateToken, setStateToken] = useState<string | null>(null);
   const router = useRouter();
   const { refresh } = useMember();
 
@@ -34,19 +39,34 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
     defaultValues: { email: "", password: "" },
   });
 
+  async function enter() {
+    await refresh();
+    const safeRedirect = redirectTo && /^\/(?!\/|\\)/.test(redirectTo) ? redirectTo : "/perfil";
+    router.push(safeRedirect);
+  }
+
+  function backToForm() {
+    setResult(null);
+    setStateToken(null);
+    setPhase("form");
+  }
+
   async function onSubmit(values: LoginInput) {
     setResult(null);
     try {
       const res = await login(values.email, values.password);
       if (res.state === "SUCCESS") {
-        await refresh();
-        const safeRedirect = redirectTo && /^\/(?!\/|\\)/.test(redirectTo) ? redirectTo : "/perfil";
-        router.push(safeRedirect);
+        await enter();
         return;
       }
-      // REQUIRE_EMAIL_VERIFICATION / REQUIRE_OWNER_APPROVAL no login (raro):
-      // não construímos uma segunda tela aqui, orienta pro fluxo de recuperação.
-      setResult({ ok: false, message: "Confirme seu cadastro antes de entrar. Verifique seu e-mail." });
+      // Cadastro interrompido antes do código: o login é o único lugar onde
+      // a pessoa reencontra essa etapa, então ela é concluída aqui mesmo.
+      if (res.state === "REQUIRE_EMAIL_VERIFICATION") {
+        setStateToken(res.stateToken ?? null);
+        setPhase("verify");
+        return;
+      }
+      setPhase("pending");
     } catch (e) {
       if (e instanceof MemberAuthError && e.code === "invalidCredentials") {
         setResult({ ok: false, message: "E-mail ou senha incorretos." });
@@ -55,6 +75,32 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
         setResult({ ok: false, message: "Não foi possível entrar. Tente novamente." });
       }
     }
+  }
+
+  if (phase === "verify") {
+    return (
+      <VerifyEmailForm
+        stateToken={stateToken}
+        onVerified={enter}
+        onPendingApproval={() => setPhase("pending")}
+        onRestart={backToForm}
+        restartLabel="Voltar ao login"
+      />
+    );
+  }
+
+  if (phase === "pending") {
+    return (
+      <div className="flex flex-col items-start gap-4">
+        <p role="status" className="text-sm text-muted-foreground">
+          Seu cadastro está aguardando aprovação. Você poderá entrar assim que
+          for aprovado.
+        </p>
+        <Button type="button" variant="outline" size="lg" onClick={backToForm} className="h-11 rounded-full px-7">
+          Voltar ao login
+        </Button>
+      </div>
+    );
   }
 
   return (

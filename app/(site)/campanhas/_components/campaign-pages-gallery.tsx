@@ -15,14 +15,15 @@ import {
 } from "@/components/ui/carousel";
 import type { Campaign } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
+import { CarouselDots } from "@/components/carousel-dots";
 
 type GalleryImages = NonNullable<Campaign["gallery"]>;
 
 /** Mesma pílula de vidro das setas de carrossel do resto do site
- * (`box-contents-section.tsx`): sobre fundo claro o vidro é `background/80`
- * com blur, não o `white/8` que o Hero usa sobre vídeo. */
+ * (`box-contents-section.tsx`): sobre fundo claro o vidro é o `variant="glass"` do
+ * Button (`background/70`), não o `white/10` que o Hero usa sobre vídeo. */
 const NAV_BUTTON_CLASSNAME =
-  "flex size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
+  "flex size-11 disabled:opacity-40 sm:flex";
 
 /**
  * Fileira horizontal com as páginas do miolo, em carrossel embla — a grade
@@ -158,21 +159,18 @@ export function CampaignPagesGallery({ images }: { images: GalleryImages }) {
 
         {images.length > 1 ? (
           <>
-            <CarouselPrevious aria-label="Página anterior" onClick={() => api?.scrollPrev(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
-            <CarouselNext aria-label="Próxima página" onClick={() => api?.scrollNext(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
+            <CarouselPrevious variant="glass" aria-label="Página anterior" onClick={() => api?.scrollPrev(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
+            <CarouselNext variant="glass" aria-label="Próxima página" onClick={() => api?.scrollNext(prefersReducedMotion())} className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
           </>
         ) : null}
       </Carousel>
 
-      {images.length > 1 ? (
-        <div className="flex flex-wrap justify-center">
-          {images.map((image, index) => (
-            <button key={image.src} type="button" aria-label={`Ir para página ${index + 1}`} aria-current={activeIndex === index} onClick={() => api?.scrollTo(index, prefersReducedMotion())} className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              <span aria-hidden="true" className={cn("h-1.5 rounded-full motion-safe:transition-all", activeIndex === index ? "w-6 bg-primary" : "w-1.5 bg-foreground/15")} />
-            </button>
-          ))}
-        </div>
-      ) : null}
+      <CarouselDots
+        count={images.length}
+        activeIndex={activeIndex}
+        onSelect={(index) => api?.scrollTo(index, prefersReducedMotion())}
+        getLabel={(index) => `Ir para página ${index + 1}`}
+      />
       {openIndex !== null ? (
         <GalleryLightbox
           images={images}

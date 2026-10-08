@@ -1,28 +1,14 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FacebookIcon, InstagramIcon, XIcon } from "@/components/icons/social-icons";
+import { NAV_LINKS } from "@/lib/nav-links";
 import { Seal } from "./seal";
 import { Wordmark } from "./wordmark";
 
-const INSTITUTIONAL_LINKS = [
-  { label: "Sustentabilidade", href: "#" },
-  { label: "Trabalhe conosco", href: "#" },
-] as const;
-
-const HELP_LINKS = [
-  { label: "Central de ajuda", href: "#" },
-  { label: "Trocas e devoluções", href: "#" },
-  { label: "Política de privacidade", href: "#" },
-  { label: "Termos de uso", href: "#" },
-] as const;
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", href: "#", icon: InstagramIcon },
-  { label: "Facebook", href: "#", icon: FacebookIcon },
-  { label: "X (Twitter)", href: "#", icon: XIcon },
-] as const;
+// Só páginas que existem. Links de ajuda, políticas e redes sociais voltam
+// quando houver destino real para cada um, nunca como link vazio.
+const FOOTER_NAV_LINKS = NAV_LINKS.filter(
+  (link) => link.href !== "/" && link.href !== "/contato",
+);
 
 export function SiteFooter() {
   return (
@@ -37,46 +23,17 @@ export function SiteFooter() {
             Universos foram feitos para serem explorados. Conheça nossas obras
             e mergulhe de cabeça.
           </p>
-          <div className="flex items-center gap-4">
-            {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                aria-label={label}
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Icon className="size-5" aria-hidden="true" />
-              </Link>
-            ))}
-          </div>
         </div>
 
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-6 text-sm">
             <h3 className="font-display text-sm font-bold uppercase text-foreground">
-              Institucional
+              Navegação
             </h3>
-            <nav className="flex flex-col gap-3">
-              {INSTITUTIONAL_LINKS.map((link) => (
+            <nav aria-label="Rodapé" className="flex flex-col gap-3">
+              {FOOTER_NAV_LINKS.map((link) => (
                 <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          <div className="flex flex-col gap-6 text-sm">
-            <h3 className="font-display text-sm font-bold uppercase text-foreground">
-              Ajuda
-            </h3>
-            <nav className="flex flex-col gap-3">
-              {HELP_LINKS.map((link) => (
-                <Link
-                  key={link.label}
+                  key={link.href}
                   href={link.href}
                   className="text-muted-foreground transition-colors hover:text-foreground"
                 >
@@ -100,31 +57,6 @@ export function SiteFooter() {
               <Link href="/contato" className="transition-colors hover:text-foreground">
                 Ver todos os canais
               </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <h3 className="font-display text-sm font-bold uppercase text-foreground">
-              Newsletter
-            </h3>
-            <div className="flex flex-col gap-3">
-              <p className="text-sm text-muted-foreground">
-                Receba novidades e ofertas exclusivas.
-              </p>
-              <form className="flex gap-3">
-                <Input
-                  type="email"
-                  placeholder="Seu e-mail"
-                  aria-label="Seu e-mail"
-                  className="h-10"
-                />
-                <Button
-                  type="submit"
-                  className="h-10 shrink-0 bg-foreground text-background hover:bg-foreground/85"
-                >
-                  Inscrever
-                </Button>
-              </form>
             </div>
           </div>
         </div>

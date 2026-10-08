@@ -53,10 +53,17 @@ export function ContactForm() {
   });
 
   async function onSubmit(values: ContactInput) {
-    const response = await sendMessage(values);
-    setResult({ ok: response.success, message: response.message });
-    if (response.success) {
-      reset();
+    setResult(null);
+    try {
+      const response = await sendMessage(values);
+      setResult({ ok: response.success, message: response.message });
+      // Só limpa o que foi de fato enviado: em falha o texto fica para nova tentativa.
+      if (response.success) {
+        reset();
+      }
+    } catch (error) {
+      console.error(error);
+      setResult({ ok: false, message: "Não foi possível enviar sua mensagem. Tente novamente." });
     }
   }
 

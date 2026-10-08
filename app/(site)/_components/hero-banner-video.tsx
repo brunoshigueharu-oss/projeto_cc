@@ -69,22 +69,24 @@ export function HeroBannerVideo({ banner, offset, isActive, onPlaying }: HeroBan
     return () => query.removeEventListener("change", syncVideoSource);
   }, [banner]);
 
+  // Ao entrar em cena, o banner recomeça do primeiro quadro — ele desliza
+  // para dentro já contando a cena do início, como uma página virada.
+  useEffect(() => {
+    const video = videoRef.current;
+    // Sem nenhum dado carregado não há para onde buscar, e mexer em
+    // `currentTime` aí dá erro no Safari — recém-carregado ele já está no zero.
+    if (isActive && video && video.readyState > 0) video.currentTime = 0;
+  }, [isActive]);
+
   // Quem está fora de cena fica parado: três vídeos decodificando ao mesmo
-  // tempo por nada. Ao entrar, o banner recomeça do primeiro quadro — ele
-  // desliza para dentro já contando a cena do início, como uma página virada.
+  // tempo por nada. O play é sempre pedido daqui, nunca pelo atributo
+  // `autoplay` — o atributo tocaria também os vizinhos fora de cena.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (!isActive) {
-      video.pause();
-      return;
-    }
-
-    // Sem nenhum dado carregado não há para onde buscar, e mexer em
-    // `currentTime` aí dá erro no Safari — recém-carregado ele já está no zero.
-    if (video.readyState > 0) video.currentTime = 0;
-    video.play().catch(() => {});
+    if (isActive) video.play().catch(() => {});
+    else video.pause();
   }, [isActive]);
 
   return (
@@ -93,14 +95,17 @@ export function HeroBannerVideo({ banner, offset, isActive, onPlaying }: HeroBan
       aria-hidden="true"
       className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
       style={{ transform: `translateX(${offset * 100}%)` }}
-      // Só o slide em cena começa sozinho; os vizinhos carregam parados,
-      // prontos para deslizar (`preload`).
-      autoPlay={isActive}
+      // Todos carregam parados, prontos para deslizar (`preload`); quem dá o
+      // play é o efeito acima.
       preload="auto"
       loop
       muted
       playsInline
       onPlaying={onPlaying}
+      // Trocar a fonte (`load()` acima) interrompe a reprodução; retoma aqui.
+      onLoadedData={(event) => {
+        if (isActive) event.currentTarget.play().catch(() => {});
+      }}
     >
       {banner.videoSrcMobile && <source src={banner.videoSrcMobile} media={MOBILE_BANNER_MEDIA} />}
       {banner.videoSrcHevc && <source src={banner.videoSrcHevc} type={HEVC_VIDEO_TYPE} />}

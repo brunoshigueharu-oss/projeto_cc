@@ -57,8 +57,9 @@ export async function createCheckoutFromCart(shippingAddress: WixAddress): Promi
 
 /** Redireciona o browser pra página de pagamento hospedada pela Wix — mesma
  * Redirect Session API de lib/wix/members-auth.ts, com payload `ecomCheckout`
- * em vez de `auth`. `thankYouPageUrl` recebe `?orderId=` só quando o
- * pagamento é concluído; `postFlowUrl` é o fallback se for abandonado. */
+ * em vez de `auth`. `thankYouPageUrl` recebe `?orderId=` quando o
+ * pagamento é concluído; `postFlowUrl` é o fallback se for abandonado. O
+ * `orderId` da URL não é prova de pagamento — confirme com `getPlacedOrder`. */
 export async function redirectToCheckoutPayment(
   checkoutId: string,
   callbacks: { thankYouPageUrl: string; postFlowUrl: string },
@@ -71,6 +72,44 @@ export async function redirectToCheckoutPayment(
   window.location.href = fullUrl;
 }
 
+/** O que a confirmação precisa saber de um pedido — recorte de `Order` da Wix
+ * (GET /ecom/v1/orders/{id}). `checkoutId` liga o pedido ao checkout que o
+ * originou; `status` diz se ele foi aprovado. */
+export type WixPlacedOrder = {
+  checkoutId: string | undefined;
+  /** Número exibido ao comprador e no painel da loja. */
+  number: string | undefined;
+  status: "INITIALIZED" | "APPROVED" | "CANCELED" | "PENDING" | "REJECTED" | undefined;
+};
+
+/** Status HTTP com que a Wix responde por um pedido que não existe ou não é
+ * de quem está perguntando. */
+const ORDER_NOT_ACCESSIBLE_STATUSES = [400, 403, 404];
+
+/**
+ * Busca um pedido com a identidade do visitante/membro atual. A Wix só
+ * devolve o pedido a quem o fez — por isso um `orderId` copiado, inventado ou
+ * de outra pessoa resulta em `null`, e não em confirmação. Outros erros
+ * (rede, 5xx) são propagados: não saber não é o mesmo que "não existe".
+ */
+export async function getPlacedOrder(orderId: string): Promise<WixPlacedOrder | null> {
+  let res;
+  try {
+    res = await wixApiRequest(`/ecom/v1/orders/${encodeURIComponent(orderId)}`, { method: "GET" });
+  } catch (e) {
+    const status = wixErrorStatus(e);
+    if (status !== undefined && ORDER_NOT_ACCESSIBLE_STATUSES.includes(status)) return null;
+    throw e;
+  }
+  const order = res?.order;
+  if (!order) return null;
+  return {
+    checkoutId: order.checkoutId,
+    number: order.number === undefined ? undefined : String(order.number),
+    status: order.status,
+  };
+}
+
 /**
  * Orquestra o checkout completo — limpar o carrinho Wix, recriar a partir das
  * linhas compráveis, criar o checkout e redirecionar pro pagamento. Único
@@ -78,14 +117,20 @@ export async function redirectToCheckoutPayment(
  * `checkout-content.tsx`, sem teste da ordem das chamadas nem do que
  * acontece se uma etapa falhar no meio). Caminho feliz não retorna —
  * `redirectToCheckoutPayment` já navegou o browser.
+ *
+ * `onCheckoutCreated` recebe o `checkoutId` antes do redirecionamento: é a
+ * última chance de guardar algo neste documento (ver
+ * `lib/cart/pending-checkout.ts`).
  */
 export async function startWixCheckout(
   lines: readonly WixLineItemInput[],
   shippingAddress: WixAddress,
   callbacks: { thankYouPageUrl: string; postFlowUrl: string },
+  onCheckoutCreated?: (checkoutId: string) => void,
 ): Promise<void> {
   await clearCurrentCart();
   await addLineItemsToCart(lines);
   const checkoutId = await createCheckoutFromCart(shippingAddress);
+  onCheckoutCreated?.(checkoutId);
   await redirectToCheckoutPayment(checkoutId, callbacks);
 }

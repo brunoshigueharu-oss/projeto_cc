@@ -37,16 +37,6 @@ const BACK_SHEET_ROTATE_DEG = 9;
 export function PaperTiltEffect() {
   const frontPaperRef = useRef<HTMLDivElement>(null);
   const backPaperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      video.pause();
-    }
-  }, []);
 
   useEffect(() => {
     const frontPaper = frontPaperRef.current;
@@ -149,7 +139,6 @@ export function PaperTiltEffect() {
             />
             {/* clip-path corta a coluna preta de 1px nas bordas laterais do vídeo */}
             <video
-              ref={videoRef}
               src="/videos/upsell/paper-sketch.mp4"
               autoPlay
               loop

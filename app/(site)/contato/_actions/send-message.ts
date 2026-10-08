@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { CONTACT_FALLBACK_EMAIL, contactDelivery } from "../_lib/contact-delivery";
 import {
   contactSchema,
   type ContactInput,
@@ -22,17 +23,33 @@ export async function sendMessage(input: ContactInput): Promise<ContactResult> {
     };
   }
 
+  const { website, ...message } = validation.data;
+
   // Honeypot preenchido = bot. Responde como sucesso para não dar pista.
-  if (validation.data.website) {
+  if (website) {
     return { success: true, message: "Mensagem enviada." };
   }
 
-  // TODO: integrar provedor de e-mail (Resend/SendGrid) quando houver conta.
-  // Até lá a mensagem é validada e descartada — nada é persistido nem enviado.
+  // Sem provedor não há entrega — nunca confirmar o que não foi enviado.
+  if (!contactDelivery) {
+    return {
+      success: false,
+      message: `O formulário está fora do ar e sua mensagem não foi enviada. Escreva para ${CONTACT_FALLBACK_EMAIL}.`,
+    };
+  }
+
+  try {
+    await contactDelivery(message);
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: `Não foi possível enviar sua mensagem. Tente novamente ou escreva para ${CONTACT_FALLBACK_EMAIL}.`,
+    };
+  }
 
   return {
     success: true,
-    message:
-      "Mensagem recebida. Respondemos em até cinco dias úteis — costuma ser antes.",
+    message: "Mensagem enviada. Respondemos em até cinco dias úteis.",
   };
 }

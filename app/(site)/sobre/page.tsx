@@ -16,7 +16,7 @@ const PRINCIPLES = [
   {
     title: "A capa vem antes do fim",
     description:
-      "Cada livro é desenhado enquanto ainda está sendo escrito. A imagem não ilustra a história — ela decide para onde a história precisa ir.",
+      "Cada livro é desenhado enquanto ainda está sendo escrito. A imagem não ilustra a história: ela decide para onde a história precisa ir.",
   },
   {
     title: "Tiragem curta, sem reimpressão automática",
@@ -26,7 +26,7 @@ const PRINCIPLES = [
   {
     title: "Universo antes de título",
     description:
-      "Nenhum livro nasce sozinho. Ele entra num universo que já tem regras, vocabulário e limites — e precisa respeitá-los.",
+      "Nenhum livro nasce sozinho. Ele entra num universo que já tem regras, vocabulário e limites, e precisa respeitá-los.",
   },
 ];
 
@@ -48,7 +48,7 @@ export default async function SobrePage() {
             em que estavam sendo publicadas.
           </p>
           <p className="mt-6 font-serif text-lg leading-relaxed text-muted-foreground">
-            Horror botânico, autômatos de madeira, gabinetes de curiosidade —
+            Horror botânico, autômatos de madeira, gabinetes de curiosidade:
             temas que dependem de imagem tanto quanto de frase, e que num
             paperback comum perdem metade do que têm. A saída foi tratar cada
             livro como um objeto: papel escolhido título a título, capa
@@ -111,7 +111,7 @@ export default async function SobrePage() {
             Quer publicar conosco?
           </h2>
           <p className="mt-4 font-serif text-lg text-muted-foreground">
-            Lemos tudo o que chega, mas respondemos devagar — pelo mesmo motivo
+            Lemos tudo o que chega, mas respondemos devagar, pelo mesmo motivo
             que publicamos devagar.
           </p>
           <Link

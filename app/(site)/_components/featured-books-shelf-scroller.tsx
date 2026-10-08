@@ -14,19 +14,20 @@ import {
 } from "@/components/ui/carousel";
 import type { Book } from "@/lib/data/schemas";
 import { cn } from "@/lib/utils";
+import { CarouselDots } from "@/components/carousel-dots";
 import { FeaturedBookCard } from "./featured-book-card";
 
 type FeaturedBooksShelfScrollerProps = {
   books: readonly Book[];
 };
 
-/** Mesma pílula de vidro das setas do resto do site (`box-contents-section.tsx`,
- * `campaign-pages-gallery.tsx`): sobre fundo claro o vidro é `background/80`
- * com blur, não o `white/8` que o Hero usa sobre vídeo. Aqui ela corre por
- * cima da arte dos cards, que é escura — daí o chevron `foreground` sobre o
- * disco claro, e não o contrário. */
+/** As setas correm por cima da arte dos cards, que é escura: por isso o vidro
+ * aqui é o claro do Hero (`white/8`, chevron branco) por cima do
+ * `variant="glass"`, e não o fosco de `background` que as outras setas de
+ * carrossel usam sobre página clara — nesse fundo o fosco vira um disco
+ * branco opaco e deixa de parecer vidro. */
 const NAV_BUTTON_CLASSNAME =
-  "hidden size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
+  "hidden size-11 border-white/20 bg-white/8 text-white hover:bg-white/16 disabled:opacity-40 sm:flex";
 
 /**
  * Prateleira de livros da Home, em carrossel infinito (embla) — o mesmo
@@ -106,11 +107,11 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
                 shadcn é fixo em inglês e não dá para substituir por children,
                 e o aria-label tem precedência sobre ele. O Hero, que monta os
                 próprios botões, já rotula as setas assim. */}
-            <CarouselPrevious
+            <CarouselPrevious variant="glass"
               aria-label="Livro anterior"
               className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")}
             />
-            <CarouselNext
+            <CarouselNext variant="glass"
               aria-label="Próximo livro"
               className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")}
             />
@@ -121,32 +122,15 @@ export function FeaturedBooksShelfScroller({ books }: FeaturedBooksShelfScroller
       {/* As bolinhas moram fora do `<Carousel>` de propósito: as setas se
           centram na altura do elemento do carrossel (`inset-y-0 my-auto`), e
           com elas dentro o eixo desceria meia fileira de bolinhas. */}
-      {books.length > 1 ? (
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
-          {books.map((book, index) => (
-            <button
-              key={book.slug}
-              type="button"
-              aria-label={`Ir para ${book.title}`}
-              aria-current={index === selectedIndex}
-              onClick={() =>
-                api?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-              }
-              className="group flex size-11 shrink-0 touch-manipulation items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "h-1.5 rounded-full transition-[width,background-color] motion-reduce:transition-none",
-                  index === selectedIndex
-                    ? "w-6 bg-primary"
-                    : "w-1.5 bg-foreground/15 group-hover:bg-foreground/30",
-                )}
-              />
-            </button>
-          ))}
-        </div>
-      ) : null}
+      <CarouselDots
+        count={books.length}
+        activeIndex={selectedIndex}
+        onSelect={(index) =>
+          api?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        }
+        getLabel={(index) => `Ir para ${books[index].title}`}
+        className="mt-2"
+      />
     </div>
   );
 }

@@ -84,3 +84,64 @@ it("finishes the exit when reduced motion is enabled mid-animation", async () =>
   await click("Desfazer");
   expect(JSON.parse(localStorage.getItem(key)!)).toEqual([line]);
 });
+
+describe("quantity editing", () => {
+  // React escuta o setter nativo: atribuir `.value` direto não dispara onChange.
+  const setNativeValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+  async function type(input: HTMLInputElement, text: string) {
+    await act(() => {
+      setNativeValue.call(input, text);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+  async function blur(input: HTMLInputElement) {
+    await act(() => {
+      input.focus();
+      input.blur();
+    });
+  }
+  const inputs = () => [...container.querySelectorAll<HTMLInputElement>('input[aria-label^="Quantidade de"]')];
+  const stored = () => JSON.parse(localStorage.getItem(key)!);
+
+  it("lets the field be emptied and retyped", async () => {
+    const line = { type: "book", slug: slugs[0], quantity: 1 };
+    await mount([line]);
+    const [input] = inputs();
+    await type(input, "");
+    expect(input.value).toBe("");
+    expect(stored()).toEqual([line]);
+    await type(input, "2");
+    await blur(input);
+    expect(input.value).toBe("2");
+    expect(stored()).toEqual([{ ...line, quantity: 2 }]);
+  });
+
+  it("ignores empty, decimal and negative drafts and restores the last valid value", async () => {
+    const line = { type: "book", slug: slugs[0], quantity: 3 };
+    await mount([line]);
+    const [input] = inputs();
+    const subtotal = container.textContent;
+    for (const draft of ["", "1.5", "-2", "0"]) {
+      await type(input, draft);
+      expect(stored()).toEqual([line]);
+      await blur(input);
+      expect(input.value).toBe("3");
+    }
+    expect(container.textContent).toBe(subtotal);
+  });
+
+  it("keeps drafts of two lines independent", async () => {
+    const lines = slugs.map((slug) => ({ type: "book", slug, quantity: 1 }));
+    await mount(lines);
+    const [first, second] = inputs();
+    await type(first, "");
+    await type(second, "4");
+    expect(first.value).toBe("");
+    expect(stored()).toEqual([lines[0], { ...lines[1], quantity: 4 }]);
+  });
+
+  it("names the field after the product", async () => {
+    await mount([{ type: "book", slug: slugs[0], quantity: 1 }]);
+    expect(inputs()[0].getAttribute("aria-label")).toBe(`Quantidade de ${BOOKS_BY_SLUG.get(slugs[0])!.title}`);
+  });
+});

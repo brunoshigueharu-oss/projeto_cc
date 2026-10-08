@@ -29,9 +29,14 @@ type LazyVideoProps = Omit<ComponentPropsWithoutRef<"video">, "src" | "preload">
  * decodificando ao mesmo tempo travam o scroll em máquina modesta.
  *
  * O `autoPlay` recebido NÃO é repassado ao elemento: se fosse, o navegador
- * dispararia o play sozinho assim que o `src` entrasse no DOM, por fora das
- * duas regras abaixo (escolha de quem pausou e `prefers-reduced-motion`).
- * Quem manda no play aqui é o componente.
+ * dispararia o play sozinho assim que o `src` entrasse no DOM, por fora da
+ * regra abaixo (a escolha de quem pausou). Quem manda no play aqui é o
+ * componente.
+ *
+ * `prefers-reduced-motion` NÃO segura o vídeo, de propósito: com o play
+ * suspenso a faixa ficava em branco (`preload="none"`, sem poster) em toda
+ * máquina com as animações do sistema desligadas — caso comum em computador
+ * de laboratório. Os vídeos do site tocam sempre.
  *
  * Para o vídeo do topo da página (hero), NÃO use este componente — ele é o
  * LCP e deve começar a baixar no primeiro byte do HTML.
@@ -64,13 +69,6 @@ export function LazyVideo({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    // Mesmo tratamento de `paper-tilt-effect.tsx`: quem pediu menos
-    // movimento no sistema não recebe loop nenhum. Como este componente é
-    // que manda no play, a decisão mora aqui.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      deveRetomar.current = false;
-    }
 
     // Sem suporte a IntersectionObserver o comportamento certo é o antigo
     // (carrega tudo), nunca um vídeo que não aparece. O `rAF` é só pra não

@@ -21,7 +21,7 @@ const DIALOG_LABELS: Record<Locale, string> = {
 };
 
 const NAV_BUTTON_CLASSNAME =
-  "hidden size-11 border-border bg-background/80 text-foreground shadow-sm backdrop-blur-[10px] hover:bg-background disabled:opacity-40 sm:flex";
+  "hidden size-11 disabled:opacity-40 sm:flex";
 
 /**
  * Faixa com os vídeos dos itens da caixa, em carrossel infinito (embla) —
@@ -139,8 +139,8 @@ export function BoxContentsSection({ book }: { book: Book }) {
 
           {items.length > 1 ? (
             <>
-              <CarouselPrevious className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
-              <CarouselNext className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
+              <CarouselPrevious variant="glass" className={cn(NAV_BUTTON_CLASSNAME, "left-2 sm:left-4")} />
+              <CarouselNext variant="glass" className={cn(NAV_BUTTON_CLASSNAME, "right-2 sm:right-4")} />
             </>
           ) : null}
         </Carousel>

@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { FormStatus, type FormResult } from "@/components/form-status";
 import { useCart, type ResolvedCartLine } from "@/lib/cart/cart-context";
 import { formatPriceClient } from "@/lib/cart/format-price";
+import { savePendingCheckout } from "@/lib/cart/pending-checkout";
 import { cn } from "@/lib/utils";
 import { startWixCheckout } from "@/lib/wix/ecom";
 import { AddressForm } from "./address-form";
@@ -54,6 +55,9 @@ export function CheckoutContent() {
         purchasableLines.map((line) => ({ catalogItemId: line.wixProductId, quantity: line.quantity })),
         toWixAddress(address),
         { thankYouPageUrl: `${origin}/checkout/confirmacao`, postFlowUrl: `${origin}/checkout` },
+        // Registra o que está indo para o pagamento: na volta, a confirmação
+        // tira do carrinho só isso, e só se o pedido for deste checkout.
+        (checkoutId) => savePendingCheckout(checkoutId, purchasableLines),
       );
       // Caminho feliz não retorna — window.location.href já navegou o browser.
     } catch (e) {

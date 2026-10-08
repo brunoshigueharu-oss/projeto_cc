@@ -132,7 +132,7 @@ export async function startSocialLogin(idp: string, callbackUri: string, returnT
 
 export async function completeSocialLogin(): Promise<{ member: WixMember | null; returnTo: string }> {
   const raw = window.localStorage.getItem(OAUTH_STASH_KEY);
-  if (!raw) throw new MemberAuthError("missingOAuthData", "No pending login found — start the login again.");
+  if (!raw) throw new MemberAuthError("missingOAuthData", "No pending login found; start the login again.");
   window.localStorage.removeItem(OAUTH_STASH_KEY);
   const stash = JSON.parse(raw);
 
@@ -142,7 +142,7 @@ export async function completeSocialLogin(): Promise<{ member: WixMember | null;
   const code = params.get("code");
   const state = params.get("state");
   if (!code || !state) throw new MemberAuthError("missingCode", "No authorization code returned.");
-  if (state !== stash.state) throw new MemberAuthError("stateMismatch", "OAuth state mismatch — possible CSRF; login aborted.");
+  if (state !== stash.state) throw new MemberAuthError("stateMismatch", "OAuth state mismatch (possible CSRF); login aborted.");
 
   const tokens = await exchangeCode(code, stash.codeVerifier, stash.redirectUri);
   setSessionTokens(tokens);
@@ -247,7 +247,7 @@ function authorizeViaHiddenIframe(authUrl: string, expectedState: string): Promi
           new MemberAuthError(
             "timeout",
             `Login timed out. Most likely this app's origin (${typeof window !== "undefined" ? window.location.origin : "?"}) ` +
-              `is not an allowed authorization redirect URI on the Wix OAuth app — register it in the site's Headless Settings.`,
+              `is not an allowed authorization redirect URI on the Wix OAuth app; register it in the site's Headless Settings.`,
           ),
         );
       }
@@ -299,7 +299,7 @@ export function mapAuthError(e: unknown): MemberAuthError | Error {
   const body = (e as { body?: { message?: string; details?: { applicationError?: { code?: string } } } })?.body;
   const code = body?.details?.applicationError?.code;
   if (code === "-19995" || status === 409) {
-    return new MemberAuthError("emailAlreadyExists", "An account with this email already exists — try logging in instead.");
+    return new MemberAuthError("emailAlreadyExists", "An account with this email already exists; try logging in instead.");
   }
   if (code === "-19999" || code === "-19976" || status === 404 || status === 401) {
     return new MemberAuthError("invalidCredentials", "Incorrect email or password.");

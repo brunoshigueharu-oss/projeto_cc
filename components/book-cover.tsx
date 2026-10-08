@@ -391,7 +391,7 @@ export const BookCover = forwardRef<BookCoverHandle, BookCoverProps>(function Bo
           type="button"
           onClick={handleToggle}
           aria-label={isPlaying ? "Pausar vídeo" : "Reproduzir vídeo"}
-          className="absolute right-1 top-3 z-10 flex size-8 items-center justify-center rounded-full border border-white/20 bg-black/15 text-white opacity-50 backdrop-blur-[2px] transition-all duration-200 hover:opacity-100 hover:bg-black/25 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
+          className="absolute right-1 top-3 z-10 flex size-8 items-center justify-center rounded-full glass glass-lens border border-white/25 bg-black/20 text-white opacity-50 [--glass-blur:4px] transition-all duration-200 hover:opacity-100 hover:bg-black/30 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 group-hover/cover:opacity-80"
         >
           {isPlaying ? (
             <Pause className="size-3.5 fill-current" />

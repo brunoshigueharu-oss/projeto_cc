@@ -59,16 +59,16 @@ const RAW_CAMPAIGN = {
    * texto novo da editora, cortar antes o que duplicar alguma dessas fontes.
    */
   about: [
-    "Entre no Reino dos Bruxos. Atravesse os limites do mundo conhecido: existem histórias que nos levam para outros lugares — e existem histórias que criam mundos inteiros diante dos nossos olhos. YANAYAG, de Enrique Alcatena e Eduardo Mazzitelli, pertence à segunda categoria: prepare-se para atravessar terras desconhecidas, encontrar feiticeiros e criaturas extraordinárias, desvendar maldições, conhecer civilizações estranhas e mergulhar em uma fantasia tão exuberante quanto misteriosa.",
-    "Em volta dessa jornada há um universo onde a magia é uma força poderosa, os bruxos exercem influência sobre reinos inteiros e o fantástico se mistura ao estranho, ao grotesco e ao maravilhoso: demônios familiares, reis, criaturas impossíveis, povos misteriosos e histórias ancestrais — seres que parecem ter saído de um sonho, ou de um pesadelo, em territórios muito além das fronteiras da realidade que conhecemos. Mas Yanayag não é apenas uma aventura de fantasia — é uma viagem pelos \"mundos perdidos\" que sempre fascinaram Alcatena.",
+    "Entre no Reino dos Bruxos. Atravesse os limites do mundo conhecido: existem histórias que nos levam para outros lugares, e existem histórias que criam mundos inteiros diante dos nossos olhos. YANAYAG, de Enrique Alcatena e Eduardo Mazzitelli, pertence à segunda categoria: prepare-se para atravessar terras desconhecidas, encontrar feiticeiros e criaturas extraordinárias, desvendar maldições, conhecer civilizações estranhas e mergulhar em uma fantasia tão exuberante quanto misteriosa.",
+    "Em volta dessa jornada há um universo onde a magia é uma força poderosa, os bruxos exercem influência sobre reinos inteiros e o fantástico se mistura ao estranho, ao grotesco e ao maravilhoso: demônios familiares, reis, criaturas impossíveis, povos misteriosos e histórias ancestrais, seres que parecem ter saído de um sonho, ou de um pesadelo, em territórios muito além das fronteiras da realidade que conhecemos. Mas Yanayag não é apenas uma aventura de fantasia: é uma viagem pelos \"mundos perdidos\" que sempre fascinaram Alcatena.",
   ],
   // Abre "O Livro", antes da lista: o que a obra é e de onde ela vem. O
   // segundo parágrafo nomeia a edição argentina de propósito — as 288 páginas
   // são as dela, não as da "Ficha Técnica Estimada" da edição brasileira, que
   // aparece na coluna ao lado com outro número.
   bookIntro: [
-    "YANAYAG não é simplesmente uma fantasia medieval convencional — não espere apenas castelos, cavaleiros e dragões. Aqui, a imaginação pode assumir qualquer forma: há bruxos e confrarias misteriosas, seres de aparência impossível, criaturas grotescas, entidades sobrenaturais, povos estranhos e lugares que parecem ter sido arrancados de algum antigo livro de mitologia que nunca existiu. É uma fantasia que convida o leitor a fazer aquilo que Alcatena faz tão bem: explorar o desconhecido.",
-    "A edição original argentina, Yanayag: En el Reino de los Brujos, foi publicada em 2016 e possui 288 páginas — uma obra substancial, que oferece ao leitor uma experiência completa e imersiva.",
+    "YANAYAG não é simplesmente uma fantasia medieval convencional: não espere apenas castelos, cavaleiros e dragões. Aqui, a imaginação pode assumir qualquer forma: há bruxos e confrarias misteriosas, seres de aparência impossível, criaturas grotescas, entidades sobrenaturais, povos estranhos e lugares que parecem ter sido arrancados de algum antigo livro de mitologia que nunca existiu. É uma fantasia que convida o leitor a fazer aquilo que Alcatena faz tão bem: explorar o desconhecido.",
+    "A edição original argentina, Yanayag: En el Reino de los Brujos, foi publicada em 2016 e possui 288 páginas, uma obra substancial, que oferece ao leitor uma experiência completa e imersiva.",
   ],
   // Só a ponte para a lista: o parágrafo que ficava aqui ("uma fantasia
   // heroica construída do zero...") era um resumo do que `bookIntro[0]` agora
@@ -83,7 +83,7 @@ const RAW_CAMPAIGN = {
     kicker: "Edição Noite",
     headline: "Adquira a versão limitada",
     description:
-      "A mesma jornada pelo Reino dos Bruxos, sob outra lua: nesta variante de capa em tiragem limitada, a lua dourada dá lugar a uma lua vermelha e o bruxo sentado no cubo de símbolos aparece recortado contra um céu noturno. São poucos exemplares — quando esta tiragem acabar, resta a capa da edição padrão.",
+      "A mesma jornada pelo Reino dos Bruxos, sob outra lua: nesta variante de capa em tiragem limitada, a lua dourada dá lugar a uma lua vermelha e o bruxo sentado no cubo de símbolos aparece recortado contra um céu noturno. São poucos exemplares: quando esta tiragem acabar, resta a capa da edição padrão.",
     ctaLabel: "Reservar Edição Noite",
   },
   recommendedFor: [
@@ -105,15 +105,15 @@ const RAW_CAMPAIGN = {
   // de Alcatena e Mazzitelli — é o repertório do artista que explica a
   // atmosfera da obra, não um assunto novo.
   authorNote:
-    "A inspiração de YANAYAG passa por uma tradição literária muito particular: Alcatena já revelou que a obra foi influenciada pelo universo fantástico de Lord Dunsany, especialmente por sua capacidade de criar terras imaginárias e mundos que parecem existir \"além dos campos que conhecemos\". O artista também reconhece ecos de autores como Clark Ashton Smith e o primeiro H. P. Lovecraft nesse tipo de imaginário — uma influência que ajuda a compreender a atmosfera da obra.",
+    "A inspiração de YANAYAG passa por uma tradição literária muito particular: Alcatena já revelou que a obra foi influenciada pelo universo fantástico de Lord Dunsany, especialmente por sua capacidade de criar terras imaginárias e mundos que parecem existir \"além dos campos que conhecemos\". O artista também reconhece ecos de autores como Clark Ashton Smith e o primeiro H. P. Lovecraft nesse tipo de imaginário, uma influência que ajuda a compreender a atmosfera da obra.",
   // Dois parágrafos, não um bloco só: a seção empilha cada um como parágrafo
   // próprio na coluna de leitura, e a quebra aqui é o que decide onde um
   // termina e o outro começa. O assunto é o que a fileira logo abaixo mostra —
   // a construção de mundo página a página —, não a linhagem literária da obra,
   // que já foi lida em "Sobre o Autor" (`authorNote`).
   galleryIntro: [
-    "Uma das grandes forças de YANAYAG está justamente em sua construção de mundo: Alcatena não se limita a desenhar personagens — ele cria culturas, religiões, arquitetura, criaturas, símbolos e mitologias. É uma obra em que cada página esconde um novo mundo.",
-    "Em determinado momento da narrativa, Yanayag chega a uma comunidade cujos habitantes apresentam suas crenças, deuses e tradições por meio de histórias em quadrinhos que funcionam como uma espécie de \"livros sagrados\" dentro daquele próprio universo: uma história em quadrinhos dentro de outra, usada para apresentar a cosmogonia de um povo fictício. É esse tipo de detalhe que faz de YANAYAG uma obra tão especial — você não está apenas acompanhando uma aventura, está descobrindo um mundo.",
+    "Uma das grandes forças de YANAYAG está justamente em sua construção de mundo: Alcatena não se limita a desenhar personagens; ele cria culturas, religiões, arquitetura, criaturas, símbolos e mitologias. É uma obra em que cada página esconde um novo mundo.",
+    "Em determinado momento da narrativa, Yanayag chega a uma comunidade cujos habitantes apresentam suas crenças, deuses e tradições por meio de histórias em quadrinhos que funcionam como uma espécie de \"livros sagrados\" dentro daquele próprio universo: uma história em quadrinhos dentro de outra, usada para apresentar a cosmogonia de um povo fictício. É esse tipo de detalhe que faz de YANAYAG uma obra tão especial: você não está apenas acompanhando uma aventura, está descobrindo um mundo.",
   ],
 } as const;
 

@@ -133,6 +133,7 @@ pressiona 1px no `active`, `opacity-50` quando `disabled`.
 | `default` | Ação primária padrão | `bg-primary` / hover 80% opacidade |
 | `accent` | CTA de destaque (ex.: comprar) | `accent` misturado com 25% de `foreground`, `shadow-sm` |
 | `brand` | CTA largo sobre superfície neutra (banner de combo) | `bg-brand-yellow`, texto `foreground`, `shadow-sm` |
+| `glass` | Botão flutuante sobre mídia ou arte (setas de carrossel) — nunca CTA sobre seção branca | `glass glass-lens`, `bg-background/70`, borda `border`, hover `bg-background/90`. Sobre arte escura (estante da home) o uso sobrescreve para o vidro claro: `border-white/20 bg-white/8 text-white` |
 | `outline` | Ação secundária | borda + `bg-background`, hover `bg-muted` |
 | `secondary` | Ação neutra | `bg-secondary` |
 | `ghost` | Ação de baixa ênfase | transparente, hover `bg-muted` |
@@ -201,6 +202,12 @@ Escala de raio (`app/globals.css`, base `--radius: 0.5rem`):
 
 - Cards e seções: `rounded-lg`/`rounded-xl`.
 - Pílulas, avatares, indicadores, badges: `rounded-full` (ou `rounded-4xl`).
+- **Indicador de posição** de carrossel/galeria: sempre `CarouselDots`
+  (`components/carousel-dots.tsx`) — bolinhas de 6px soltas, sem cápsula nem
+  vidro, a atual em pílula de 24px. A geometria é uma só; a cor segue o
+  fundo: `tone="page"` (padrão) sobre seção branca (`bg-foreground/20`, atual
+  `bg-primary`) e `tone="media"` sobre banner de vídeo (`bg-white/35`, atual
+  `bg-white/90`). Não reescrever a fileira à mão.
 - **Ícones**: só `lucide-react`, `size-4` inline com texto (`size-3`/`3.5`
   em contextos compactos). Não introduzir outra biblioteca de ícones.
 - **Vetores decorativos** (SVG solto, blobs, texturas): o código não usa
@@ -209,9 +216,27 @@ Escala de raio (`app/globals.css`, base `--radius: 0.5rem`):
   hardcoded dentro de um componente.
 - **Parallax de capa de livro**: segue o fluxo da skill `atualizar-livro`,
   não este guia.
-- **Vidro/blur**: reservado a elementos flutuantes sobre mídia (ex.:
-  controles do Hero sobre vídeo — `backdrop-blur-[10px] bg-white/8
-  border-white/24`), não para UI padrão do site.
+- **Vidro (liquid glass)**: utilitário `glass` em `app/globals.css` — brilho
+  de cima, fio especular, sombra e desfoque/saturação do que está atrás.
+  `glass-lens` soma refração nas bordas (só Chromium; Safari e Firefox ficam
+  no desfoque), e é só para controles redondos. Os mapas de refração e de luz de aro ficam
+  em `public/images/glass/` e são gerados por
+  `scripts/generate-glass-lens.py` (squircle convexo + lei de Snell) — não
+  editar os PNGs à mão. O efeito é calibrado para ser **sutil**: o vidro não
+  pode chamar mais atenção que a mídia atrás dele. A cor do vidro fica em classe
+  Tailwind no elemento, em três tons:
+  - claro sobre mídia escura (setas do Hero,
+    setas da estante de livros da home, lightbox): `border-white/20`–`/24 bg-white/8 text-white`. As setas do
+    Hero são as maiores peças de vidro do site (`size-10`, `lg:size-12`);
+  - fumê para controle discreto sobre vídeo ou capa (pausar, virar, tela
+    cheia): `border-white/25 bg-black/20 text-white`;
+  - fosco sobre a página (header, setas de carrossel via `variant="glass"`):
+    `bg-background/70`–`/75`, texto `foreground` — abaixo de 70% o chevron
+    escuro perde contraste sobre arte preta (galeria de campanha).
+
+  Vidro só aparece com algo atrás: reservado a elemento **flutuante** (header
+  fixo, controle sobre mídia). CTA sólido (`default`, `accent`, `brand`) e
+  card sobre seção branca não viram vidro.
 
 ## 8. Motion & acessibilidade
 

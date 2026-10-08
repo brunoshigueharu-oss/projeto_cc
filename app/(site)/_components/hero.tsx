@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type FocusEvent,
   type MouseEvent,
   type PointerEvent,
 } from "react";
@@ -12,15 +13,16 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { CarouselDots } from "@/components/carousel-dots";
 import type { HomeBanner } from "@/lib/data/schemas";
 import { getSwipeStep } from "../_lib/get-swipe-step";
 import { HeroBannerVideo } from "./hero-banner-video";
 
 const CAROUSEL_ARROW_CLASSNAME =
-  "absolute top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] transition-colors hover:bg-white/16 lg:size-11";
+  "absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full glass glass-lens border border-white/20 bg-white/8 text-white transition-colors hover:bg-white/16 lg:size-12";
 
 /** Tempo de cada banner na tela antes de o carrossel avançar sozinho. */
-const AUTOPLAY_DELAY_MS = 3000;
+const AUTOPLAY_DELAY_MS = 5000;
 
 /** Quanto dura o deslize de um banner para o outro. É o mesmo
  * `duration-[600ms]` do slide em `hero-banner-video.tsx`; aqui serve só para
@@ -38,15 +40,22 @@ type HeroProps = {
 /**
  * Hero da Home = carrossel de vídeos em faixa cheia (mudo/loop/autoplay),
  * sem texto sobreposto. Cada vídeo é um link para o destino do banner
- * (página do livro ou `/campanhas`). Anda sozinho a cada 3s e também por
+ * (página do livro ou `/campanhas`). Anda sozinho a cada 5s e também por
  * setas, bolinhas ou swipe (toque) — em todos os casos o banner novo entra
  * deslizando pela borda.
+ *
+ * O banner não troca sozinho enquanto o mouse está sobre ele ou o foco do
+ * teclado está dentro — o destino do link não pode mudar debaixo de quem está
+ * prestes a acioná-lo. `prefers-reduced-motion` não para o carrossel: os
+ * vídeos do site tocam sempre (ver `components/lazy-video.tsx`).
  */
 export function Hero({ banners }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [entering, setEntering] = useState<{ index: number; direction: Direction } | null>(null);
   const [leaving, setLeaving] = useState<{ index: number; direction: Direction } | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const swipeOrigin = useRef<{ x: number; y: number } | null>(null);
   const hasSwiped = useRef(false);
   const total = banners.length;
@@ -108,15 +117,11 @@ export function Hero({ banners }: HeroProps) {
   // navegar na mão (setas, bolinhas ou swipe) reinicia a contagem em vez de
   // deixar o slide recém-escolhido sair no meio do tempo do anterior.
   useEffect(() => {
-    if (total < 2) return;
-    // Mesma regra do resto do site (ver `lazy-video.tsx`): quem pediu menos
-    // movimento no sistema troca de banner só pelas setas e bolinhas. O
-    // deslize em si já morre no `prefers-reduced-motion` de `globals.css`.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (total < 2 || isHovered || hasKeyboardFocus) return;
 
     const timer = window.setTimeout(() => goTo(activeIndex + 1, 1), AUTOPLAY_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, goTo, total]);
+  }, [activeIndex, goTo, hasKeyboardFocus, isHovered, total]);
 
   if (total === 0) return null;
 
@@ -177,8 +182,31 @@ export function Hero({ banners }: HeroProps) {
     }
   }
 
+  function handleFocus(event: FocusEvent<HTMLElement>) {
+    // Só foco de teclado segura o carrossel: no clique de mouse o botão
+    // também recebe foco (Chrome), e aí a troca ficaria parada até a pessoa
+    // clicar fora da faixa.
+    if (event.target.matches(":focus-visible")) setHasKeyboardFocus(true);
+  }
+
+  function handleBlur(event: FocusEvent<HTMLElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget)) setHasKeyboardFocus(false);
+  }
+
   return (
-    <section className="relative overflow-hidden bg-background">
+    <section
+      aria-roledescription="carrossel"
+      aria-label="Destaques"
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      // Só mouse: no toque não existe "sair de cima", e o carrossel ficaria
+      // parado para sempre depois do primeiro toque.
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setIsHovered(true);
+      }}
+      onPointerLeave={() => setIsHovered(false)}
+      className="group/hero relative overflow-hidden bg-background"
+    >
       {/* `touch-pan-y`: o navegador só assume o arrasto vertical (scroll da
           página); o horizontal chega aos handlers como swipe. */}
       <Link
@@ -209,7 +237,7 @@ export function Hero({ banners }: HeroProps) {
             onClick={() => goTo(activeIndex - 1, -1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "left-3 lg:left-10")}
           >
-            <ChevronLeft className="size-4" aria-hidden="true" />
+            <ChevronLeft className="size-4 lg:size-5" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -217,32 +245,21 @@ export function Hero({ banners }: HeroProps) {
             onClick={() => goTo(activeIndex + 1, 1)}
             className={cn(CAROUSEL_ARROW_CLASSNAME, "right-3 lg:right-10")}
           >
-            <ChevronRight className="size-4" aria-hidden="true" />
+            <ChevronRight className="size-4 lg:size-5" aria-hidden="true" />
           </button>
 
-          {/* Cada bolinha é um botão de 24px de altura com a pílula de 6px
-              centralizada: a pílula continua pequena, mas o alvo de toque
-              não. Com alvo de 6px, errar por poucos pixels caía no Link do
-              vídeo e abria a página do livro. */}
-          <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
-            {banners.map((item, index) => (
-              <button
-                key={item.slug}
-                type="button"
-                aria-label={`Ir para banner ${index + 1}`}
-                aria-current={index === activeIndex}
-                onClick={() => goTo(index, index > activeIndex ? 1 : -1)}
-                className="group flex h-6 items-center px-1"
-              >
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "block h-1.5 rounded-full bg-white/30 transition-all",
-                    index === activeIndex ? "w-6 bg-primary" : "w-1.5 group-hover:bg-white/50"
-                  )}
-                />
-              </button>
-            ))}
+          {/* A fileira ocupa a largura toda só pra centralizar as bolinhas.
+              `pointer-events-none` nela devolve ao Link do banner o clique
+              nas laterais vazias. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
+            <CarouselDots
+              tone="media"
+              count={banners.length}
+              activeIndex={activeIndex}
+              onSelect={(index) => goTo(index, index > activeIndex ? 1 : -1)}
+              getLabel={(index) => `Ir para banner ${index + 1}`}
+              className="pointer-events-auto"
+            />
           </div>
         </>
       )}

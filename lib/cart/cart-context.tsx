@@ -29,7 +29,6 @@ type CartContextValue = {
   addItem: (type: CartItemType, slug: string, quantity?: number) => void;
   removeItem: (type: CartItemType, slug: string) => void;
   setQuantity: (type: CartItemType, slug: string, quantity: number) => void;
-  clear: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -39,7 +38,7 @@ const EMPTY_LINES: readonly CartLine[] = [];
 const CART_EVENT = "hocus-pocus:cart-change";
 const cartEmitter = typeof window !== "undefined" ? new EventTarget() : null;
 
-function isCartLine(value: unknown): value is CartLine {
+export function isCartLine(value: unknown): value is CartLine {
   if (typeof value !== "object" || value === null) return false;
   const line = value as Record<string, unknown>;
   return (
@@ -67,6 +66,25 @@ function readLines(): CartLine[] {
 function writeLines(lines: CartLine[]) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
   cartEmitter?.dispatchEvent(new Event(CART_EVENT));
+}
+
+/**
+ * Tira do carrinho só o que foi comprado: desconta as quantidades de
+ * `purchased` e mantém o resto — itens (ou unidades a mais) colocados depois
+ * de o checkout começar, nesta ou em outra aba, não fazem parte do pedido.
+ * Função de módulo, e não do contexto, porque quem a chama é a conciliação do
+ * checkout (`pending-checkout.ts`), fora da árvore de render.
+ */
+export function removePurchasedLines(purchased: readonly CartLine[]) {
+  writeLines(
+    readLines().flatMap((line) => {
+      const bought = purchased.find(
+        (candidate) => candidate.type === line.type && candidate.slug === line.slug,
+      );
+      const quantity = line.quantity - (bought?.quantity ?? 0);
+      return quantity > 0 ? [{ ...line, quantity }] : [];
+    }),
+  );
 }
 
 // `useSyncExternalStore` exige que `getSnapshot` devolva a MESMA referência
@@ -141,10 +159,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  function clear() {
-    writeLines([]);
-  }
-
   const resolvedLines = useMemo<ResolvedCartLine[]>(
     () =>
       lines.flatMap((line): ResolvedCartLine[] => {
@@ -187,7 +201,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     addItem,
     removeItem,
     setQuantity,
-    clear,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

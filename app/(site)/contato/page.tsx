@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/page-header";
 import { ContactForm } from "./_components/contact-form";
+import { CONTACT_FALLBACK_EMAIL, contactDelivery } from "./_lib/contact-delivery";
 
 export const metadata: Metadata = {
   title: "Contato",
   description:
-    "Fale com a Hocus Pocus — envio de originais, pedidos, imprensa e demais assuntos.",
+    "Fale com a Hocus Pocus: envio de originais, pedidos, imprensa e demais assuntos.",
 };
 
 const CHANNELS = [
@@ -79,12 +80,29 @@ export default function ContatoPage() {
             <h2 className="font-display text-2xl text-foreground">
               Enviar uma mensagem
             </h2>
-            <p className="mt-2 font-serif text-sm text-muted-foreground">
-              Todos os campos são obrigatórios.
-            </p>
-            <div className="mt-8">
-              <ContactForm />
-            </div>
+            {contactDelivery ? (
+              <>
+                <p className="mt-2 font-serif text-sm text-muted-foreground">
+                  Todos os campos são obrigatórios.
+                </p>
+                <div className="mt-8">
+                  <ContactForm />
+                </div>
+              </>
+            ) : (
+              <p className="mt-2 font-serif text-sm text-muted-foreground">
+                O formulário está temporariamente fora do ar. Escreva direto
+                para um dos canais ao lado; é por lá que respondemos. Para
+                outros assuntos, use{" "}
+                <a
+                  href={`mailto:${CONTACT_FALLBACK_EMAIL}`}
+                  className="font-mono text-foreground underline underline-offset-4 hover:text-primary"
+                >
+                  {CONTACT_FALLBACK_EMAIL}
+                </a>
+                .
+              </p>
+            )}
           </div>
         </div>
       </section>

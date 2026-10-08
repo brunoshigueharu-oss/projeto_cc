@@ -9,7 +9,7 @@ import { getCatalog } from "./_data-access/get-catalog";
 export const metadata: Metadata = {
   title: "Catálogo",
   description:
-    "Todos os títulos da Hocus Pocus — tiragens curtas, sem reimpressão automática.",
+    "Todos os títulos da Hocus Pocus: tiragens curtas, sem reimpressão automática.",
 };
 
 export default async function CatalogoPage({ searchParams }: PageProps<"/catalogo">) {
@@ -29,8 +29,8 @@ export default async function CatalogoPage({ searchParams }: PageProps<"/catalog
         title="Hocus Pocus"
         intro={
           universe
-            ? `Filtrando por ${universe.name} — ${universe.tagline}`
-            : "Venha conhecer nossos universos ilustrados — a história em quadrinhos nunca esteve tão viva."
+            ? `Filtrando por ${universe.name}: ${universe.tagline}`
+            : "Venha conhecer nossos universos ilustrados: a história em quadrinhos nunca esteve tão viva."
         }
       >
         <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground tabular-nums">

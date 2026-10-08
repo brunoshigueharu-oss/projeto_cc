@@ -23,7 +23,7 @@ export const contactSchema = z.object({
   message: z
     .string()
     .trim()
-    .min(20, "Conte um pouco mais — pelo menos 20 caracteres.")
+    .min(20, "Conte um pouco mais (pelo menos 20 caracteres).")
     .max(2000, "Máximo de 2000 caracteres."),
   /**
    * Honeypot: bots preenchem, humanos não veem. Vazio é o esperado.

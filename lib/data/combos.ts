@@ -23,7 +23,7 @@ const RAW_COMBOS = [
     slug: "caixa-de-reliquias-contos-1-e-2",
     title: "Caixa de Relíquias + Os Contos do Planta 1 e 2",
     description:
-      "A Caixa de Relíquias, com o Volume 2 e todos os itens colecionáveis dentro, mais o Volume 1 de Os Contos do Planta — a coleção completa da série.",
+      "A Caixa de Relíquias, com o Volume 2 e todos os itens colecionáveis dentro, mais o Volume 1 de Os Contos do Planta: a coleção completa da série.",
     bookSlugs: [
       "os-contos-do-planta-caixa-de-reliquias",
       "os-contos-do-planta-2",
@@ -61,7 +61,7 @@ const RAW_COMBOS = [
     slug: "robo-de-madeira-graphic-novel-en",
     title: "Robô de Madeira + Plant: Graphic Novel EN",
     description:
-      "Robô de Madeira — Atlas Cianus ao lado de Mr. Plant — A Biped Among Plants, a edição em inglês da graphic novel que abre a saga.",
+      "Robô de Madeira: Atlas Cianus ao lado de Mr. Plant: A Biped Among Plants, a edição em inglês da graphic novel que abre a saga.",
     bookSlugs: ["robo-de-madeira-atlas-cianus", "mr-plant-a-biped-among-plants"],
     showOnBookSlugs: ["robo-de-madeira-atlas-cianus"],
     price: { amount: 36000, currency: "BRL" },

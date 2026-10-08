@@ -16,7 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
 import { useMember } from "@/lib/wix/member-context";
-import { register as wixRegister, verifyEmail, MemberAuthError } from "@/lib/wix/members-auth";
+import { register as wixRegister, MemberAuthError } from "@/lib/wix/members-auth";
+import { VerifyEmailForm } from "../../_components/verify-email-form";
 import { cadastroSchema, type CadastroInput } from "../_lib/cadastro-schema";
 
 type Phase = "form" | "verify" | "pending";
@@ -25,8 +26,6 @@ export function CadastroForm() {
   const [result, setResult] = useState<FormResult | null>(null);
   const [phase, setPhase] = useState<Phase>("form");
   const [stateToken, setStateToken] = useState<string | null>(null);
-  const [code, setCode] = useState("");
-  const [verifying, setVerifying] = useState(false);
   const router = useRouter();
   const { refresh } = useMember();
 
@@ -59,30 +58,10 @@ export function CadastroForm() {
       }
     } catch (e) {
       if (e instanceof MemberAuthError && e.code === "emailAlreadyExists") {
-        setResult({ ok: false, message: "Este e-mail já tem cadastro. Tente entrar." });
+        setResult({ ok: false, message: "Este e-mail já tem cadastro. Entre com ele; se faltar confirmar o e-mail, você conclui por lá." });
       } else {
         setResult({ ok: false, message: "Não foi possível criar sua conta. Tente novamente." });
       }
-    }
-  }
-
-  async function onSubmitCode(e: React.FormEvent) {
-    e.preventDefault();
-    if (!stateToken) return;
-    setVerifying(true);
-    setResult(null);
-    try {
-      const res = await verifyEmail(code, stateToken);
-      if (res.state === "SUCCESS") {
-        await refresh();
-        router.push("/perfil");
-        return;
-      }
-      setResult({ ok: false, message: "Código inválido. Confira e tente novamente." });
-    } catch {
-      setResult({ ok: false, message: "Código inválido. Confira e tente novamente." });
-    } finally {
-      setVerifying(false);
     }
   }
 
@@ -97,30 +76,17 @@ export function CadastroForm() {
 
   if (phase === "verify") {
     return (
-      <form onSubmit={onSubmitCode}>
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="code">Código de verificação</FieldLabel>
-            <p className="text-sm text-muted-foreground">
-              Enviamos um código de 6 dígitos para o seu e-mail.
-            </p>
-            <Input
-              id="code"
-              inputMode="numeric"
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              autoComplete="one-time-code"
-            />
-          </Field>
-          <div className="flex flex-wrap items-center gap-4">
-            <Button type="submit" size="lg" disabled={verifying} className="h-11 rounded-full px-7">
-              {verifying ? "Confirmando…" : "Confirmar"}
-            </Button>
-            <FormStatus result={result} />
-          </div>
-        </FieldGroup>
-      </form>
+      <VerifyEmailForm
+        stateToken={stateToken}
+        onVerified={async () => {
+          await refresh();
+          router.push("/perfil");
+        }}
+        onPendingApproval={() => setPhase("pending")}
+        // O login retoma a verificação de um cadastro que ficou pela metade.
+        onRestart={() => router.push("/login")}
+        restartLabel="Ir para o login"
+      />
     );
   }
 

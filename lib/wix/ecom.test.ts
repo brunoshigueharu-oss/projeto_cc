@@ -6,6 +6,7 @@ import {
   addLineItemsToCart,
   clearCurrentCart,
   createCheckoutFromCart,
+  getPlacedOrder,
   redirectToCheckoutPayment,
   startWixCheckout,
 } from "./ecom";
@@ -115,6 +116,36 @@ describe("lib/wix/ecom", () => {
     });
   });
 
+  describe("getPlacedOrder", () => {
+    it("devolve checkout, número e status do pedido de quem está logado", async () => {
+      const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString();
+        expect(url).toBe(`${WIX_API_BASE}/ecom/v1/orders/order-1`);
+        expect(init?.method).toBe("GET");
+        return jsonResponse({ order: { id: "order-1", checkoutId: "checkout-1", number: 1042, status: "APPROVED" } });
+      });
+      vi.stubGlobal("fetch", fetchMock);
+
+      await expect(getPlacedOrder("order-1")).resolves.toEqual({
+        checkoutId: "checkout-1",
+        number: "1042",
+        status: "APPROVED",
+      });
+    });
+
+    it.each([400, 403, 404])("trata %i como pedido que não é desta pessoa", async (status) => {
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "nope" }, status)));
+
+      await expect(getPlacedOrder("order-de-outro")).resolves.toBeNull();
+    });
+
+    it("propaga falha do servidor em vez de dizer que o pedido não existe", async () => {
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ message: "server error" }, 500)));
+
+      await expect(getPlacedOrder("order-1")).rejects.toThrow();
+    });
+  });
+
   describe("startWixCheckout", () => {
     const callbacks = {
       thankYouPageUrl: "https://example.com/checkout/confirmacao",
@@ -143,8 +174,14 @@ describe("lib/wix/ecom", () => {
       vi.stubGlobal("location", locationMock);
       vi.stubGlobal("fetch", fetchMock);
 
-      await startWixCheckout([{ catalogItemId: "prod-1", quantity: 1 }], {} as never, callbacks);
+      const onCheckoutCreated = vi.fn(() => {
+        // Precisa rodar antes do redirecionamento, enquanto o documento existe.
+        expect(locationMock.href).toBe("");
+      });
 
+      await startWixCheckout([{ catalogItemId: "prod-1", quantity: 1 }], {} as never, callbacks, onCheckoutCreated);
+
+      expect(onCheckoutCreated).toHaveBeenCalledExactlyOnceWith("checkout-1");
       expect(calledUrls).toEqual([
         `DELETE ${WIX_API_BASE}/ecom/v1/carts/current`,
         `POST ${WIX_API_BASE}/ecom/v1/carts/current/add-to-cart`,

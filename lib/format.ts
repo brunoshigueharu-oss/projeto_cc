@@ -31,5 +31,5 @@ export function formatDateRange(startsAt: string, endsAt: string | null): string
   if (!endsAt) {
     return `A partir de ${start}`;
   }
-  return `${start} — ${shortDateFormatter.format(new Date(`${endsAt}T00:00:00`))}`;
+  return `${start} a ${shortDateFormatter.format(new Date(`${endsAt}T00:00:00`))}`;
 }

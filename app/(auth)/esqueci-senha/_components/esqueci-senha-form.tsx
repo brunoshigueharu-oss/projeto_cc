@@ -13,8 +13,23 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
+import { wixErrorStatus } from "@/lib/wix/client";
 import { sendPasswordResetEmail } from "@/lib/wix/members-auth";
 import { esqueciSenhaSchema, type EsqueciSenhaInput } from "../_lib/esqueci-senha-schema";
+
+const HTTP_TOO_MANY_REQUESTS = 429;
+const HTTP_SERVER_ERROR = 500;
+
+/**
+ * Falha que não depende de qual e-mail foi digitado — sem resposta do Wix
+ * (rede fora, token não emitido), instabilidade do servidor ou limite de
+ * requisições. Só essas podem aparecer como erro: as demais recusas (4xx)
+ * podem variar conforme a conta existir ou não, e mostrá-las revelaria isso.
+ */
+function isOperationalFailure(error: unknown): boolean {
+  const status = wixErrorStatus(error);
+  return status === undefined || status === HTTP_TOO_MANY_REQUESTS || status >= HTTP_SERVER_ERROR;
+}
 
 export function EsqueciSenhaForm() {
   const [result, setResult] = useState<FormResult | null>(null);
@@ -29,14 +44,24 @@ export function EsqueciSenhaForm() {
   });
 
   async function onSubmit(values: EsqueciSenhaInput) {
+    // Limpa o resultado anterior: uma confirmação antiga não pode ficar na
+    // tela enquanto o novo pedido ainda não terminou.
+    setResult(null);
     const redirectUri = `${window.location.origin}/atualizar-senha`;
     try {
       await sendPasswordResetEmail(values.email, redirectUri);
     } catch (e) {
-      // Mensagem sempre igual, mesmo em erro — não revela se o e-mail existe.
       // Logado pra debug (allow-list de redirect, chave errada, etc.) sem vazar nada ao usuário.
       console.error(e);
+      if (isOperationalFailure(e)) {
+        setResult({
+          ok: false,
+          message: "Não foi possível concluir o pedido agora. Tente novamente em instantes.",
+        });
+        return;
+      }
     }
+    // Mesma mensagem para pedido aceito e para recusa do Wix — não revela se o e-mail existe.
     setResult({ ok: true, message: "Se esse e-mail tiver cadastro, enviamos um link para redefinir a senha." });
   }
 

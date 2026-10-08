@@ -5,7 +5,7 @@ import Image from "next/image";
 import { GalleryLightbox, prefersReducedMotion } from "@/components/gallery/gallery-lightbox";
 
 import type { Book } from "@/lib/data/schemas";
-import { cn } from "@/lib/utils";
+import { CarouselDots } from "@/components/carousel-dots";
 
 type BookGalleryProps = {
   images: NonNullable<Book["gallery"]>;
@@ -151,22 +151,13 @@ export function BookGallery({ images, bookTitle }: BookGalleryProps) {
         ))}
       </ul>
 
-      {images.length > 1 ? (
-        <div className="mt-1 flex flex-wrap items-center justify-center">
-          {images.map((image, index) => (
-            <button
-              key={image.src}
-              type="button"
-              aria-label={`Ir para foto ${index + 1}`}
-              aria-current={index === activeIndex}
-              onClick={() => scrollToIndex(index)}
-              className="flex size-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <span aria-hidden="true" className={cn("h-1.5 rounded-full motion-safe:transition-all", index === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/15")} />
-            </button>
-          ))}
-        </div>
-      ) : null}
+      <CarouselDots
+        count={images.length}
+        activeIndex={activeIndex}
+        onSelect={scrollToIndex}
+        getLabel={(index) => `Ir para foto ${index + 1}`}
+        className="mt-1"
+      />
 
       {openIndex !== null ? (
         <GalleryLightbox

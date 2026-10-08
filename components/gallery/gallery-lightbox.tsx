@@ -8,7 +8,7 @@ export function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-const control = "absolute z-10 flex size-11 items-center justify-center rounded-full border border-white/24 bg-white/8 text-white backdrop-blur-[10px] hover:bg-white/16 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+const control = "absolute z-10 flex size-11 items-center justify-center rounded-full glass glass-lens border border-white/24 bg-white/8 text-white hover:bg-white/16 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
 type Props = {
   images: { src: string; alt: string }[];
@@ -141,7 +141,7 @@ export function GalleryLightbox({ images, initialIndex, getThumbnail, revealThum
       <div ref={frameRef} className="absolute overflow-hidden">
         <Image src={images[index].src} alt={images[index].alt} fill sizes="90vw" onLoad={(event) => { if (frameRef.current && !closing.current) fitFrame(frameRef.current, event.currentTarget); }} className="object-cover" />
       </div>
-      <p aria-live="polite" aria-atomic="true" className="pointer-events-none absolute inset-x-0 bottom-5 text-center text-sm">{index + 1} / {images.length} — {images[index].alt}</p>
+      <p aria-live="polite" aria-atomic="true" className="pointer-events-none absolute inset-x-0 bottom-5 text-center text-sm">{index + 1} / {images.length} · {images[index].alt}</p>
     </dialog>
   );
 }

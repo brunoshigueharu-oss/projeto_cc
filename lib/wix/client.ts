@@ -160,7 +160,7 @@ export async function wixApiRequest(path: string, options: RequestOptions = {}) 
   });
 
   if (res.status === 402) {
-    console.warn("Wix: Payment required (402) — recurso exige plano ativo no site.");
+    console.warn("Wix: Payment required (402): recurso exige plano ativo no site.");
     return undefined;
   }
   if (!res.ok) {

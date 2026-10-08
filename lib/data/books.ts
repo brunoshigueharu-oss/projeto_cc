@@ -3,12 +3,12 @@ import { UNIVERSE_SLUGS } from "./universes";
 
 const GUSTAVO = {
   name: "Gustavo Ravaglio",
-  bio: "Gustavo Ravaglio é um premiado autor de quadrinhos, vencedor dos prêmios Troféu HQ Mix e Prêmio Jabuti, reconhecido pela criação de universos e personagens originais, além de projetos gráficos sofisticados que elevam a experiência do livro a outro patamar. Ravaglio é designer, escritor, ilustrador, quadrinista, antropólogo — mestre pela UFPR — e analista técnico do mercado financeiro. Atualmente, dirige seu próprio estúdio de design, atuando nas áreas de entretenimento e educação com soluções estratégicas e criativas para esses setores. Também leciona na Pontifícia Universidade Católica do Paraná, nos cursos de graduação e pós-graduação lato sensu em Design.",
+  bio: "Gustavo Ravaglio é um premiado autor de quadrinhos, vencedor dos prêmios Troféu HQ Mix e Prêmio Jabuti, reconhecido pela criação de universos e personagens originais, além de projetos gráficos sofisticados que elevam a experiência do livro a outro patamar. Ravaglio é designer, escritor, ilustrador, quadrinista, antropólogo (mestre pela UFPR) e analista técnico do mercado financeiro. Atualmente, dirige seu próprio estúdio de design, atuando nas áreas de entretenimento e educação com soluções estratégicas e criativas para esses setores. Também leciona na Pontifícia Universidade Católica do Paraná, nos cursos de graduação e pós-graduação lato sensu em Design.",
 };
 
 const ALCATENA_E_MAZZITELLI = {
   name: "Enrique Alcatena e Eduardo Mazzitelli",
-  bio: "Enrique Alcatena é um dos grandes nomes da história dos quadrinhos argentinos. Com carreira iniciada profissionalmente em 1975, seu trabalho atravessou fronteiras e gêneros, passando por editoras e mercados da Argentina, Itália, França, Reino Unido e Estados Unidos, e deu vida a personagens como Batman, Superman, Conan, Predator e Judge Dredd. É quando tem liberdade para criar seus próprios mundos, porém, que sua arte alcança uma dimensão particularmente fascinante — e Yanayag é um dos grandes exemplos disso.\n\nAo lado do roteirista Eduardo Mazzitelli, seu parceiro em obras marcantes como Acero Líquido, Pesadillas e Shankar, Alcatena constrói em Yanayag um universo que parece possuir uma história muito mais antiga e profunda do que aquela encontrada nas páginas. Nesse título, a dupla retorna à chamada \"fantasia pura\", deixando de lado uma abordagem mais documental para mergulhar completamente na imaginação. Yanayag é o primeiro trabalho da dupla publicado pela Hocus Pocus.",
+  bio: "Enrique Alcatena é um dos grandes nomes da história dos quadrinhos argentinos. Com carreira iniciada profissionalmente em 1975, seu trabalho atravessou fronteiras e gêneros, passando por editoras e mercados da Argentina, Itália, França, Reino Unido e Estados Unidos, e deu vida a personagens como Batman, Superman, Conan, Predator e Judge Dredd. É quando tem liberdade para criar seus próprios mundos, porém, que sua arte alcança uma dimensão particularmente fascinante, e Yanayag é um dos grandes exemplos disso.\n\nAo lado do roteirista Eduardo Mazzitelli, seu parceiro em obras marcantes como Acero Líquido, Pesadillas e Shankar, Alcatena constrói em Yanayag um universo que parece possuir uma história muito mais antiga e profunda do que aquela encontrada nas páginas. Nesse título, a dupla retorna à chamada \"fantasia pura\", deixando de lado uma abordagem mais documental para mergulhar completamente na imaginação. Yanayag é o primeiro trabalho da dupla publicado pela Hocus Pocus.",
 };
 
 /**
@@ -53,10 +53,10 @@ const PLANTA_UNIVERSE_FAMILY = {
   covers: [
     {
       bookSlug: "um-bipede-entre-plantas",
-      caption: "O Planta — Um Bípede Entre Plantas",
+      caption: "O Planta: Um Bípede Entre Plantas",
       image: {
         src: "/images/universo/familia/o-planta/um-bipede-entre-plantas.png",
-        alt: "Capa de O Planta — Um Bípede Entre Plantas",
+        alt: "Capa de O Planta: Um Bípede Entre Plantas",
         width: 538,
         height: 760,
       },
@@ -75,10 +75,10 @@ const PLANTA_UNIVERSE_FAMILY = {
     },
     {
       bookSlug: "os-contos-do-planta-1",
-      caption: "Os Contos do Planta — Vol. 1",
+      caption: "Os Contos do Planta, Vol. 1",
       image: {
         src: "/images/universo/familia/o-planta/os-contos-do-planta-1.png",
-        alt: "Capa de Os Contos do Planta — Vol. 1",
+        alt: "Capa de Os Contos do Planta, Vol. 1",
         width: 538,
         height: 760,
       },
@@ -86,10 +86,10 @@ const PLANTA_UNIVERSE_FAMILY = {
     },
     {
       bookSlug: "os-contos-do-planta-2",
-      caption: "Os Contos do Planta — Vol. 2",
+      caption: "Os Contos do Planta, Vol. 2",
       image: {
         src: "/images/universo/familia/o-planta/os-contos-do-planta-2.png",
-        alt: "Capa de Os Contos do Planta — Vol. 2",
+        alt: "Capa de Os Contos do Planta, Vol. 2",
         width: 538,
         height: 760,
       },
@@ -130,8 +130,8 @@ const RAW_BOOKS = [
     // catálogo que era da edição em português (agora esgotada — ver bloco no
     // fim do array).
     slug: "mr-plant-a-biped-among-plants",
-    title: "Mr. Plant — A Biped Among Plants",
-    subtitle: "Graphic Novel — Vol. 1",
+    title: "Mr. Plant: A Biped Among Plants",
+    subtitle: "Graphic Novel, Vol. 1",
     universeSlug: "necroplanta",
     languageFlag: "us",
     author: GUSTAVO,
@@ -144,7 +144,7 @@ const RAW_BOOKS = [
       alt: "Selo de Livro Finalista do Prêmio Jabuti",
     },
     coverAlt:
-      "Capa do livro Mr. Plant — A Biped Among Plants, edição em inglês, de Gustavo Ravaglio",
+      "Capa do livro Mr. Plant: A Biped Among Plants, edição em inglês, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/mr-plant-a-biped-among-plants.mp4",
     backVideoSrc: "/videos/livros/verso/mr-plant-a-biped-among-plants.mp4",
@@ -156,15 +156,15 @@ const RAW_BOOKS = [
     gallery: [
       {
         src: "/images/galeria/um-bipede-entre-plantas/01.jpg",
-        alt: "Página do miolo de Mr. Plant — A Biped Among Plants, mostrando a fachada de uma casa vitoriana à noite",
+        alt: "Página do miolo de Mr. Plant: A Biped Among Plants, mostrando a fachada de uma casa vitoriana à noite",
       },
-      { src: "/images/galeria/um-bipede-entre-plantas/02.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
+      { src: "/images/galeria/um-bipede-entre-plantas/02.jpg", alt: "Página do miolo de Mr. Plant: A Biped Among Plants" },
       {
         src: "/images/galeria/um-bipede-entre-plantas/03.jpg",
-        alt: "Página do miolo de Mr. Plant — A Biped Among Plants, mostrando o interior de uma sala iluminada por velas",
+        alt: "Página do miolo de Mr. Plant: A Biped Among Plants, mostrando o interior de uma sala iluminada por velas",
       },
-      { src: "/images/galeria/um-bipede-entre-plantas/04.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
-      { src: "/images/galeria/um-bipede-entre-plantas/05.jpg", alt: "Página do miolo de Mr. Plant — A Biped Among Plants" },
+      { src: "/images/galeria/um-bipede-entre-plantas/04.jpg", alt: "Página do miolo de Mr. Plant: A Biped Among Plants" },
+      { src: "/images/galeria/um-bipede-entre-plantas/05.jpg", alt: "Página do miolo de Mr. Plant: A Biped Among Plants" },
     ],
     // Mesma arte de parallax da edição em português — ver nota de gramática de
     // shift/origin no bloco `um-bipede-entre-plantas`, no fim deste array.
@@ -217,9 +217,9 @@ const RAW_BOOKS = [
     wixProductId: "d8562fa9-53ef-44ac-97ec-6babc709fc4d",
     status: "disponivel",
     upsell: {
-      title: "Mr. Plant — A Biped Among Plants + Assinatura + Sketch",
+      title: "Mr. Plant: A Biped Among Plants + Assinatura + Sketch",
       description:
-        "Você pode receber seu exemplar de Mr. Plant — A Biped Among Plants autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+        "Você pode receber seu exemplar de Mr. Plant: A Biped Among Plants autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
     },
     universeShowcase: PLANTA_UNIVERSE_SHOWCASE,
@@ -234,7 +234,7 @@ const RAW_BOOKS = [
           ? {
               ...cover,
               bookSlug: "mr-plant-a-biped-among-plants",
-              caption: "Mr. Plant — A Biped Among Plants",
+              caption: "Mr. Plant: A Biped Among Plants",
             }
           : cover,
       ),
@@ -242,7 +242,7 @@ const RAW_BOOKS = [
   },
   {
     slug: "os-contos-do-planta-1",
-    title: "Os Contos do Planta — Vol. 1",
+    title: "Os Contos do Planta, Vol. 1",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     synopsis:
@@ -262,11 +262,11 @@ const RAW_BOOKS = [
     backVideoOffsetY: -11.3,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-1-v2.mp4",
     gallery: [
-      { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta — Vol. 1" },
-      { src: "/images/galeria/os-contos-do-planta-1/02.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 1" },
-      { src: "/images/galeria/os-contos-do-planta-1/03.jpg", alt: "Página 8 do miolo de Os Contos do Planta — Vol. 1" },
-      { src: "/images/galeria/os-contos-do-planta-1/04.jpg", alt: "Página 18 do miolo de Os Contos do Planta — Vol. 1" },
-      { src: "/images/galeria/os-contos-do-planta-1/05.jpg", alt: "Página 21 do miolo de Os Contos do Planta — Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/01.jpg", alt: "Página 5 do miolo de Os Contos do Planta, Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/02.jpg", alt: "Página 6 do miolo de Os Contos do Planta, Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/03.jpg", alt: "Página 8 do miolo de Os Contos do Planta, Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/04.jpg", alt: "Página 18 do miolo de Os Contos do Planta, Vol. 1" },
+      { src: "/images/galeria/os-contos-do-planta-1/05.jpg", alt: "Página 21 do miolo de Os Contos do Planta, Vol. 1" },
     ],
     // Mesma gramática do parallax de `um-bipede-entre-plantas` (ver nota lá):
     // a folhagem da base desce e sai por baixo, o Planta sobe e sai pelo topo,
@@ -308,7 +308,7 @@ const RAW_BOOKS = [
       dimensions: "27,5 cm • 20,5 cm • 0,4 cm",
       weight: "200 g",
       language: "Português (Brasil)",
-      edition: "Tiragem Única – 2a. edição",
+      edition: "Tiragem Única, 2a. edição",
       publishedAt: "2023-11-01",
     },
     price: { amount: 11999, currency: "BRL" },
@@ -320,7 +320,7 @@ const RAW_BOOKS = [
       alt: "Capa do livro Os Contos do Planta, Volume 1, de Gustavo Ravaglio",
     },
     upsell: {
-      title: "Os Contos do Planta — Vol. 1 + Assinatura + Sketch",
+      title: "Os Contos do Planta, Vol. 1 + Assinatura + Sketch",
       description:
         "Você pode receber seu exemplar de Os Contos do Planta 1 autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
@@ -330,7 +330,7 @@ const RAW_BOOKS = [
   },
   {
     slug: "os-contos-do-planta-2",
-    title: "Os Contos do Planta — Vol. 2",
+    title: "Os Contos do Planta, Vol. 2",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     synopsis:
@@ -354,11 +354,11 @@ const RAW_BOOKS = [
     backVideoPhase: 0.5,
     videoBannerSrc: "/videos/faixas/os-contos-do-planta-2-v2.mp4",
     gallery: [
-      { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2" },
-      { src: "/images/galeria/os-contos-do-planta-2/02.jpg", alt: "Página 7 do miolo de Os Contos do Planta — Vol. 2" },
-      { src: "/images/galeria/os-contos-do-planta-2/03.jpg", alt: "Página 13 do miolo de Os Contos do Planta — Vol. 2" },
-      { src: "/images/galeria/os-contos-do-planta-2/04.jpg", alt: "Página 19 do miolo de Os Contos do Planta — Vol. 2" },
-      { src: "/images/galeria/os-contos-do-planta-2/05.jpg", alt: "Página 28 do miolo de Os Contos do Planta — Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/01.jpg", alt: "Página 6 do miolo de Os Contos do Planta, Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/02.jpg", alt: "Página 7 do miolo de Os Contos do Planta, Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/03.jpg", alt: "Página 13 do miolo de Os Contos do Planta, Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/04.jpg", alt: "Página 19 do miolo de Os Contos do Planta, Vol. 2" },
+      { src: "/images/galeria/os-contos-do-planta-2/05.jpg", alt: "Página 28 do miolo de Os Contos do Planta, Vol. 2" },
     ],
     // Noite de tempestade: o fundo da cena sobe de leve, a colina da igreja e a
     // vegetação da base descem e saem por baixo, os galhos sobem e saem pelo
@@ -429,7 +429,7 @@ const RAW_BOOKS = [
       alt: "Capa do livro Os Contos do Planta, Volume 2, de Gustavo Ravaglio",
     },
     upsell: {
-      title: "Os Contos do Planta — Vol. 2 + Assinatura + Sketch",
+      title: "Os Contos do Planta, Vol. 2 + Assinatura + Sketch",
       description:
         "Você pode receber seu exemplar de Os Contos do Planta 2 autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
@@ -447,7 +447,7 @@ const RAW_BOOKS = [
       "O mundo destes personagens é dividido em duas grandes metades. De um lado está a Faccia Incógnita, território oculto habitado por criaturas míticas e forças desconhecidas. Do outro, o Atlas Cianus, o lado azul onde vivem os humanos. Separados por uma fronteira cercada de lendas e medo, poucos ousam atravessar para o lado obscuro, e ninguém jamais retornou de lá.\n\nA duologia Robô de Madeira acompanha uma expedição rumo ao lado oculto, liderada por um capitão consumido pela vingança e por um misterioso autômato. Juntos, eles partem para matar Leviatã, a mais nefasta das bestas bíblicas.\n\nO autômato foi construído por Sacaglione, antigo amigo do capitão, morto pelo Leviatã. Agora, a máquina permanece como a última lembrança \"viva\" daquele que perdeu a vida para o demônio oceânico.\n\nEm uma narrativa repleta de simbolismo, mistério e múltiplas camadas, acompanhe a tripulação do navio Lagosta Negra em uma jornada rumo ao impossível.",
     excerpt:
       "Neste primeiro volume, você será apresentado a uma sombria jornada de navegação rumo aos territórios proibidos da Faccia Incógnita, onde uma tripulação marcada pela perda e pela obsessão atravessa mares desconhecidos em busca da lendária criatura Leviatã.\n\nO livro em capa dura foi desenvolvido para remeter visualmente a um antigo artefato náutico. A capa combina relevos, hot stamp e aplicações de verniz que simulam madeira entalhada, enquanto a lombada em tecido, no formato meia casaca, recebe acabamento serigráfico. O projeto gráfico busca transformar o objeto físico do livro em uma extensão da atmosfera da narrativa.\n\nA edição também utiliza mais de três tipos de papel nas páginas, além de aplicações de tinta dourada.",
-    coverAlt: "Capa do livro Robô de Madeira — Atlas Cianus, de Gustavo Ravaglio",
+    coverAlt: "Capa do livro Robô de Madeira: Atlas Cianus, de Gustavo Ravaglio",
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus.mp4",
     // Mesmo ajuste de enquadramento de `os-contos-do-planta-1` — ver nota lá.
@@ -504,7 +504,7 @@ const RAW_BOOKS = [
     specs: {
       pages: 188,
       isbn: "978-6500212501",
-      format: "Capa dura — lombada de tecido",
+      format: "Capa dura, lombada de tecido",
       dimensions: "26,7 cm • 18,7 cm • 2,5 cm",
       weight: "1010 g",
       language: "Português (Brasil)",
@@ -517,18 +517,18 @@ const RAW_BOOKS = [
     featured: true,
     featuredCardImage: {
       src: "/images/livros/home/robo-de-madeira-atlas-cianus.png",
-      alt: "Capa do livro Robô de Madeira — Atlas Cianus, de Gustavo Ravaglio",
+      alt: "Capa do livro Robô de Madeira: Atlas Cianus, de Gustavo Ravaglio",
     },
     upsell: {
-      title: "Robô de Madeira — Atlas Cianus + Assinatura + Sketch",
+      title: "Robô de Madeira: Atlas Cianus + Assinatura + Sketch",
       description:
-        "Você pode receber seu exemplar de Robô de Madeira — Atlas Cianus autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+        "Você pode receber seu exemplar de Robô de Madeira: Atlas Cianus autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
     },
   },
   {
     slug: "robo-de-madeira-atlas-cianus-art-edition",
-    title: "Robô de Madeira — Art Edition",
+    title: "Robô de Madeira: Art Edition",
     subtitle: "Atlas Cianus",
     universeSlug: "robo-de-madeira",
     author: GUSTAVO,
@@ -537,7 +537,7 @@ const RAW_BOOKS = [
     excerpt:
       "Esta edição faz parte de uma tiragem limitada e numerada. O livro é \"enquadrado\" em uma caixa com acabamentos metalizados e ornamentações inspiradas na estética náutica, enquanto uma luva de acetato envolve o exemplar numa espécie de \"relicário\".\n\nA edição acompanha ainda um card dourado, certificado numerado e uma experiência em realidade aumentada que faz surgir, em 3D, o navio Lagosta Negra, sobre a capa do livro. Ao utilizar o aplicativo no celular Android, o leitor poderá visualizar a embarcação emergindo diretamente sobre a edição física.\n\nNeste primeiro volume, você será apresentado a uma sombria jornada de navegação rumo aos territórios proibidos da Faccia Incógnita, onde uma tripulação marcada pela perda e pela obsessão atravessa mares desconhecidos em busca da lendária criatura Leviatã. O livro em capa dura foi desenvolvido para remeter visualmente a um antigo artefato náutico. A capa combina relevos, hot stamp e aplicações de verniz que simulam madeira entalhada, enquanto a lombada em tecido, no formato meia casaca, recebe acabamento serigráfico. O projeto gráfico busca transformar o objeto físico do livro em uma extensão da atmosfera da narrativa.\n\nA edição também utiliza mais de três tipos de papel nas páginas, além de aplicações de tinta dourada.",
     coverAlt:
-      "Capa do livro Robô de Madeira — Atlas Cianus, Art Edition, de Gustavo Ravaglio",
+      "Capa do livro Robô de Madeira: Atlas Cianus, Art Edition, de Gustavo Ravaglio",
     coverTone: "navy",
     coverVideoSrc: "/videos/livros/robo-de-madeira-atlas-cianus-art-edition.mp4",
     // O enquadramento do estojo lê como maior que o dos livros vizinhos —
@@ -612,7 +612,7 @@ const RAW_BOOKS = [
       pages: 188,
       isbn: "978-6500212501",
       format:
-        "Moldura cartonada com laminação metálica, luva em acetato. Livro — capa dura e lombada de tecido.",
+        "Moldura cartonada com laminação metálica, luva em acetato. Livro: capa dura e lombada de tecido.",
       dimensions: "34,2 cm • 42,6 cm • 9,2 cm",
       weight: "1450 g",
       language: "Português (Brasil)",
@@ -625,18 +625,18 @@ const RAW_BOOKS = [
     featured: true,
     featuredCardImage: {
       src: "/images/livros/home/robo-de-madeira-atlas-cianus-art-edition.png",
-      alt: "Capa do livro Robô de Madeira — Atlas Cianus, Art Edition, de Gustavo Ravaglio",
+      alt: "Capa do livro Robô de Madeira: Atlas Cianus, Art Edition, de Gustavo Ravaglio",
     },
     upsell: {
-      title: "Robô de Madeira — Art Edition + Assinatura + Sketch",
+      title: "Robô de Madeira: Art Edition + Assinatura + Sketch",
       description:
-        "Você pode receber seu exemplar de Robô de Madeira — Art Edition autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+        "Você pode receber seu exemplar de Robô de Madeira: Art Edition autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
     },
   },
   {
     slug: "os-contos-do-planta-caixa-de-reliquias",
-    title: "Os Contos do Planta – Caixa de Relíquias",
+    title: "Os Contos do Planta: Caixa de Relíquias",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     // A caixa acompanha Contos do Planta 2, então a história é a mesma do
@@ -645,7 +645,7 @@ const RAW_BOOKS = [
     synopsis:
       "Os projetos do Dr. Mantis para a construção do corpo do Planta foram roubados.\n\nPlanta, Fausto, o cachorro mago, Dr. Mantis, cientista criador do protagonista, e os demais integrantes do grupo se envolvem em uma investigação que revelará o passado sombrio do cientista. A trama revisita momentos dolorosos de sua trajetória e traz à tona segredos que ele preferiria esquecer.\n\nEm uma narrativa envolvente, todos correm contra o tempo para solucionar o mistério enquanto são perseguidos pelo enigmático vilão Necroplanta.",
     excerpt:
-      "A Caixa de Relíquias dos Contos do Planta foi projetada não apenas para armazenar sua coleção, mas também para ampliar a experiência do leitor com o universo da obra por meio de itens interativos, gráficos e narrativos que se conectam diretamente à história e aos personagens.\n\nVeja abaixo os itens que você encontra na caixa:\n\nCaixa — fechamento magnético, acabamento em capa dura, aplicação de tinta dourada, relevos na arte e ornamentos em verniz localizado. A lombada em tecido recebe impressão serigráfica, enquanto toda a caixa é ornamentada interna e externamente.\n\nContos do Planta 2 — nesta edição ocorre a aparição de um dos grandes vilões da série: Necroplanta. Livro com 88 páginas, capa e contra capa inteiramente holográfica repletas de cenas animadas, profundidade visual e efeitos tridimensionais que transformam o livro em uma experiência interativa.\n\nJornal — no início de Contos do Planta 2, Dr. Mantis lê uma matéria sobre o assalto ao museu, acontecimento que dá início à narrativa do livro. Este item reproduz integralmente o jornal do universo de Planta. O Noticiarista Oculto é um jornal alternativo e enigmático, cujo editor permanece desconhecido. Apesar de seu tom sensacionalista, é um dos poucos veículos que realmente relata a verdade.\n\nTabuleiro — este misterioso tabuleiro apresenta uma interação gráfica entre diversos personagens do universo de Planta. No verso, o leitor encontra um mapa de Curytiba na década de 1930, indicando a localização da casa de Dr. Mantis, Planta e Lupus Fausto.\n\nCards e Postais — a caixa acompanha dois postais com ilustrações inéditas e dois cards dourados em formato de cartas de tarô: um de Planta e outro de Necroplanta.",
+      "A Caixa de Relíquias dos Contos do Planta foi projetada não apenas para armazenar sua coleção, mas também para ampliar a experiência do leitor com o universo da obra por meio de itens interativos, gráficos e narrativos que se conectam diretamente à história e aos personagens.\n\nVeja abaixo os itens que você encontra na caixa:\n\nCaixa: fechamento magnético, acabamento em capa dura, aplicação de tinta dourada, relevos na arte e ornamentos em verniz localizado. A lombada em tecido recebe impressão serigráfica, enquanto toda a caixa é ornamentada interna e externamente.\n\nContos do Planta 2: nesta edição ocorre a aparição de um dos grandes vilões da série: Necroplanta. Livro com 88 páginas, capa e contra capa inteiramente holográfica repletas de cenas animadas, profundidade visual e efeitos tridimensionais que transformam o livro em uma experiência interativa.\n\nJornal: no início de Contos do Planta 2, Dr. Mantis lê uma matéria sobre o assalto ao museu, acontecimento que dá início à narrativa do livro. Este item reproduz integralmente o jornal do universo de Planta. O Noticiarista Oculto é um jornal alternativo e enigmático, cujo editor permanece desconhecido. Apesar de seu tom sensacionalista, é um dos poucos veículos que realmente relata a verdade.\n\nTabuleiro: este misterioso tabuleiro apresenta uma interação gráfica entre diversos personagens do universo de Planta. No verso, o leitor encontra um mapa de Curytiba na década de 1930, indicando a localização da casa de Dr. Mantis, Planta e Lupus Fausto.\n\nCards e Postais: a caixa acompanha dois postais com ilustrações inéditas e dois cards dourados em formato de cartas de tarô: um de Planta e outro de Necroplanta.",
     coverAlt: "Capa da Caixa de Relíquias de Os Contos do Planta, de Gustavo Ravaglio",
     coverTone: "garnet",
     coverVideoSrc: "/videos/livros/os-contos-do-planta-caixa-de-reliquias.mp4",
@@ -657,8 +657,8 @@ const RAW_BOOKS = [
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/01.jpg", alt: "Caixa de Relíquias aberta, com o jornal O Noticiarista Oculto e o tabuleiro" },
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/02.jpg", alt: "Verso do tabuleiro da Caixa de Relíquias, com o mapa de Curytiba em 1930" },
       { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/03.jpg", alt: "Itens colecionáveis da Caixa de Relíquias de Os Contos do Planta" },
-      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/04.jpg", alt: "Página 6 do miolo de Os Contos do Planta — Vol. 2, incluído na caixa" },
-      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/05.jpg", alt: "Página 13 do miolo de Os Contos do Planta — Vol. 2, incluído na caixa" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/04.jpg", alt: "Página 6 do miolo de Os Contos do Planta, Vol. 2, incluído na caixa" },
+      { src: "/images/galeria/os-contos-do-planta-caixa-de-reliquias/05.jpg", alt: "Página 13 do miolo de Os Contos do Planta, Vol. 2, incluído na caixa" },
     ],
     // Jardim de esculturas: mesma gramática dos outros livros (ver nota em
     // `um-bipede-entre-plantas`) — o sinal do `shift` é preso à borda do
@@ -724,7 +724,7 @@ const RAW_BOOKS = [
       // o registro é do livro que acompanha a caixa.
       isbn: "978-6500762990",
       format:
-        "Caixa — capa dura, lombada de tecido. Livro — capa holográfica plástica.",
+        "Caixa: capa dura, lombada de tecido. Livro: capa holográfica plástica.",
       dimensions: "31,9 cm • 24,5 cm • 8,8 cm",
       weight: "1042 g",
       language: "Português (Brasil)",
@@ -771,7 +771,7 @@ const RAW_BOOKS = [
       alt: "Capa da Caixa de Relíquias de Os Contos do Planta, de Gustavo Ravaglio",
     },
     upsell: {
-      title: "Os Contos do Planta — Vol. 2 + Assinatura + Sketch",
+      title: "Os Contos do Planta, Vol. 2 + Assinatura + Sketch",
       description:
         "Você pode receber seu exemplar de Os Contos do Planta 2 autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
@@ -842,7 +842,7 @@ const RAW_BOOKS = [
       dimensions: "27,5 cm • 20,5 cm • 0,8 cm",
       weight: "300 g",
       language: "Português (Brasil)",
-      edition: "1a. Edição — Tiragem Única Numerada",
+      edition: "1a. Edição, Tiragem Única Numerada",
       publishedAt: "2024-10-01",
     },
     // PLACEHOLDER: preço não veio na ficha da editora — mantido o valor já
@@ -880,7 +880,7 @@ const RAW_BOOKS = [
     synopsis:
       "Em um mundo dominado por castas de feiticeiros renegados e ordens secretas, uma vingança ritualística altera para sempre o destino de um jovem: ao ser rejeitado por uma princesa, um influente bruxo lança 19 maldições mortais sobre seu filho, Yanayag. Para sobreviver, ele é forçado a cruzar territórios hostis e enfrentar, um a um, os 19 mestres das artes sombrias que sustentam seu suplício.",
     excerpt:
-      "Yanayag não é uma fantasia medieval convencional — não espere apenas castelos, cavaleiros e dragões. Aqui, a imaginação pode assumir qualquer forma: bruxos e confrarias misteriosas, seres de aparência impossível, criaturas grotescas, entidades sobrenaturais e povos estranhos habitam um mundo influenciado pelo universo fantástico de Lord Dunsany, com ecos de Clark Ashton Smith e do primeiro H. P. Lovecraft.\n\nÉ a primeira colaboração de Enrique Alcatena e Eduardo Mazzitelli publicada pela Hocus Pocus, e inaugura um universo autoral independente do restante do catálogo.",
+      "Yanayag não é uma fantasia medieval convencional: não espere apenas castelos, cavaleiros e dragões. Aqui, a imaginação pode assumir qualquer forma: bruxos e confrarias misteriosas, seres de aparência impossível, criaturas grotescas, entidades sobrenaturais e povos estranhos habitam um mundo influenciado pelo universo fantástico de Lord Dunsany, com ecos de Clark Ashton Smith e do primeiro H. P. Lovecraft.\n\nÉ a primeira colaboração de Enrique Alcatena e Eduardo Mazzitelli publicada pela Hocus Pocus, e inaugura um universo autoral independente do restante do catálogo.",
     coverAlt: "Capa do livro Yanayag, de Enrique Alcatena e Eduardo Mazzitelli",
     coverTone: "forest",
     coverVideoSrc: "/videos/livros/yanayag.mp4",
@@ -985,7 +985,7 @@ const RAW_BOOKS = [
     // `/campanhas`, e por isso `published: false` — sem página em
     // `/catalogo/yanayag-noite` enquanto a editora não fechar a edição.
     slug: "yanayag-noite",
-    title: "Yanayag — Edição Noite",
+    title: "Yanayag: Edição Noite",
     subtitle: "Edição limitada",
     published: false,
     catalogVisible: false,
@@ -1036,7 +1036,7 @@ const RAW_BOOKS = [
     // destaque no catálogo que era desta; ver nota no início do array.
     slug: "um-bipede-entre-plantas",
     title: "Um Bípede Entre Plantas",
-    subtitle: "Graphic Novel — Vol. 1",
+    subtitle: "Graphic Novel, Vol. 1",
     universeSlug: "necroplanta",
     author: GUSTAVO,
     synopsis:
@@ -1120,7 +1120,7 @@ const RAW_BOOKS = [
     upsell: {
       title: "Exemplar de O Planta autografado pelo autor e sketch personalizado!",
       description:
-        "Você pode receber seu exemplar de O Planta – Um bípede entre plantas autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
+        "Você pode receber seu exemplar de O Planta: Um bípede entre plantas autografado pelo autor e acompanhado de um sketch personalizado, produzido em folha separada especialmente para ser emoldurada e incorporada à sua coleção.\n\nUma oportunidade de possuir não apenas o livro, mas também uma obra original ligada ao universo da obra. Garanta seu livro assinado e seu sketch aqui.",
       price: { amount: 4999, currency: "BRL" },
     },
     universeShowcase: PLANTA_UNIVERSE_SHOWCASE,

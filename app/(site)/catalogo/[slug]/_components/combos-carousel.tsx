@@ -38,7 +38,7 @@ type CombosCarouselProps = {
   combos: readonly CombosCarouselItem[];
 };
 
-/** Quanto tempo um combo sem faixa (ou com reduced-motion) fica em cena
+/** Quanto tempo um combo sem faixa fica em cena
  *  antes de o carousel passar para o próximo. */
 const COMBO_STATIC_SLIDE_MS = 5000;
 
@@ -194,9 +194,6 @@ function ComboStage({
  * oferta sem cortar nenhum close-up no meio. Ao fim da última, avisa
  * `onFinished` (o carousel passa para o próximo combo) e recomeça da primeira.
  *
- * Sem faixas para tocar (reduced-motion), o banner fica parado na primeira e
- * avisa `onFinished` depois de `COMBO_STATIC_SLIDE_MS`, como um slide comum.
- *
  * Não usa `LazyVideo` porque aqui há vários `<video>` na mesma posição: o
  * observer daquele componente veria todos como visíveis e mandaria tocar
  * todos juntos — exatamente a decodificação em paralelo que ele existe para
@@ -261,33 +258,6 @@ function ComboVideoRotator({
     return () => observer.disconnect();
   }, []);
 
-  // Mesmo tratamento de `lazy-video.tsx` e `paper-tilt-effect.tsx`: quem
-  // pediu menos movimento no sistema não recebe nem loop nem rodízio — fica
-  // a primeira faixa, parada.
-  const prefersReducedMotion = useRef(false);
-  useEffect(() => {
-    prefersReducedMotion.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-  }, []);
-
-  // `onFinished` muda a cada render do carousel; a ref evita reiniciar o
-  // timer do modo parado por causa disso.
-  const onFinishedRef = useRef(onFinished);
-  useEffect(() => {
-    onFinishedRef.current = onFinished;
-  }, [onFinished]);
-
-  useEffect(() => {
-    if (!isInView || !prefersReducedMotion.current) return;
-
-    const timer = setTimeout(
-      () => onFinishedRef.current(),
-      COMBO_STATIC_SLIDE_MS,
-    );
-    return () => clearTimeout(timer);
-  }, [isInView]);
-
   // Chamado no `ended` da faixa em cena. Ela volta pro zero já aqui, pausada
   // e invisível, para abrir inteira na próxima volta do rodízio.
   const handleVideoEnded = (index: number) => {
@@ -306,7 +276,7 @@ function ComboVideoRotator({
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
 
-      if (index === activeIndex && isInView && !prefersReducedMotion.current) {
+      if (index === activeIndex && isInView) {
         // `play()` rejeita com a aba em background ou autoplay bloqueado.
         // Nada a fazer: o vídeo é decorativo.
         video.play().catch(() => {});

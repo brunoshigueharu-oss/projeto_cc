@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ConfirmationContent } from "./_components/confirmation-content";
 
 export const metadata: Metadata = {
-  title: "Pedido confirmado",
+  title: "Confirmação do pedido",
   description: "Confirmação do seu pedido na Hocus Pocus.",
 };
 
