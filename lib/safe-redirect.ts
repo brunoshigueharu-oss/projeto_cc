@@ -25,7 +25,11 @@ export function getSafeRedirect(
   try {
     const url = new URL(value, origin);
     if (url.origin !== new URL(origin).origin) return fallback;
-    return `${url.pathname}${url.search}${url.hash}`;
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    // A normalização de `.`/`..` pode produzir `//host` (ex.: `/.//evil.com`),
+    // que ao navegar vira outro domínio — valida também o resultado.
+    if (path.startsWith("//") || path.startsWith("/\\")) return fallback;
+    return path;
   } catch {
     return fallback;
   }

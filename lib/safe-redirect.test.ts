@@ -25,6 +25,9 @@ describe("getSafeRedirect", () => {
     "/\t/evil.com",
     "/\n/evil.com",
     "/\r/evil.com",
+    "/.//evil.com",
+    "/a/..//evil.com",
+    "/././/evil.com",
     "javascript:alert(1)",
     "perfil",
   ])("recusa destino externo ou malformado: %j", (value) => {
