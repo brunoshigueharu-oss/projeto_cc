@@ -181,6 +181,8 @@
        o elemento de scroll da página, e `hidden` aqui quebraria o
        `position: sticky` do header. */
     overflow-x: clip;
+    /* Header fixo tem 64px: âncoras e foco por Tab param abaixo dele. */
+    scroll-padding-top: 5rem;
   }
 }
 

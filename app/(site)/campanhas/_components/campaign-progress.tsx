@@ -96,7 +96,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
 
                 <p
                   aria-hidden="true"
-                  className="mt-2 text-right text-sm font-medium text-foreground/50 tabular-nums"
+                  className="mt-2 text-right text-sm font-medium text-muted-foreground tabular-nums"
                 >
                   {progress.percent}%
                 </p>
@@ -123,7 +123,7 @@ export function CampaignProgress({ campaign }: { campaign: Campaign }) {
           )}
 
           {isClosed ? (
-            <p className="flex h-12 w-full items-center justify-center rounded-full border border-border px-7 text-base font-medium text-foreground/50">
+            <p className="flex h-12 w-full items-center justify-center rounded-full border border-border px-7 text-base font-medium text-muted-foreground">
               Campanha encerrada
             </p>
           ) : (

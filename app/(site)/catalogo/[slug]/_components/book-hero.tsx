@@ -80,7 +80,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
 
         <div>
           <nav aria-label={labels.breadcrumbNav}>
-            <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-foreground/50">
+            <ol className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
               <li>
                 <Link href="/" className="hover:text-foreground">
                   Home
@@ -139,7 +139,7 @@ export function BookHero({ book, universe }: BookHeroProps) {
                 secondaryAction={universeLink}
               />
             ) : (
-              <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
+              <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-muted-foreground">
                 {labels.soldOut}
               </span>
             )}

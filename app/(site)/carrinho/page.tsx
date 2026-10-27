@@ -158,7 +158,10 @@ export default function CarrinhoPage() {
                 type="button"
                 aria-label={`Remover ${line.title}`}
                 onClick={(event) => void removeLine(line, event.currentTarget)}
-                className="text-muted-foreground transition-colors hover:text-destructive"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "icon-lg" }),
+                  "text-muted-foreground hover:text-destructive",
+                )}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
               </button>

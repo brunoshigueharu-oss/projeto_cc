@@ -89,7 +89,7 @@ export function UniverseSection({ universe, book }: UniverseSectionProps) {
             </p>
 
             <div className="flex flex-col items-start gap-3">
-              <span className="text-xs font-medium uppercase tracking-[0.15em] text-foreground/40">
+              <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
                 {isSoldOut
                   ? labels.soldOutEdition
                   : isPreOrder

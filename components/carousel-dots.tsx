@@ -72,7 +72,7 @@ export function CarouselDots({
           aria-current={index === activeIndex}
           onClick={() => onSelect(index)}
           className={cn(
-            "group flex touch-manipulation items-center rounded-full px-1 focus-visible:outline-2 focus-visible:-outline-offset-2",
+            "group flex touch-manipulation items-center rounded-full px-2.5 focus-visible:outline-2 focus-visible:-outline-offset-2",
             classNames.button,
           )}
         >

@@ -78,7 +78,7 @@ export function CampaignSpecialEdition({
                     addedLabel="Adicionado!"
                   />
                 ) : (
-                  <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground/50">
+                  <span className="rounded-full border border-border px-7 py-3 text-sm font-medium text-muted-foreground">
                     Tiragem esgotada
                   </span>
                 )}

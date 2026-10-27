@@ -7,6 +7,8 @@ export default async function Home() {
 
   return (
     <>
+      {/* O hero é só vídeo; o H1 existe para leitor de tela e buscadores. */}
+      <h1 className="sr-only">Hocus Pocus — editora de livros ilustrados</h1>
       <Hero banners={banners} />
       <FeaturedBooksShelf />
     </>
