@@ -15,8 +15,37 @@ import type { NextConfig } from "next";
  */
 const CACHE_IMUTAVEL = "public, max-age=31536000, immutable";
 
+/**
+ * Headers de segurança aplicados a todas as rotas. O site roda em Docker no
+ * EasyPanel, que não injeta nenhum deles (conferido em 2026-10-27).
+ *
+ * A CSP é só a parte que não depende de quais scripts/iframes a página
+ * carrega: `frame-ancestors 'none'` impede que o site seja embutido em outra
+ * página (clickjacking). O login da Wix abre um iframe *da Wix* dentro do
+ * site e responde por `postMessage` — não embute o site — então não é
+ * afetado. Uma CSP completa (script-src, connect-src...) precisa ser testada
+ * contra o login e o checkout da Wix antes de virar regra.
+ */
+const SECURITY_HEADERS = [
+  {
+    key: "Content-Security-Policy",
+    value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'",
+  },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), payment=()",
+  },
+  // Navegadores ignoram HSTS em HTTP (localhost), então não afeta o dev.
+  { key: "Strict-Transport-Security", value: "max-age=31536000" },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Não anunciar o framework/versão no header `x-powered-by`.
+  poweredByHeader: false,
 
   images: {
     // `/_next/image` otimiza sob demanda e guarda o resultado em
@@ -29,6 +58,7 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
+      { source: "/:path*", headers: SECURITY_HEADERS },
       {
         source: "/videos/:path*",
         headers: [{ key: "Cache-Control", value: CACHE_IMUTAVEL }],

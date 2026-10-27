@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormStatus, type FormResult } from "@/components/form-status";
+import { getSafeRedirect } from "@/lib/safe-redirect";
 import { useMember } from "@/lib/wix/member-context";
 import { login, MemberAuthError } from "@/lib/wix/members-auth";
 import { VerifyEmailForm } from "../../_components/verify-email-form";
@@ -41,8 +42,7 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
 
   async function enter() {
     await refresh();
-    const safeRedirect = redirectTo && /^\/(?!\/|\\)/.test(redirectTo) ? redirectTo : "/perfil";
-    router.push(safeRedirect);
+    router.push(getSafeRedirect(redirectTo, window.location.origin, "/perfil"));
   }
 
   function backToForm() {
