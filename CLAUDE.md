@@ -22,7 +22,7 @@
 - Mutações via Server Actions em `actions/` — NUNCA chamar DB direto em Client Components
 - `components/ui/` — primitivos reutilizáveis (shadcn)
 - `components/` — componentes de feature
-- `lib/` — helpers, clients (supabase, stripe), configurações
+- `lib/` — helpers, clients, configurações
 - `lib/data/` — dados estáticos do site + schemas Zod, validados no topo do módulo
 - `types/` — tipos globais e schemas Zod compartilhados
 
@@ -58,5 +58,4 @@
 - Proxy (antigo "middleware") em `proxy.ts` na raiz — não dentro de `app/`.
   Next.js 16 renomeou a convenção: arquivo `proxy.ts`, função exportada
   `proxy` (não `middleware`)
-- Supabase client no server: usar `createServerClient` (cookies). No client: `createBrowserClient`
 - Imagens externas precisam de domínio autorizado em `next.config.ts` (remotePatterns)
